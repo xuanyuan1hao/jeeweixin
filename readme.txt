@@ -17,6 +17,8 @@ weixin program for you
 2. 未经版权所有者授权，禁止发行源代码及其被实质上修改的版本。
 3. 未经版权所有者授权，禁止将源代码及其衍生品进行出售、发行。
 
+
+
 JEEWeiXin V2.0 功能
 
 1、URL、Tocken 认证接口
@@ -46,5 +48,6 @@ JEEWeiXin V2.0 功能
 25、通过interceptor拦截器实现OAuth认证，并缓存openid
 26、JS-Ticket的缓存
 27、JS-SDK 实例
+
 更多测试功能请关注方官方微信号：weixinpy-com
 
