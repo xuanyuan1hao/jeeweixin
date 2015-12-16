@@ -18,7 +18,6 @@ weixin program for you
 3. 未经版权所有者授权，禁止将源代码及其衍生品进行出售、发行。
 
 
-
 JEEWeiXin V2.0 功能
 
 1、URL、Tocken 认证接口
@@ -50,4 +49,5 @@ JEEWeiXin V2.0 功能
 27、JS-SDK 实例
 
 更多测试功能请关注方官方微信号：weixinpy-com
+
 
