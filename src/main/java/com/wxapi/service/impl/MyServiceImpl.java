@@ -21,6 +21,7 @@ import com.wxapi.process.WxApi;
 import com.wxapi.process.WxApiClient;
 import com.wxapi.process.WxMessageBuilder;
 import com.wxapi.service.MyService;
+import com.wxapi.vo.Matchrule;
 import com.wxapi.vo.MsgRequest;
 import com.wxcms.domain.AccountFans;
 import com.wxcms.domain.AccountMenu;
@@ -160,11 +161,23 @@ public class MyServiceImpl implements MyService{
 	//发布菜单
 	public JSONObject publishMenu(String gid,MpAccount mpAccount){
 		List<AccountMenu> menus = menuDao.listWxMenus(gid);
-		String menuJson = prepareMenus(menus);
-		JSONObject rstObj = WxApiClient.publishMenus(menuJson,mpAccount);
-		if(rstObj != null && rstObj.getInt("errcode") == 0){//成功，更新菜单组
-			menuGroupDao.updateMenuGroupDisable();
-			menuGroupDao.updateMenuGroupEnable(gid);
+		
+		//demo，只为男创建菜单；其他个性化需求 设置 Matchrule 属性即可
+		Matchrule matchrule = new Matchrule();
+		matchrule.setSex("1");//1-男 ；2-女
+		
+		String menuJson = prepareMenus(menus,matchrule);
+//		JSONObject rstObj = WxApiClient.publishMenus(menuJson,mpAccount);//创建普通菜单
+		JSONObject rstObj = WxApiClient.publishAddconditionalMenus(menuJson,mpAccount);//创建个性化菜单
+		
+		if(rstObj != null){//成功，更新菜单组
+			if(rstObj.containsKey("menu_id")){
+				menuGroupDao.updateMenuGroupDisable();
+				menuGroupDao.updateMenuGroupEnable(gid);
+			}else if(rstObj.containsKey("errcode") && rstObj.getInt("errcode") == 0){
+				menuGroupDao.updateMenuGroupDisable();
+				menuGroupDao.updateMenuGroupEnable(gid);
+			}
 		}
 		return rstObj;
 	}
@@ -242,8 +255,13 @@ public class MyServiceImpl implements MyService{
 		return fans;
 	}
 	
-	//获取微信公众账号的菜单
-	private String prepareMenus(List<AccountMenu> menus) {
+	/**
+	 * 获取微信公众账号的菜单
+	 * @param menus	菜单列表
+	 * @param matchrule	个性化菜单配置
+	 * @return
+	 */
+	private String prepareMenus(List<AccountMenu> menus,Matchrule matchrule) {
 		if(!CollectionUtils.isEmpty(menus)){
 			List<AccountMenu> parentAM = new ArrayList<AccountMenu>();
 			Map<Long,List<JSONObject>> subAm = new HashMap<Long,List<JSONObject>>();
@@ -269,6 +287,7 @@ public class MyServiceImpl implements MyService{
 			}
 			JSONObject root = new JSONObject();
 			root.put("button", arr);
+			root.put("matchrule", JSONObject.fromObject(matchrule).toString());
 			return JSONObject.fromObject(root).toString();
 		}
 		return "error";

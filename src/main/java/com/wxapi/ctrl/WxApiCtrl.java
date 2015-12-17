@@ -95,18 +95,25 @@ public class WxApiCtrl {
 	}
 	
 	//创建微信公众账号菜单
-	@RequestMapping(value = "/publishMenu", method = RequestMethod.POST)
+	@RequestMapping(value = "/publishMenu")
 	public ModelAndView publishMenu(HttpServletRequest request,String gid) {
 		JSONObject rstObj = null;
 		MpAccount mpAccount = WxMemoryCacheClient.getSingleMpAccount();
 		if(mpAccount != null){
 			rstObj = myService.publishMenu(gid,mpAccount);
-			if(rstObj != null && rstObj.getInt("errcode") == 0){
-				ModelAndView mv = new ModelAndView("common/success");
-				mv.addObject("successMsg", "创建菜单成功");
-				return mv;
+			if(rstObj != null){//成功，更新菜单组
+				if(rstObj.containsKey("menu_id")){
+					ModelAndView mv = new ModelAndView("common/success");
+					mv.addObject("successMsg", "创建菜单成功");
+					return mv;
+				}else if(rstObj.containsKey("errcode") && rstObj.getInt("errcode") == 0){
+					ModelAndView mv = new ModelAndView("common/success");
+					mv.addObject("successMsg", "创建菜单成功");
+					return mv;
+				}
 			}
 		}
+		
 		ModelAndView mv = new ModelAndView("common/failure");
 		String failureMsg = "创建菜单失败，请检查菜单：可创建最多3个一级菜单，每个一级菜单下可创建最多5个二级菜单。";
 		if(rstObj != null){

@@ -105,6 +105,13 @@ public class WxApiClient {
 		return WxApi.httpsRequest(url, HttpMethod.POST, menus);
 	}
 	
+	//创建个性化菜单
+	public static JSONObject publishAddconditionalMenus(String menus,MpAccount mpAccount){
+		String accessToken = getAccessToken(mpAccount);
+		String url = WxApi.getMenuAddconditionalUrl(accessToken);
+		return WxApi.httpsRequest(url, HttpMethod.POST, menus);
+	}
+	
 	//删除菜单
 	public static JSONObject deleteMenu(MpAccount mpAccount){
 		String accessToken = getAccessToken(mpAccount);
