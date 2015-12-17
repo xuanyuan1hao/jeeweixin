@@ -162,13 +162,13 @@ public class MyServiceImpl implements MyService{
 	public JSONObject publishMenu(String gid,MpAccount mpAccount){
 		List<AccountMenu> menus = menuDao.listWxMenus(gid);
 		
-		//demo，只为男创建菜单；其他个性化需求 设置 Matchrule 属性即可
 		Matchrule matchrule = new Matchrule();
-		matchrule.setSex("1");//1-男 ；2-女
-		
 		String menuJson = prepareMenus(menus,matchrule);
-//		JSONObject rstObj = WxApiClient.publishMenus(menuJson,mpAccount);//创建普通菜单
-		JSONObject rstObj = WxApiClient.publishAddconditionalMenus(menuJson,mpAccount);//创建个性化菜单
+		JSONObject rstObj = WxApiClient.publishMenus(menuJson,mpAccount);//创建普通菜单
+		
+		//以下为创建个性化菜单demo，只为男创建菜单；其他个性化需求 设置 Matchrule 属性即可
+//		matchrule.setSex("1");//1-男 ；2-女
+//		JSONObject rstObj = WxApiClient.publishAddconditionalMenus(menuJson,mpAccount);//创建个性化菜单
 		
 		if(rstObj != null){//成功，更新菜单组
 			if(rstObj.containsKey("menu_id")){
