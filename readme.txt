@@ -1,5 +1,6 @@
 
 感谢您使用JeeWeixin
+预览效果：www.jeeweixin.com 
 
 版本V2.0
 发布时间：20151208
@@ -9,7 +10,6 @@
 www.weixinpy.com 
 weixin program for you
 
-看效果：www.jeeweixin.com 
 
 版权申明
 1. 源码项目版权、知识产权归微信派(南京匠成信息科技有限公司)所有。
