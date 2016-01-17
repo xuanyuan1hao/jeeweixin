@@ -1,9 +1,10 @@
 package com.wxcms.mapper;
 
-import java.util.List;
-
 import com.core.page.Pagination;
 import com.wxcms.domain.AccountFans;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 
 public interface AccountFansDao {
@@ -30,4 +31,5 @@ public interface AccountFansDao {
 
 	public void deleteByOpenId(String openId);
 
+	void updateRecommendMediaId(@Param("openId") String openId,@Param("mediaId") String mediaId);
 }

@@ -12,7 +12,7 @@ import com.wxcms.domain.AccountFans;
 public interface MyService {
 	
 	//消息处理
-	public String processMsg(MsgRequest msgRequest,MpAccount mpAccount);
+	public String processMsg(MsgRequest msgRequest,MpAccount mpAccount,String webRootPath,String webUrl);
 
 	//发布菜单
 	public JSONObject publishMenu(String gid,MpAccount mpAccount);

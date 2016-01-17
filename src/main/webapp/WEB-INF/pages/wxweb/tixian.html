@@ -1,0 +1,65 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width,user-scalable=no" name="viewport">
+    <title>我的openid和信息</title>
+    <style>
+        #id_description p{
+            font-size: 16px;
+            letter-spacing:2px;
+            line-height:22px;
+            font-family: "Microsoft YaHei" ! important;
+            color: #3e3e3e;
+        }
+        #id_description img{
+            margin-top: 2px;
+            border-radius:5px;
+        }
+    </style>
+</head>
+
+<body style="margin: 0px;padding: 0px;background-color:#e7e8eb;">
+<div style="margin:0 auto;background-color:#fff;">
+    <div style="padding: 0px 20px;">
+        <div>
+            <#if fans??>
+                <div>我的信息：</div>
+                <div style="margin-top:5px;"><img src="${fans.headimgurl!}" width="80px;"/></div>
+                <div style="margin-top:5px;">${fans.nicknameStr!}</div>
+                <div style="margin-top:5px;">${fans.province!}-${fans.city!}</div>
+                <div>可提现金额：${fans.userMoney!}</div>
+                <div>提现金额：<input type="text" id="money" value="${fans.userMoneyFreezed!}"/></div>
+                <div><input id="tixian_btn" type="button" value="提现" /></div>
+                <span id="result"></span>
+            </#if>
+        </div>
+    </div>
+    <#include "../common/wx_footer.html">
+</div>
+<script type="text/javascript" src="${s.base}/res/jquery-1.9.1.min.js"></script>
+<script>
+    $("#tixian_btn").click(function(){
+        var money=$("#money").val();
+        $.ajax({
+            type: "POST",
+            url:"/wxapi/tixian_json.html",
+            data:"money="+money,// 要提交的表单
+            success: function(ret)
+            {
+                alert(ret);
+                var returnJson=JSON.parse(ret);
+                if(returnJson.result==true){
+                    alert(returnJson.msg);
+                }else{
+                    alert(returnJson.msg);
+                }
+            },
+            error: function(error){alert(error);}
+        });
+    });
+</script>
+</body>
+</html>
+
+

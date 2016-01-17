@@ -1,9 +1,9 @@
 package com.wxcms.service;
 
-import java.util.List;
-
 import com.core.page.Pagination;
 import com.wxcms.domain.AccountFans;
+
+import java.util.List;
 
 
 public interface AccountFansService {
@@ -29,4 +29,5 @@ public interface AccountFansService {
 	public void deleteByOpenId(String openId);
 
 
+	public void updateRecommendMediaId(String userOpenId, String mediaId);
 }

@@ -1,19 +1,14 @@
 package com.wxapi.process;
 
+import com.wxapi.vo.*;
+import com.wxcms.domain.MsgNews;
+import com.wxcms.domain.MsgText;
+import net.sf.json.JSONObject;
+import org.apache.commons.lang.StringUtils;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import net.sf.json.JSONObject;
-
-import org.apache.commons.lang.StringUtils;
-
-import com.wxapi.vo.Article;
-import com.wxapi.vo.MsgRequest;
-import com.wxapi.vo.MsgResponseNews;
-import com.wxapi.vo.MsgResponseText;
-import com.wxcms.domain.MsgNews;
-import com.wxcms.domain.MsgText;
 
 /**
  * 消息builder工具类
@@ -74,5 +69,19 @@ public class WxMessageBuilder {
 			return null;
 		}
 	}
-	
+
+	public static MsgResponseImage getMsgResponseImage(MsgRequest msgRequest, String mediaId) {
+		if(null!=mediaId){
+			MsgResponseImage msgResponseImage=new MsgResponseImage();
+			msgResponseImage.setToUserName(msgRequest.getFromUserName());
+			msgResponseImage.setFromUserName(msgRequest.getToUserName());
+			msgResponseImage.setMsgType(MsgType.Image.toString());
+			msgResponseImage.setCreateTime(new Date().getTime());
+			Image image=new Image();
+			image.setMediaId(mediaId);
+			msgResponseImage.setImage(image);
+			return msgResponseImage;
+		}
+		return null;
+	}
 }

@@ -15,9 +15,8 @@
      						http://www.springframework.org/schema/aop 
      						http://www.springframework.org/schema/aop/spring-aop-4.0.xsd 
    							http://www.springframework.org/schema/mvc  
-						    http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd"> 
-		
-		
+						    http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd">
+
 		<bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">  
 		    <property name="templateLoaderPath" value=""/>
 			<property name="freemarkerSettings">
@@ -36,15 +35,36 @@
 					<prop key="auto_import">/WEB-INF/ftl/spring.ftl as s</prop>
 				</props>
 			</property>
-		</bean>  
-	    <bean id="viewResolver" class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
-	    	<property name="prefix" value="/WEB-INF/pages/" />
-			<property name="suffix" value=".html" />
-			<property name="cache" value="true" />
-			<property name="contentType" value="text/html; charset=UTF-8" />
-			<property name="requestContextAttribute" value="request" />
 		</bean>
-	     
+		<bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+		<property name="mediaTypes">
+			<map>
+				<entry key="html" value="text/html"/>
+				<entry key="json" value="application/json"/>
+			</map>
+		</property>
+		<property name="viewResolvers">
+		<list>
+			<bean id="viewResolver" class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
+				<property name="prefix" value="/WEB-INF/pages/" />
+				<property name="suffix" value=".html" />
+				<property name="cache" value="true" />
+				<property name="contentType" value="text/html; charset=UTF-8" />
+				<property name="requestContextAttribute" value="request" />
+			</bean>
+		</list>
+		</property>
+			<property name="defaultViews">
+				<list>
+					<bean class="org.springframework.web.servlet.view.json.MappingJackson2JsonView">
+						<property name="prettyPrint" value="true" />
+						<property name="contentType" value="text/plain" />
+					</bean>
+				</list>
+		</property>
+	</bean>
+
+
 	    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver" >
 	    	<property name="maxUploadSize" value="10000000" />
 	    </bean>  

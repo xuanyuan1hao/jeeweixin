@@ -1,38 +1,27 @@
 package com.wxapi.service.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.core.util.ImageUtils;
+import com.core.util.UploadUtil;
+import com.wxapi.process.*;
+import com.wxapi.service.MyService;
+import com.wxapi.vo.Matchrule;
+import com.wxapi.vo.MsgRequest;
+import com.wxcms.domain.*;
+import com.wxcms.mapper.*;
+import com.wxcms.service.AccountFansService;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.wxapi.process.HttpMethod;
-import com.wxapi.process.MpAccount;
-import com.wxapi.process.MsgType;
-import com.wxapi.process.MsgXmlUtil;
-import com.wxapi.process.WxApi;
-import com.wxapi.process.WxApiClient;
-import com.wxapi.process.WxMessageBuilder;
-import com.wxapi.service.MyService;
-import com.wxapi.vo.Matchrule;
-import com.wxapi.vo.MsgRequest;
-import com.wxcms.domain.AccountFans;
-import com.wxcms.domain.AccountMenu;
-import com.wxcms.domain.MsgBase;
-import com.wxcms.domain.MsgNews;
-import com.wxcms.domain.MsgText;
-import com.wxcms.mapper.AccountFansDao;
-import com.wxcms.mapper.AccountMenuDao;
-import com.wxcms.mapper.AccountMenuGroupDao;
-import com.wxcms.mapper.MsgBaseDao;
-import com.wxcms.mapper.MsgNewsDao;
+import java.awt.*;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 /**
  * 业务消息处理
  * 开发者根据自己的业务自行处理消息的接收与回复；
@@ -55,7 +44,9 @@ public class MyServiceImpl implements MyService{
 	
 	@Autowired
 	private AccountFansDao fansDao;
-	
+
+	@Autowired
+	private AccountFansService accountFansService;
 	/**
 	 * 处理消息
 	 * 开发者可以根据用户发送的消息和自己的业务，自行返回合适的消息；
@@ -63,7 +54,7 @@ public class MyServiceImpl implements MyService{
 	 * @param appId ： appId
 	 * @param appSecret : appSecret
 	 */
-	public String processMsg(MsgRequest msgRequest,MpAccount mpAccount){
+	public String processMsg(MsgRequest msgRequest,MpAccount mpAccount,String webRootPath,String webUrl){
 		String msgtype = msgRequest.getMsgType();//接收到的消息类型
 		String respXml = null;//返回的内容；
 		if(msgtype.equals(MsgType.Text.toString())){
@@ -75,7 +66,7 @@ public class MyServiceImpl implements MyService{
 			/**
 			 * 用户订阅公众账号、点击菜单按钮的时候，会触发事件消息
 			 */
-			respXml = this.processEventMsg(msgRequest);
+			respXml = this.processEventMsg(msgRequest,mpAccount,webRootPath,webUrl);
 			
 		//其他消息类型，开发者自行处理
 		}else if(msgtype.equals(MsgType.Image.toString())){//图片消息
@@ -99,7 +90,7 @@ public class MyServiceImpl implements MyService{
 		String content = msgRequest.getContent();
 		if(!StringUtils.isEmpty(content)){//文本消息
 			String tmpContent = content.trim();
-			List<MsgNews> msgNews = msgNewsDao.getRandomMsgByContent(tmpContent,mpAccount.getMsgcount());
+			List<MsgNews> msgNews = msgNewsDao.getRandomMsgByContent(tmpContent, mpAccount.getMsgcount());
 			if(!CollectionUtils.isEmpty(msgNews)){
 				return MsgXmlUtil.newsToXml(WxMessageBuilder.getMsgResponseNews(msgRequest, msgNews));
 			}
@@ -108,14 +99,25 @@ public class MyServiceImpl implements MyService{
 	}
 	
 	//处理事件消息
-	private String processEventMsg(MsgRequest msgRequest){
+	private String processEventMsg(MsgRequest msgRequest,MpAccount mpAccount,String webRootPath,String webUrl){
 		String key = msgRequest.getEventKey();
 		if(MsgType.SUBSCRIBE.toString().equals(msgRequest.getEvent())){//订阅消息
+			//订阅消息，获取订阅扫描的二维码信息
+			String eventKey=msgRequest.getEventKey();
+			if(eventKey.indexOf("qrscene_")>=0)
+			{
+				//得到推广人信息，给推广人发送赚钱信息
+				int userId=Integer.parseInt(eventKey.replace("qrscene_",""));
+
+			}
 			MsgText text = msgBaseDao.getMsgTextBySubscribe();
 			if(text != null){
 				return MsgXmlUtil.textToXml(WxMessageBuilder.getMsgResponseText(msgRequest, text));
 			}
 		}else if(MsgType.UNSUBSCRIBE.toString().equals(msgRequest.getEvent())){//取消订阅消息
+			String openId=msgRequest.getFromUserName();//获取取消关注的用户openId
+
+
 			MsgText text = msgBaseDao.getMsgTextByInputCode(MsgType.UNSUBSCRIBE.toString());
 			if(text != null){
 				return MsgXmlUtil.textToXml(WxMessageBuilder.getMsgResponseText(msgRequest, text));
@@ -152,12 +154,51 @@ public class MyServiceImpl implements MyService{
 							}
 						}
 					}
+				}else if(key.indexOf("my_refer")>=0){
+					//生成推广的图片
+					String userOpenId=msgRequest.getFromUserName();
+					AccountFans accountFans=accountFansService.getByOpenId(userOpenId);
+					if(null!=accountFans){
+						String headImg=webRootPath+"/res/upload/"+userOpenId+".jpg";
+						if(!hasCreateRecommendPic(headImg+".text.jpg")){
+							//带参二维码
+							byte[] qrcode = WxApiClient.createQRCode(2592000,accountFans.getId().intValue(),mpAccount);
+							String url = webRootPath+UploadUtil.byteToImg(webRootPath, qrcode);
+							String headImgUrl=accountFans.getHeadimgurl();
+							try {
+								UploadUtil.download(headImgUrl,userOpenId+".jpg",webRootPath+"/res/upload/");
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+							String baseRecommendImgPath=webRootPath+"/res/css/images/base_recommend.jpg";
+							//生成带图片的二维码
+							ImageUtils.pressImage(headImg, url, url+".qrcode.jpg", 0, 0,true,100,100);
+							ImageUtils.pressImage(url + ".qrcode.jpg", baseRecommendImgPath, url + ".last.jpg", 150, 420, false, 250, 250);
+							ImageUtils.pressText("我是"+accountFans.getNicknameStr(), url+".last.jpg",
+									headImg+".text.jpg","宋体", Font.BOLD, 0, 36, 100, 260);
+							//上传图片到微信
+							String picPath=webUrl+"/res/upload/"+userOpenId+".jpg"+".text.jpg";
+							String mediaId = WxApi.uploadMedia(WxApiClient.getAccessToken(mpAccount),MediaType.Image.toString(),picPath);
+							System.out.println(mediaId);
+							accountFansService.updateRecommendMediaId(userOpenId,mediaId);
+							return MsgXmlUtil.imageToXml(WxMessageBuilder.getMsgResponseImage(msgRequest, mediaId));
+						}else{
+							String mediaId =accountFans.getMediaId();
+							if(null!=mediaId&&(!"".equals(mediaId))){
+								return MsgXmlUtil.imageToXml(WxMessageBuilder.getMsgResponseImage(msgRequest, mediaId));
+							}
+						}
+					}
 				}
 			}
 		}
 		return null;
 	}
-	
+
+	private boolean hasCreateRecommendPic(String recommendPicPath) {
+		return new File(recommendPicPath).exists();
+	}
+
 	//发布菜单
 	public JSONObject publishMenu(String gid,MpAccount mpAccount){
 		List<AccountMenu> menus = menuDao.listWxMenus(gid);
@@ -236,9 +277,14 @@ public class MyServiceImpl implements MyService{
 			if(tmpFans == null){
 				fansDao.add(fans);
 			}else{
+				fans.setUserMoney(tmpFans.getUserMoney());
+				fans.setUserMoneyFreezed(tmpFans.getUserMoneyFreezed());
 				fans.setId(tmpFans.getId());
 				fansDao.update(fans);
 			}
+		}else
+		{
+			fans = fansDao.getByOpenId(openId);
 		}
 		return fans;
 	}

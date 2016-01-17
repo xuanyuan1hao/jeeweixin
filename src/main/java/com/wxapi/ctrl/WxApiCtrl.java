@@ -1,46 +1,28 @@
 package com.wxapi.ctrl;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import net.sf.json.JSONObject;
-
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
-
 import com.core.page.Pagination;
 import com.core.spring.JsonView;
 import com.core.util.DateUtil;
 import com.core.util.UploadUtil;
 import com.core.util.wx.SignUtil;
-import com.wxapi.process.ErrCode;
-import com.wxapi.process.MediaType;
-import com.wxapi.process.MpAccount;
-import com.wxapi.process.MsgXmlUtil;
-import com.wxapi.process.WxApiClient;
-import com.wxapi.process.WxMemoryCacheClient;
-import com.wxapi.process.WxSign;
+import com.wxapi.process.*;
 import com.wxapi.service.impl.MyServiceImpl;
-import com.wxapi.vo.Material;
-import com.wxapi.vo.MaterialArticle;
-import com.wxapi.vo.MaterialItem;
-import com.wxapi.vo.MsgRequest;
-import com.wxapi.vo.TemplateMessage;
+import com.wxapi.vo.*;
 import com.wxcms.domain.AccountFans;
 import com.wxcms.domain.MsgNews;
+import net.sf.json.JSONObject;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.util.*;
 
 
 /**
@@ -87,7 +69,16 @@ public class WxApiCtrl {
 		MpAccount mpAccount = WxMemoryCacheClient.getSingleMpAccount();
 		try {
 			MsgRequest msgRequest = MsgXmlUtil.parseXml(request);//获取发送的消息
-			return myService.processMsg(msgRequest,mpAccount);
+			System.out.println("======================="+msgRequest.getMsgType());
+			/*String webUrl=request.getRequestURL().toString();
+			String url=request.getServerName().toString();
+			String port=request.getLocalPort()+"";
+			System.out.println("======================="+webUrl);
+			System.out.println("======================="+url);
+			System.out.println("======================="+port);*/
+			String webUrl="http://"+request.getServerName().toString()+((request.getLocalPort()==80)?"":request.getLocalPort());
+			String webRootPath=request.getServletContext().getRealPath("/");
+			return myService.processMsg(msgRequest,mpAccount,webRootPath,webUrl);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return "error";
@@ -186,7 +177,7 @@ public class WxApiCtrl {
 		ModelAndView mv = new ModelAndView("wxcms/materialPagination");
 		Integer offset = pagination.getStart();
 		Integer count = pagination.getPageSize();
-		Material material = WxApiClient.syncBatchMaterial(MediaType.News, offset, count,mpAccount);
+		Material material = WxApiClient.syncBatchMaterial(MediaType.News, offset, count, mpAccount);
 		if(material != null){
 			List<MaterialArticle> materialList = new ArrayList<MaterialArticle>();
 			List<MaterialItem> itemList = material.getItems();
@@ -249,13 +240,52 @@ public class WxApiCtrl {
 			return mv;
 		}
 	}
-	
-	/**
-	 * 生成二维码
-	 * @param request
-	 * @param num 二维码参数
-	 * @return
-	 */
+	@RequestMapping(value = "/my_center")
+	public ModelAndView myCenter(HttpServletRequest request){
+		MpAccount mpAccount = WxMemoryCacheClient.getSingleMpAccount();//获取缓存中的唯一账号
+		if(mpAccount != null){
+			ModelAndView mv = new ModelAndView("wxweb/my_center");
+			//拦截器已经处理了缓存,这里直接取
+			String openid = WxMemoryCacheClient.getOpenid(request.getSession().getId());
+			AccountFans fans = myService.syncAccountFans(openid, mpAccount, true);//同时更新数据库
+			mv.addObject("openid", openid);
+			mv.addObject("fans", fans);
+			return mv;
+		}else{
+			ModelAndView mv = new ModelAndView("common/failureMobile");
+			mv.addObject("message", "OAuth获取openid失败");
+			return mv;
+		}
+	}
+	@RequestMapping(value = "/tixian")
+	public ModelAndView tixian(HttpServletRequest request,@RequestParam("openId") String openId){
+		MpAccount mpAccount = WxMemoryCacheClient.getSingleMpAccount();//获取缓存中的唯一账号
+		if(mpAccount != null){
+			ModelAndView mv = new ModelAndView("wxweb/tixian");
+			AccountFans fans = myService.syncAccountFans(openId,mpAccount,true);//同时更新数据库
+			mv.addObject("openid", openId);
+			mv.addObject("fans", fans);
+			return mv;
+		}else{
+			ModelAndView mv = new ModelAndView("common/failureMobile");
+			mv.addObject("message", "OAuth获取openid失败");
+			return mv;
+		}
+	}
+	@RequestMapping(value = "/tixian_json", method = RequestMethod.POST)
+	public @ResponseBody String tixianJson(ModelMap map,@RequestParam("money") double money) {
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("result", false);
+		jsonObject.put("msg", "提现成功");
+		return  jsonObject.toString();
+	}
+
+		/**
+         * 生成二维码
+         * @param request
+         * @param num 二维码参数
+         * @return
+         */
 	@RequestMapping(value = "/createQrcode", method = RequestMethod.POST)
 	public ModelAndView createQrcode(HttpServletRequest request,Integer num){
 		ModelAndView mv = new ModelAndView("wxcms/qrcode");

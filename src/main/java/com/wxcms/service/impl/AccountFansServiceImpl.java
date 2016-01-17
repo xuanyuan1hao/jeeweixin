@@ -67,4 +67,8 @@ public class AccountFansServiceImpl implements AccountFansService{
 		entityDao.deleteByOpenId(openId);
 	}
 
+	public void updateRecommendMediaId(String userOpenId, String mediaId) {
+		entityDao.updateRecommendMediaId(userOpenId,mediaId);
+	}
+
 }

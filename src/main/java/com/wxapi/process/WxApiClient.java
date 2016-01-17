@@ -371,7 +371,7 @@ public class WxApiClient {
 			String accessToken = getAccessToken(mpAccount);
 			String postBody = WxApi.getQrcodeJson(expireSecodes, scene);
 			JSONObject jsObj = WxApi.httpsRequest(WxApi.getCreateQrcodeUrl(accessToken),HttpMethod.POST, postBody);
-			if(jsObj != null){
+			if(jsObj != null&&(jsObj.has("ticket"))){
 				String ticket = jsObj.getString("ticket");
 				if(!StringUtils.isBlank(ticket)){
 					return WxApi.httpsRequestByte(WxApi.getShowQrcodeUrl(ticket), HttpMethod.GET);

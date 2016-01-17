@@ -1,8 +1,9 @@
 package com.wxcms.domain;
 
-import java.io.UnsupportedEncodingException;
-
 import com.core.domain.BaseEntity;
+
+import java.io.UnsupportedEncodingException;
+import java.util.Date;
 
 /**
  * 账号粉丝用户信息
@@ -24,8 +25,43 @@ public class AccountFans extends BaseEntity{
 	private String headimgurl;//头像
 	private String remark;//备注
 	private Integer status;//用户状态 1-可用；0-不可用
-	
-	
+	private Double userMoney;//用户所拥有的可用金额
+	private Double userMoneyFreezed;//用户冻结金额
+	private Date lastUpdateTime;//用户最后更新时间
+	private String mediaId;
+
+	public String getMediaId() {
+		return mediaId;
+	}
+
+	public void setMediaId(String mediaId) {
+		this.mediaId = mediaId;
+	}
+
+	public void setUserMoney(Double userMoney) {
+		this.userMoney = userMoney;
+	}
+
+	public void setUserMoneyFreezed(Double userMoneyFreezed) {
+		this.userMoneyFreezed = userMoneyFreezed;
+	}
+
+	public void setLastUpdateTime(Date lastUpdateTime) {
+		this.lastUpdateTime = lastUpdateTime;
+	}
+
+	public Double getUserMoney() {
+		return userMoney;
+	}
+
+	public Double getUserMoneyFreezed() {
+		return userMoneyFreezed;
+	}
+
+	public Date getLastUpdateTime() {
+		return lastUpdateTime;
+	}
+
 	public String getOpenId() {
 		return openId;
 	}
