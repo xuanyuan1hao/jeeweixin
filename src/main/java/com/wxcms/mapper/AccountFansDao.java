@@ -4,6 +4,7 @@ import com.core.page.Pagination;
 import com.wxcms.domain.AccountFans;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Date;
 import java.util.List;
 
 
@@ -32,4 +33,7 @@ public interface AccountFansDao {
 	public void deleteByOpenId(String openId);
 
 	void updateRecommendMediaId(@Param("openId") String openId,@Param("mediaId") String mediaId);
+
+	void updateLastUpdateTime(@Param("openId") String openId,@Param("lastUpdateTime") Date date);
+	void updateUserReferId(@Param("openId") String openId,@Param("userReferId") int userReferId);
 }

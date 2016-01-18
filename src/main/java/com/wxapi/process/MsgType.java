@@ -13,12 +13,12 @@ public enum MsgType {
 	Voice("voice"),//语音消息
 	Video("video"),//视频消息
 	Event("event"),//事件消息
-	
+	Default("defalut"),//默认消息
 	MPNEWS("mpnews"),//群发图文消息
 	
 	SUBSCRIBE("subscribe"),//订阅消息
 	UNSUBSCRIBE("unsubscribe");//取消订阅
-	
+
 	private String name;
 	
 	private MsgType(String name) {

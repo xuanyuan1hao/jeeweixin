@@ -61,7 +61,12 @@
 	<update id="updateRecommendMediaId" parameterType="com.wxcms.domain.AccountFans" flushCache="true">
 		UPDATE t_wxcms_account_fans SET mediaId = #{mediaId} WHERE OPENID = #{openId}
 	</update>
-
+	<update id="updateLastUpdateTime" parameterType="com.wxcms.domain.AccountFans" flushCache="true">
+		UPDATE t_wxcms_account_fans SET lastUpdateTime = #{lastUpdateTime} WHERE OPENID = #{openId}
+	</update>
+	<update id="updateUserReferId" parameterType="com.wxcms.domain.AccountFans" flushCache="true">
+		UPDATE t_wxcms_account_fans SET userReferId = #{userReferId} WHERE OPENID = #{openId}
+	</update>
 
 	<delete id="delete" parameterType="com.wxcms.domain.AccountFans" >
 		DELETE FROM t_wxcms_account_fans WHERE ID = #{id}

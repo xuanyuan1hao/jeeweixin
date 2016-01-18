@@ -51,8 +51,8 @@ public class MyServiceImpl implements MyService{
 	 * 处理消息
 	 * 开发者可以根据用户发送的消息和自己的业务，自行返回合适的消息；
 	 * @param msgRequest : 接收到的消息
-	 * @param appId ： appId
-	 * @param appSecret : appSecret
+	 * @param mpAccount ： mpAccount
+	 * @param webRootPath : webRootPath
 	 */
 	public String processMsg(MsgRequest msgRequest,MpAccount mpAccount,String webRootPath,String webUrl){
 		String msgtype = msgRequest.getMsgType();//接收到的消息类型
@@ -77,7 +77,7 @@ public class MyServiceImpl implements MyService{
 		
 		//如果没有对应的消息，默认返回订阅消息；
 		if(StringUtils.isEmpty(respXml)){
-			MsgText text = msgBaseDao.getMsgTextByInputCode(MsgType.SUBSCRIBE.toString());
+			MsgText text = msgBaseDao.getMsgTextByInputCode(MsgType.Default.toString());
 			if(text != null){
 				respXml = MsgXmlUtil.textToXml(WxMessageBuilder.getMsgResponseText(msgRequest, text));
 			}
@@ -104,11 +104,16 @@ public class MyServiceImpl implements MyService{
 		if(MsgType.SUBSCRIBE.toString().equals(msgRequest.getEvent())){//订阅消息
 			//订阅消息，获取订阅扫描的二维码信息
 			String eventKey=msgRequest.getEventKey();
+			int userId=0;
 			if(eventKey.indexOf("qrscene_")>=0)
 			{
 				//得到推广人信息，给推广人发送赚钱信息
-				int userId=Integer.parseInt(eventKey.replace("qrscene_",""));
-
+				userId=Integer.parseInt(eventKey.replace("qrscene_",""));
+			}
+			//订阅得到用户信息保存入库
+			AccountFans fans = syncAccountFans(msgRequest.getFromUserName(), mpAccount, true);//同时更新数据库
+			if(null!=fans&&(userId!=0)){
+				accountFansService.updateUserReferId(msgRequest.getFromUserName(),userId);
 			}
 			MsgText text = msgBaseDao.getMsgTextBySubscribe();
 			if(text != null){

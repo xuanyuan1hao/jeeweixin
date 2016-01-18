@@ -10,6 +10,7 @@ import com.wxapi.service.impl.MyServiceImpl;
 import com.wxapi.vo.*;
 import com.wxcms.domain.AccountFans;
 import com.wxcms.domain.MsgNews;
+import com.wxcms.service.AccountFansService;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.*;
 
@@ -34,7 +34,9 @@ public class WxApiCtrl {
 	
 	@Autowired
 	private MyServiceImpl myService;
-	
+
+	@Autowired
+	private AccountFansService accountFansService;
 	/**
 	 * GET请求：进行URL、Tocken 认证；
 	 * 1. 将token、timestamp、nonce三个参数进行字典序排序
@@ -69,14 +71,10 @@ public class WxApiCtrl {
 		MpAccount mpAccount = WxMemoryCacheClient.getSingleMpAccount();
 		try {
 			MsgRequest msgRequest = MsgXmlUtil.parseXml(request);//获取发送的消息
-			System.out.println("======================="+msgRequest.getMsgType());
-			/*String webUrl=request.getRequestURL().toString();
-			String url=request.getServerName().toString();
-			String port=request.getLocalPort()+"";
-			System.out.println("======================="+webUrl);
-			System.out.println("======================="+url);
-			System.out.println("======================="+port);*/
-			String webUrl="http://"+request.getServerName().toString()+((request.getLocalPort()==80)?"":request.getLocalPort());
+			System.out.println("=======================" + msgRequest.getMsgType());
+			String openId=msgRequest.getFromUserName();
+			accountFansService.updateLastUpdateTime(openId,new Date());//更新最后使用时间，用于客服群发消息
+			String webUrl="http://"+request.getServerName().toString()+((request.getLocalPort()==80)?"":(":"+request.getLocalPort()));
 			String webRootPath=request.getServletContext().getRealPath("/");
 			return myService.processMsg(msgRequest,mpAccount,webRootPath,webUrl);
 		} catch (Exception e) {
@@ -328,8 +326,8 @@ public class WxApiCtrl {
 	
 	/**
 	 * 发送客服消息
-	 * @param openId ： 粉丝的openid
-	 * @param content ： 消息内容
+	 * @param request ： 粉丝的openid
+	 * @param response ： 消息内容
 	 * @return
 	 */
 	@RequestMapping(value = "/sendCustomTextMsg", method = RequestMethod.POST)
@@ -350,8 +348,8 @@ public class WxApiCtrl {
 	
 	/**
 	 * 发送模板消息
-	 * @param openId
-	 * @param content
+	 * @param request
+	 * @param response
 	 * @return
 	 */
 	@RequestMapping(value = "/sendTemplateMessage", method = RequestMethod.POST)

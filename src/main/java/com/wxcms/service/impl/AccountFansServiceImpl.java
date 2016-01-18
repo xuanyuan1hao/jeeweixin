@@ -1,5 +1,6 @@
 package com.wxcms.service.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,7 +69,13 @@ public class AccountFansServiceImpl implements AccountFansService{
 	}
 
 	public void updateRecommendMediaId(String userOpenId, String mediaId) {
-		entityDao.updateRecommendMediaId(userOpenId,mediaId);
+		entityDao.updateRecommendMediaId(userOpenId, mediaId);
+	}
+	public void updateLastUpdateTime(String userOpenId,Date date){
+		entityDao.updateLastUpdateTime(userOpenId,date);
 	}
 
+	public void updateUserReferId(String userOpenId, int userReferId) {
+		entityDao.updateUserReferId(userOpenId, userReferId);
+	}
 }

@@ -27,8 +27,26 @@ public class AccountFans extends BaseEntity{
 	private Integer status;//用户状态 1-可用；0-不可用
 	private Double userMoney;//用户所拥有的可用金额
 	private Double userMoneyFreezed;//用户冻结金额
+	private String userMoneyPassword;//用户所拥有的可用金额
+	private int userReferId;
 	private Date lastUpdateTime;//用户最后更新时间
 	private String mediaId;
+
+	public void setUserMoneyPassword(String userMoneyPassword) {
+		this.userMoneyPassword = userMoneyPassword;
+	}
+
+	public void setUserReferId(int userReferId) {
+		this.userReferId = userReferId;
+	}
+
+	public String getUserMoneyPassword() {
+		return userMoneyPassword;
+	}
+
+	public int getUserReferId() {
+		return userReferId;
+	}
 
 	public String getMediaId() {
 		return mediaId;

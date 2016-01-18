@@ -3,6 +3,7 @@ package com.wxcms.service;
 import com.core.page.Pagination;
 import com.wxcms.domain.AccountFans;
 
+import java.util.Date;
 import java.util.List;
 
 
@@ -30,4 +31,7 @@ public interface AccountFansService {
 
 
 	public void updateRecommendMediaId(String userOpenId, String mediaId);
+
+	public void updateLastUpdateTime(String userOpenId,Date date);
+	public void updateUserReferId(String userOpenId, int userReferId);
 }
