@@ -28,25 +28,36 @@ public class AccountFans extends BaseEntity{
 	private Double userMoney;//用户所拥有的可用金额
 	private Double userMoneyFreezed;//用户冻结金额
 	private String userMoneyPassword;//用户所拥有的可用金额
-	private int userReferId;
+	private long userReferId;
 	private Date lastUpdateTime;//用户最后更新时间
 	private String mediaId;
+	private Double userMoneyTixian;//用户提现的金额
+
+	public void setUserMoneyTixian(Double userMoneyTixian) {
+		this.userMoneyTixian = userMoneyTixian;
+	}
+
+	public Double getUserMoneyTixian() {
+		return userMoneyTixian;
+	}
 
 	public void setUserMoneyPassword(String userMoneyPassword) {
 		this.userMoneyPassword = userMoneyPassword;
 	}
 
-	public void setUserReferId(int userReferId) {
+	public void setUserReferId(long userReferId) {
 		this.userReferId = userReferId;
+	}
+
+	public long getUserReferId() {
+		return userReferId;
 	}
 
 	public String getUserMoneyPassword() {
 		return userMoneyPassword;
 	}
 
-	public int getUserReferId() {
-		return userReferId;
-	}
+
 
 	public String getMediaId() {
 		return mediaId;

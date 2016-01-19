@@ -6,9 +6,11 @@ import com.wxapi.process.*;
 import com.wxapi.service.MyService;
 import com.wxapi.vo.Matchrule;
 import com.wxapi.vo.MsgRequest;
+import com.wxapi.vo.MsgResponseText;
 import com.wxcms.domain.*;
 import com.wxcms.mapper.*;
 import com.wxcms.service.AccountFansService;
+import com.wxcms.service.FlowService;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.commons.collections.CollectionUtils;
@@ -18,10 +20,9 @@ import org.springframework.stereotype.Service;
 
 import java.awt.*;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
+
 /**
  * 业务消息处理
  * 开发者根据自己的业务自行处理消息的接收与回复；
@@ -47,6 +48,8 @@ public class MyServiceImpl implements MyService{
 
 	@Autowired
 	private AccountFansService accountFansService;
+	@Autowired
+	private FlowService flowService;
 	/**
 	 * 处理消息
 	 * 开发者可以根据用户发送的消息和自己的业务，自行返回合适的消息；
@@ -104,25 +107,72 @@ public class MyServiceImpl implements MyService{
 		if(MsgType.SUBSCRIBE.toString().equals(msgRequest.getEvent())){//订阅消息
 			//订阅消息，获取订阅扫描的二维码信息
 			String eventKey=msgRequest.getEventKey();
-			int userId=0;
+			long userId=0;
 			if(eventKey.indexOf("qrscene_")>=0)
 			{
 				//得到推广人信息，给推广人发送赚钱信息
-				userId=Integer.parseInt(eventKey.replace("qrscene_",""));
+				userId=Long.parseLong(eventKey.replace("qrscene_", ""));
 			}
 			//订阅得到用户信息保存入库
-			AccountFans fans = syncAccountFans(msgRequest.getFromUserName(), mpAccount, true);//同时更新数据库
-			if(null!=fans&&(userId!=0)){
-				accountFansService.updateUserReferId(msgRequest.getFromUserName(),userId);
-			}
-			MsgText text = msgBaseDao.getMsgTextBySubscribe();
-			if(text != null){
-				return MsgXmlUtil.textToXml(WxMessageBuilder.getMsgResponseText(msgRequest, text));
+			AccountFans fans =accountFansService.getByOpenId(msgRequest.getFromUserName());
+			if(null==fans){
+				fans = syncAccountFans(msgRequest.getFromUserName(), mpAccount, true);//同时更新数据库
+				if(null!=fans){
+					if(userId!=0)
+						accountFansService.updateUserReferId(msgRequest.getFromUserName(),userId);
+					//发钱，发送客服消息
+					Random random = new Random();
+					double money=50.00*random.nextDouble();
+					String content="你已经获得了"+String.format("%.2f",money)+"元红包，满100.00元就可以提现了，点击我的海报邀请好友扫一扫就可以增加余额了。";
+					Flow flow=new Flow();
+					flow.setCreatetime(new Date());
+					flow.setUserFlowMoney(money);
+					flow.setFansId(fans.getId());
+					flow.setFlowType(2);//关注获取的红包。
+					flow.setFromFansId(0);
+					flow.setUserFlowLog(content);
+					flowService.add(flow);
+					//JSONObject result = WxApiClient.sendCustomTextMessage(msgRequest.getFromUserName(), content, mpAccount);
+					//给自己加钱，给上级发消息，给上级发推广费。
+					accountFansService.updateUserAddMoney(fans,money,userId, mpAccount);
+					MsgText text = new MsgText();
+					text.setContent(content);
+					if(text != null){
+						return MsgXmlUtil.textToXml(WxMessageBuilder.getMsgResponseText(msgRequest, text));
+					}
+				}
 			}
 		}else if(MsgType.UNSUBSCRIBE.toString().equals(msgRequest.getEvent())){//取消订阅消息
 			String openId=msgRequest.getFromUserName();//获取取消关注的用户openId
-
-
+			AccountFans accountFans=accountFansService.getByOpenId(openId);
+			if(null!=accountFans){
+				if(accountFans.getUserReferId()!=0){
+					Flow searchFlow=new Flow();
+					searchFlow.setFansId(accountFans.getUserReferId());
+					searchFlow.setFromFansId(accountFans.getId());
+					searchFlow.setFlowType(1);
+					List<Flow> ret=flowService.listForPage(searchFlow);
+					if(null!=ret&&ret.size()>0){
+						double money=ret.get(0).getUserFlowMoney();//获取当初推广赠送的金额
+						//减少其上级的金额
+						AccountFans recommendAccountFans=accountFansService.getById(accountFans.getUserReferId()+"");
+						if(null!=recommendAccountFans){
+							String log="您的好友"+accountFans.getNicknameStr()+"取消了关注，您被扣除"+money+"元红包";
+							Flow flow=new Flow();
+							flow.setCreatetime(new Date());
+							flow.setUserFlowMoney(money);
+							flow.setFansId(accountFans.getUserReferId());
+							flow.setFlowType(3);//取消关注减去的红包。
+							flow.setFromFansId(accountFans.getId());
+							flow.setUserFlowLog(log);
+							flowService.add(flow);
+							JSONObject result = WxApiClient.sendCustomTextMessage(recommendAccountFans.getOpenId(), log, mpAccount);
+							accountFansService.updateAddUserMoneyByUserId(0-money,accountFans.getUserReferId());
+						}
+					}
+				}
+				accountFansService.deleteByOpenId(openId);
+			}
 			MsgText text = msgBaseDao.getMsgTextByInputCode(MsgType.UNSUBSCRIBE.toString());
 			if(text != null){
 				return MsgXmlUtil.textToXml(WxMessageBuilder.getMsgResponseText(msgRequest, text));
@@ -165,31 +215,41 @@ public class MyServiceImpl implements MyService{
 					AccountFans accountFans=accountFansService.getByOpenId(userOpenId);
 					if(null!=accountFans){
 						String headImg=webRootPath+"/res/upload/"+userOpenId+".jpg";
-						if(!hasCreateRecommendPic(headImg+".text.jpg")){
+						if(!hasCreateRecommendPic(headImg+".text.jpg")||(null==accountFans.getMediaId())){
+							//创建生成图片的线程，并且直接返回文字信息
+							String log="生成我的海报大概需要5秒钟，请等待！";
+							JSONObject result = WxApiClient.sendCustomTextMessage(userOpenId, log, mpAccount);
 							//带参二维码
 							byte[] qrcode = WxApiClient.createQRCode(2592000,accountFans.getId().intValue(),mpAccount);
 							String url = webRootPath+UploadUtil.byteToImg(webRootPath, qrcode);
 							String headImgUrl=accountFans.getHeadimgurl();
 							try {
 								UploadUtil.download(headImgUrl,userOpenId+".jpg",webRootPath+"/res/upload/");
+								String baseRecommendImgPath=webRootPath+"/res/css/images/base_recommend.jpg";
+								//生成带图片的二维码
+								ImageUtils.pressImage(headImg, url, url+".qrcode.jpg", 0, 0,true,100,100);
+								ImageUtils.pressImage(url + ".qrcode.jpg", baseRecommendImgPath, url + ".last.jpg", 150, 420, false, 250, 250);
+								ImageUtils.pressText("我是"+accountFans.getNicknameStr(), url+".last.jpg",
+										headImg+".text.jpg","宋体", Font.BOLD, 0, 36, 100, 260);
+								//上传图片到微信
+								String picPath=webUrl+"/res/upload/"+userOpenId+".jpg"+".text.jpg";
+								String mediaId = WxApi.uploadMedia(WxApiClient.getAccessToken(mpAccount),MediaType.Image.toString(),picPath);
+								System.out.println(mediaId);
+								accountFansService.updateRecommendMediaId(userOpenId, mediaId);
+								log="生成海报成功，转发您的海报就可以获得推广费！";
+								WxApiClient.sendCustomTextMessage(userOpenId, log, mpAccount);
+								return MsgXmlUtil.imageToXml(WxMessageBuilder.getMsgResponseImage(msgRequest, mediaId));
 							} catch (Exception e) {
 								e.printStackTrace();
 							}
-							String baseRecommendImgPath=webRootPath+"/res/css/images/base_recommend.jpg";
-							//生成带图片的二维码
-							ImageUtils.pressImage(headImg, url, url+".qrcode.jpg", 0, 0,true,100,100);
-							ImageUtils.pressImage(url + ".qrcode.jpg", baseRecommendImgPath, url + ".last.jpg", 150, 420, false, 250, 250);
-							ImageUtils.pressText("我是"+accountFans.getNicknameStr(), url+".last.jpg",
-									headImg+".text.jpg","宋体", Font.BOLD, 0, 36, 100, 260);
-							//上传图片到微信
-							String picPath=webUrl+"/res/upload/"+userOpenId+".jpg"+".text.jpg";
-							String mediaId = WxApi.uploadMedia(WxApiClient.getAccessToken(mpAccount),MediaType.Image.toString(),picPath);
-							System.out.println(mediaId);
-							accountFansService.updateRecommendMediaId(userOpenId,mediaId);
-							return MsgXmlUtil.imageToXml(WxMessageBuilder.getMsgResponseImage(msgRequest, mediaId));
+							MsgResponseText msgResponseText=new MsgResponseText();
+							msgResponseText.setContent("生成图片识别，请再次点击我的海报生成推广图片！");
+							return MsgXmlUtil.textToXml(msgResponseText);
 						}else{
 							String mediaId =accountFans.getMediaId();
 							if(null!=mediaId&&(!"".equals(mediaId))){
+								String log="生成海报成功，转发您的海报就可以获得推广费！";
+								WxApiClient.sendCustomTextMessage(userOpenId, log, mpAccount);
 								return MsgXmlUtil.imageToXml(WxMessageBuilder.getMsgResponseImage(msgRequest, mediaId));
 							}
 						}
@@ -280,11 +340,18 @@ public class MyServiceImpl implements MyService{
 		if (merge && null != fans) {
 			AccountFans tmpFans = fansDao.getByOpenId(openId);
 			if(tmpFans == null){
+				fans.setUserMoney(0.00);
+				fans.setUserMoneyFreezed(0.00);
+				fans.setId(0L);
+				fans.setUserMoneyTixian(0.00);
 				fansDao.add(fans);
 			}else{
 				fans.setUserMoney(tmpFans.getUserMoney());
 				fans.setUserMoneyFreezed(tmpFans.getUserMoneyFreezed());
 				fans.setId(tmpFans.getId());
+				fans.setUserMoneyTixian(tmpFans.getUserMoneyTixian());
+				fans.setUserMoneyPassword(tmpFans.getUserMoneyPassword());
+
 				fansDao.update(fans);
 			}
 		}else

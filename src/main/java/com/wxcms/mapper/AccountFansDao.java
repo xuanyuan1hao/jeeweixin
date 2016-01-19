@@ -16,6 +16,8 @@ public interface AccountFansDao {
 	
 	public List<AccountFans> list(AccountFans searchEntity);
 
+	List<AccountFans> listByUserMoneyTixian(AccountFans searchEntity);
+
 	public Integer getTotalItemsCount(AccountFans searchEntity);
 	
 	public List<AccountFans> paginationEntity(AccountFans searchEntity ,Pagination<AccountFans> pagination);
@@ -35,5 +37,13 @@ public interface AccountFansDao {
 	void updateRecommendMediaId(@Param("openId") String openId,@Param("mediaId") String mediaId);
 
 	void updateLastUpdateTime(@Param("openId") String openId,@Param("lastUpdateTime") Date date);
-	void updateUserReferId(@Param("openId") String openId,@Param("userReferId") int userReferId);
+	void updateUserReferId(@Param("openId") String openId,@Param("userReferId") long userReferId);
+
+	void updateUserMoneyPassword(@Param("openId") String userOpenId,@Param("userMoneyPassword") String userMoneyPassword);
+
+	void updateUserMoney(@Param("userMoney") double userMoney,@Param("openId") String openId);
+
+	void updateAddUserMoney(@Param("userMoney") double userMoney,@Param("openId")  String openId);
+
+	void updateAddUserMoneyByUserId(@Param("userMoney") double userMoney,@Param("id") long id);
 }

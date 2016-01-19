@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width,user-scalable=no" name="viewport">
-    <title>我的openid和信息</title>
+    <title>提现</title>
     <style>
         #id_description p{
             font-size: 16px;
@@ -28,10 +28,19 @@
                 <div style="margin-top:5px;"><img src="${fans.headimgurl!}" width="80px;"/></div>
                 <div style="margin-top:5px;">${fans.nicknameStr!}</div>
                 <div style="margin-top:5px;">${fans.province!}-${fans.city!}</div>
-                <div>可提现金额：${fans.userMoney!}</div>
-                <div>提现金额：<input type="text" id="money" value="${fans.userMoneyFreezed!}"/></div>
-                <div><input id="tixian_btn" type="button" value="提现" /></div>
-                <span id="result"></span>
+
+                <form id="tixian_form" name="form">
+                    <input id="openId" name="openId" value="${fans.openId!}" type="hidden">
+                    <div>可提现金额：${fans.userMoney!}</div>
+                        <input type="hidden" id="canTixianMoney" value="${fans.userMoney!}">
+                    <div>提现金额：<input type="text" id="money" name="money" value="${fans.userMoney!}"/></div>
+                    <div>提现密码：<input type="password" id="userMoneyPassword" name="userMoneyPassword" value=""/></div>
+                    <div>收款人：<input type="text" id="alipayName" name="fansTixian.alipayName" value=""/></div>
+                    <div>收款支付宝：<input type="text" id="alipayEmail" name="fansTixian.alipayEmail" value=""/></div>
+
+                    <div><input id="tixian_btn" type="button" value="提现" /></div>
+                </form>
+
             </#if>
         </div>
     </div>
@@ -40,20 +49,40 @@
 <script type="text/javascript" src="${s.base}/res/jquery-1.9.1.min.js"></script>
 <script>
     $("#tixian_btn").click(function(){
+        var canTixianMoney=$("#canTixianMoney").val();
         var money=$("#money").val();
+        if(money<10){
+            alert("提现金额必须大于10");
+            return;
+        }
+        if(eval(canTixianMoney)<eval(money)){
+            alert("提现金额必须小于等于可提现金额");
+            return;
+        }
+        var userMoneyPassword=$("#userMoneyPassword").val();
+        var alipayName=$("#alipayName").val();
+        var alipayEmail=$("#alipayEmail").val();
+        if(userMoneyPassword==""){
+            alert("提现密码不能为空");
+            return;
+        }
+        if(alipayName==""){
+            alert("收款人不能为空");
+            return;
+        }
+        if(alipayEmail==""){
+            alert("收款支付宝不能为空");
+            return;
+        }
         $.ajax({
             type: "POST",
             url:"/wxapi/tixian_json.html",
-            data:"money="+money,// 要提交的表单
+            data:$('#tixian_form').serialize(),// 要提交的表单
             success: function(ret)
             {
-                alert(ret);
                 var returnJson=JSON.parse(ret);
-                if(returnJson.result==true){
-                    alert(returnJson.msg);
-                }else{
-                    alert(returnJson.msg);
-                }
+                alert(returnJson.msg);
+                window.location.reload();
             },
             error: function(error){alert(error);}
         });

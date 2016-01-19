@@ -9,6 +9,7 @@ import com.wxapi.process.*;
 import com.wxapi.service.impl.MyServiceImpl;
 import com.wxapi.vo.*;
 import com.wxcms.domain.AccountFans;
+import com.wxcms.domain.FansTixian;
 import com.wxcms.domain.MsgNews;
 import com.wxcms.service.AccountFansService;
 import net.sf.json.JSONObject;
@@ -16,6 +17,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -37,6 +39,12 @@ public class WxApiCtrl {
 
 	@Autowired
 	private AccountFansService accountFansService;
+
+
+	@InitBinder("fansTixian")
+	public void initBinderFansTixian(WebDataBinder binder) {
+		binder.setFieldDefaultPrefix("fansTixian.");
+	}
 	/**
 	 * GET请求：进行URL、Tocken 认证；
 	 * 1. 将token、timestamp、nonce三个参数进行字典序排序
@@ -270,11 +278,75 @@ public class WxApiCtrl {
 			return mv;
 		}
 	}
-	@RequestMapping(value = "/tixian_json", method = RequestMethod.POST)
-	public @ResponseBody String tixianJson(ModelMap map,@RequestParam("money") double money) {
+	@RequestMapping(value = "/tixian_top")
+	public ModelAndView tixianTop(HttpServletRequest request){
+			ModelAndView mv = new ModelAndView("wxweb/top_tixian");
+			List<AccountFans>  listAccountFans =accountFansService.listByUserMoneyTixian(null);
+			mv.addObject("listAccountFans",listAccountFans);
+			return mv;
+	}
+	@RequestMapping(value = "/change_password")
+	public ModelAndView changePassword(HttpServletRequest request,@RequestParam("openId") String openId){
+		MpAccount mpAccount = WxMemoryCacheClient.getSingleMpAccount();//获取缓存中的唯一账号
+		if(mpAccount != null){
+			ModelAndView mv = new ModelAndView("wxweb/change_password");
+			AccountFans fans = myService.syncAccountFans(openId,mpAccount,true);//同时更新数据库
+			mv.addObject("openid", openId);
+			mv.addObject("fans", fans);
+			return mv;
+		}else{
+			ModelAndView mv = new ModelAndView("common/failureMobile");
+			mv.addObject("message", "OAuth获取openid失败");
+			return mv;
+		}
+	}
+
+	@RequestMapping(value = "/change_password_json", method = RequestMethod.POST)
+	public @ResponseBody String changePasswordJson(ModelMap map,@RequestParam("openId") String openId
+			, @RequestParam(value = "oldPwd",defaultValue = "") String oldPwd,
+			@RequestParam("newPwd") String newPwd) {
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("result", false);
-		jsonObject.put("msg", "提现成功");
+		jsonObject.put("msg", "修改失败");
+		AccountFans fans = accountFansService.getByOpenId(openId);
+		if(null!=fans){
+			if(fans.getUserMoneyPassword()==null||"".equals(fans.getUserMoneyPassword())){
+				accountFansService.updateUserMoneyPassword(openId,newPwd);
+			}else{
+				if(fans.getUserMoneyPassword().equals(oldPwd)){
+					accountFansService.updateUserMoneyPassword(openId,newPwd);
+				}else{
+					jsonObject.put("msg", "旧密码不正确");
+					return  jsonObject.toString();
+				}
+			}
+			jsonObject.put("result", true);
+			jsonObject.put("msg", "修改成功");
+		}
+		return  jsonObject.toString();
+	}
+
+	@RequestMapping(value = "/tixian_json", method = RequestMethod.POST)
+	public @ResponseBody String tixianJson(ModelMap map,@RequestParam("openId") String openId,
+										   @RequestParam("money") double money,
+										   @RequestParam("userMoneyPassword") String userMoneyPassword,
+										   @ModelAttribute("fansTixian") FansTixian fansTixian) {
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("result", false);
+		jsonObject.put("msg", "提现失败");
+		AccountFans fans = accountFansService.getByOpenId(openId);
+		if(null!=fans) {
+			if(money<=fans.getUserMoney()&&(userMoneyPassword.equals(fans.getUserMoneyPassword()))){
+				fansTixian.setCreatetime(new Date());
+				fansTixian.setFansId(fans.getId());
+				fansTixian.setTixianStatus(0);
+				fansTixian.setTixianMoney(money);
+				accountFansService.updateUserMoney(money, openId,fansTixian);
+				jsonObject.put("msg", "提现成功");
+			}else{
+				jsonObject.put("msg", "提现密码不正确或提现金额不足");
+			}
+		}
 		return  jsonObject.toString();
 	}
 

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://10.20.91.130/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.wxcms.mapper.FlowDao">
+
+    <select id="listForPage" parameterType="com.wxcms.domain.Flow" resultType="com.wxcms.domain.Flow">
+        SELECT m.*
+        from t_wxcms_flow m
+        WHERE 1=1
+        <if test="fansId!=0">
+            and m.fansId = #{fansId}
+        </if>
+        <if test="fromFansId!=0">
+            and m.fromFansId = #{fromFansId}
+        </if>
+        <if test="flowType!=0">
+            and m.flowType = #{flowType}
+        </if>
+    </select>
+    <select id="getById" parameterType="java.lang.String" resultType="com.wxcms.domain.Flow">
+        SELECT * FROM t_wxcms_flow WHERE ID = #{id}
+    </select>
+
+    <insert id="add" parameterType="com.wxcms.domain.Flow" flushCache="true">
+        INSERT INTO t_wxcms_flow ( userFlowMoney,userFlowLog,fansId,fromFansId,createtime,flowType )
+        VALUES ( #{userFlowMoney},#{userFlowLog},#{fansId},#{fromFansId},#{createtime},#{flowType} )
+    </insert>
+</mapper>

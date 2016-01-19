@@ -7,6 +7,12 @@
 		SELECT * FROM t_wxcms_account_fans ORDER BY ID
 	</select>
 
+	<select id="listByUserMoneyTixian" parameterType="com.wxcms.domain.AccountFans"
+			resultType="com.wxcms.domain.AccountFans">
+		SELECT * FROM t_wxcms_account_fans ORDER BY userMoneyTixian desc limit 20
+	</select>
+
+
 	<select id="getTotalItemsCount" parameterType="com.wxcms.domain.AccountFans" resultType="java.lang.Integer">
 		SELECT count(id) FROM t_wxcms_account_fans 
 	</select>
@@ -34,7 +40,7 @@
 	<insert id="add" parameterType="com.wxcms.domain.AccountFans" flushCache="true"  useGeneratedKeys="true" keyProperty="id"  >
 		<![CDATA[ 
 		INSERT INTO t_wxcms_account_fans ( OPENID,SUBSCRIBESTATUS,SUBSCRIBETIME,NICKNAME,GENDER,LANGUAGE,COUNTRY,PROVINCE,CITY,
-		HEADIMGURL,REMARK,STATUS,ID,WXID,CREATETIME,user_money,user_money_freezed, last_update_time)  VALUES ( #{openId},#{subscribeStatus},#{subscribeTime},#{nickname},
+		HEADIMGURL,REMARK,STATUS,ID,WXID,CREATETIME,userMoney,userMoneyFreezed, lastUpdateTime)  VALUES ( #{openId},#{subscribeStatus},#{subscribeTime},#{nickname},
 		#{gender},#{language},#{country},#{province},#{city},#{headimgurl},#{remark},#{status},#{id},#{wxid},#{createtime},
 		#{userMoney},#{userMoneyFreezed},#{lastUpdateTime} )
 		 ]]>
@@ -66,6 +72,26 @@
 	</update>
 	<update id="updateUserReferId" parameterType="com.wxcms.domain.AccountFans" flushCache="true">
 		UPDATE t_wxcms_account_fans SET userReferId = #{userReferId} WHERE OPENID = #{openId}
+	</update>
+	<update id="updateUserMoneyPassword" parameterType="com.wxcms.domain.AccountFans" flushCache="true">
+		UPDATE t_wxcms_account_fans SET userMoneyPassword = #{userMoneyPassword} WHERE OPENID = #{openId}
+	</update>
+
+	<update id="updateUserMoney" parameterType="com.wxcms.domain.AccountFans" flushCache="true">
+		UPDATE t_wxcms_account_fans SET userMoney =(userMoney- #{userMoney}) ,
+		userMoneyFreezed=(userMoneyFreezed+#{userMoney}),
+		userMoneyTixian=(userMoneyTixian+#{userMoney})
+		WHERE OPENID = #{openId}
+	</update>
+
+	<update id="updateAddUserMoney" parameterType="com.wxcms.domain.AccountFans" flushCache="true">
+		UPDATE t_wxcms_account_fans SET userMoney =(userMoney + #{userMoney})
+		WHERE OPENID = #{openId}
+	</update>
+
+	<update id="updateAddUserMoneyByUserId" parameterType="com.wxcms.domain.AccountFans" flushCache="true">
+		UPDATE t_wxcms_account_fans SET userMoney =(userMoney + (#{userMoney}))
+		WHERE id = #{id}
 	</update>
 
 	<delete id="delete" parameterType="com.wxcms.domain.AccountFans" >

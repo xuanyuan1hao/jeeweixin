@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://10.20.91.130/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.wxcms.mapper.FansTixianDao">
+
+    <select id="listForPage" parameterType="com.wxcms.domain.FansTixian" resultType="com.wxcms.domain.FansTixian">
+        SELECT m.*,m2.*
+        from t_wxcms_fans_tixian m,t_wxcms_account_fans m2
+        WHERE m.fansId = #{fansId} and m2.id=m.fansId
+    </select>
+
+    <select id="getById" parameterType="java.lang.String" resultType="com.wxcms.domain.FansTixian">
+        SELECT * FROM t_wxcms_fans_tixian WHERE ID = #{id}
+    </select>
+
+    <insert id="add" parameterType="com.wxcms.domain.FansTixian" flushCache="true">
+        INSERT INTO t_wxcms_fans_tixian ( fansId,alipayName,alipayEmail,tixianMoney,tixianStatus,createtime )
+        VALUES ( #{fansId},#{alipayName},#{alipayEmail},#{tixianMoney},#{tixianStatus},#{createtime} )
+    </insert>
+
+    <update id="update" parameterType="com.wxcms.domain.FansTixian" flushCache="true">
+        UPDATE t_wxcms_fans_tixian SET fansId = #{fansId},alipayName = #{alipayName},alipayEmail = #{alipayEmail},
+        tixianMoney = #{tixianMoney},tixianStatus = #{tixianStatus},createtime = #{createtime}
+        WHERE ID = #{id}
+    </update>
+
+    <update id="updateStatus" parameterType="com.wxcms.domain.FansTixian" flushCache="true">
+        UPDATE t_wxcms_fans_tixian SET tixianStatus = #{tixianStatus}
+        WHERE ID = #{id}
+    </update>
+
+
+    <delete id="delete" parameterType="com.wxcms.domain.FansTixian" >
+        DELETE FROM t_wxcms_fans_tixian WHERE ID = #{id}
+    </delete>
+
+</mapper>

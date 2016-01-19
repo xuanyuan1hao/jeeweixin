@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width,user-scalable=no" name="viewport">
-    <title>我的openid和信息</title>
+    <title>会员中心</title>
     <style>
         #id_description p{
             font-size: 16px;
@@ -25,10 +25,10 @@
         <div style="height:10px;"></div>
 
         <div style="font-weight:bold;font-size:20px;border-bottom:1px solid #e7e8eb;">
-            我的openid和信息，请确保您已经关注了微信派官方账号（weixinpy-com）：
+           会员中心
         </div>
 
-        <div style="margin:10px 0px;">
+        <div style="display: none; margin:10px 0px;">
             我的openid : ${openid!}
         </div>
 
@@ -41,7 +41,7 @@
                 <div>可提现金额：${fans.userMoney!}</div>
                 <div>提现冻结金额：${fans.userMoneyFreezed!}</div>
                 <div><a href="/wxapi/tixian.html?openId=${openid!}">提现</a></div>
-
+                <div><a href="/wxapi/change_password.html?openId=${openid!}">设置修改提现密码</a></div>
             </#if>
         </div>
     </div>
