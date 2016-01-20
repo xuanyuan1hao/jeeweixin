@@ -25,7 +25,8 @@ public class WxMessageBuilder {
 		jsObj.put("text", textObj);
 		return jsObj.toString();
 	}
-	
+	//客服图片消息
+
 	//获取 MsgResponseText 对象
 	public static MsgResponseText getMsgResponseText(MsgRequest msgRequest,MsgText msgText){
 		if(msgText != null){
@@ -83,5 +84,15 @@ public class WxMessageBuilder {
 			return msgResponseImage;
 		}
 		return null;
+	}
+
+	public static String prepareCustomImage(String openid, String mediaId) {
+		JSONObject jsObj = new JSONObject();
+		jsObj.put("touser", openid);
+		jsObj.put("msgtype", MsgType.Image.name());
+		JSONObject imgObj = new JSONObject();
+		imgObj.put("media_id", mediaId);
+		jsObj.put("image", imgObj);
+		return jsObj.toString();
 	}
 }

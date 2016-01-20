@@ -32,6 +32,33 @@ public class AccountFans extends BaseEntity{
 	private Date lastUpdateTime;//用户最后更新时间
 	private String mediaId;
 	private Double userMoneyTixian;//用户提现的金额
+	private int userLevel1;//一级下线数量
+	private int userLevel2;//2级下线数量
+	private int userLevel3;//3级下线数量
+
+	public void setUserLevel1(int userLevel1) {
+		this.userLevel1 = userLevel1;
+	}
+
+	public void setUserLevel2(int userLevel2) {
+		this.userLevel2 = userLevel2;
+	}
+
+	public void setUserLevel3(int userLevel3) {
+		this.userLevel3 = userLevel3;
+	}
+
+	public int getUserLevel1() {
+		return userLevel1;
+	}
+
+	public int getUserLevel2() {
+		return userLevel2;
+	}
+
+	public int getUserLevel3() {
+		return userLevel3;
+	}
 
 	public void setUserMoneyTixian(Double userMoneyTixian) {
 		this.userMoneyTixian = userMoneyTixian;
@@ -165,7 +192,10 @@ public class AccountFans extends BaseEntity{
 		this.city = city;
 	}
 	public String getHeadimgurl() {
-		return headimgurl;
+		if(null!=headimgurl&&!"".equals(headimgurl))
+			return headimgurl.substring(0,headimgurl.length()-1)+"96";
+		else
+			return null;
 	}
 	public void setHeadimgurl(String headimgurl) {
 		this.headimgurl = headimgurl;

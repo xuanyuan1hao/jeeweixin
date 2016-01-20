@@ -109,8 +109,18 @@
 	        		</property>
 	        	</bean>
 	        </mvc:interceptor>
+			<mvc:interceptor>
+				<mvc:mapping path="/**/*.html"/>
+				<bean class="com.wxcms.interceptor.LoginInterceptor">
+					<property name="includes">
+						<list>
+							<value>/wxcms/urltoken.html</value>
+						</list>
+					</property>
+				</bean>
+			</mvc:interceptor>
 		</mvc:interceptors>
-        
+
         
         <!-- 服务器启动时自动加载，目前主要提取加载需要缓存的公众号信息 -->
         <bean id="appServiceImpl" class="com.wxcms.AppDefineInitService"></bean>

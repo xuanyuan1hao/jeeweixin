@@ -1,56 +1,53 @@
-<!DOCTYPE HTML>
-<html>
+<!doctype html>
+<html class="no-js">
+
 <head>
     <meta charset="UTF-8">
-    <meta content="width=device-width,user-scalable=no" name="viewport">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="renderer" content="webkit">
+
     <script type="text/javascript" src="${s.base}/res/jquery-1.9.1.min.js"></script>
-    <style type="text/css">
-        .msg-item{
-            text-align:center;
-            padding:5px;
-            margin:10px 5px;
-            background-color: #fff;
-            border-radius:5px;
-            min-height: 80px;
-        }
-        .msg-item a{
-            text-decoration: none;
-        }
-        .msg-item .nav-a:hover{
-            text-decoration: underline;
-        }
-        .msg-item img{
-            border-radius:5px;
-            border: none;
-        }
-        .msg-content{
-            text-align:left;
-            font-size:16px;
-            line-height:20px;
-            min-height: 50px;
-        }
-        .msg-content div{
-            font-size:16px;
-        }
-    </style>
+    <link rel="stylesheet" href="${s.base}/res/AmazeUI-2.5.1/assets/css/amazeui.min.css"/>
+    <link rel="stylesheet" href="${s.base}/res/AmazeUI-2.5.1/assets/css/admin.css">
+    <script src="${s.base}/res/AmazeUI-2.5.1/assets/js/amazeui.min.js"></script>
+    <script src="${s.base}/res/AmazeUI-2.5.1/assets/js/app.js"></script>
 </head>
-
-<body style="margin: 0px;padding:10px; background-color: #eeeeee;">
-<section style="width:100%;" >
-
-    <#list listAccountFans as row>
-        <div class="msg-item">
-            <div class="msg-content">
-                <div style="margin-top:2px;text-align:left;font-size:12px;color:#6f6f6f;">
-                    <img src="${row.headimgurl}" width="50px" height="50px" />
-                    ${row.nicknameStr}
-                    ${row.userMoneyTixian}元
+<body>
+<header class="am-topbar admin-header">
+    <div class="am-topbar-brand">
+        <small>提现排行榜</small>
+    </div>
+</header>
+<div class="am-cf admin-main">
+    <!-- content start -->
+    <div class="admin-content">
+        <div class="am-g">
+            <div class="am-u-md-6">
+                <div class="am-panel am-panel-default">
+                    <div id="collapse-panel-2" class="am-in">
+                        <table class="am-table am-table-bd am-table-bdrs am-table-striped am-table-hover">
+                            <tbody>
+                            <tr>
+                                <th class="am-text-center">排行</th>
+                                <th>用户名</th>
+                                <th>提现额</th>
+                            </tr>
+                            <#list listAccountFans as row>
+                                <tr>
+                                    <td class="am-text-center"><img width="40px" height="40px" src="${row.headimgurl}" alt=""></td>
+                                    <td>${row.nicknameStr}</td>
+                                    <td>${row.userMoneyTixian}元</td>
+                                </tr>
+                            </#list>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
-    </#list>
+    </div>
+</div>
 
-</section>
 </body>
 </html>
 

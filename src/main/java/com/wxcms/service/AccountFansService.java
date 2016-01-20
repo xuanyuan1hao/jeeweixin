@@ -42,6 +42,9 @@ public interface AccountFansService {
 
 	void updateUserMoney(double money, String openId,FansTixian fansTixian);
 
-	void updateUserAddMoney(AccountFans fans, double money, long referUserId,MpAccount mpAccount);
-	public void updateAddUserMoneyByUserId(double money, long userId);
+	void updateUserAddMoney(AccountFans fans, double money, long referUserId,MpAccount mpAccount,int times);
+	void updateAddUserMoneyByUserId(double money, long userId);
+	void updateUserLevel1( int userLevel1, long id);
+	void updateUserLevel2( int userLevel2,long id);
+	void updateUserLevel3(int userLevel3, long id);
 }

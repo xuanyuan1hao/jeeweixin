@@ -40,6 +40,10 @@
                 <div style="margin-top:5px;">${fans.province!}-${fans.city!}</div>
                 <div>可提现金额：${fans.userMoney!}</div>
                 <div>提现冻结金额：${fans.userMoneyFreezed!}</div>
+                <div>我的同盟</div>
+                <div>我的一级同盟${fans.userLevel1!}</div>
+                <div>我的二级同盟${fans.userLevel2!}</div>
+                <div>我的三级同盟${fans.userLevel3!}</div>
                 <div><a href="/wxapi/tixian.html?openId=${openid!}">提现</a></div>
                 <div><a href="/wxapi/change_password.html?openId=${openid!}">设置修改提现密码</a></div>
             </#if>

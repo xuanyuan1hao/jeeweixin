@@ -71,7 +71,7 @@ public class WxApiClient {
 		if(token != null && !token.isExpires()){//不为空，并且没有过期
 			return token;
 		}else{
-			token = WxApi.getOAuthAccessToken(mpAccount.getAppid(),mpAccount.getAppsecret(),code);
+			token = WxApi.getOAuthAccessToken(mpAccount.getAppid(), mpAccount.getAppsecret(), code);
 			if(token != null){
 				if(token.getErrcode() != null){//获取失败
 					System.out.println("## getOAuthAccessToken Error = " + token.getErrmsg());
@@ -87,7 +87,7 @@ public class WxApiClient {
 	
 	//获取openId
 	public static String getOAuthOpenId(MpAccount mpAccount,String code){
-		OAuthAccessToken token = WxApi.getOAuthAccessToken(mpAccount.getAppid(),mpAccount.getAppsecret(),code);
+		OAuthAccessToken token = WxApi.getOAuthAccessToken(mpAccount.getAppid(), mpAccount.getAppsecret(), code);
 		if(token != null){
 			if(token.getErrcode() != null){//获取失败
 				System.out.println("## getOAuthAccessToken Error = " + token.getErrmsg());
@@ -399,8 +399,16 @@ public class WxApiClient {
 		}
 		return null;
 	}
-	
-	
+
+
+	public static JSONObject sendCustomImageMessage(String openid, String mediaId, MpAccount mpAccount) {
+		if(!StringUtils.isBlank(mediaId) && !StringUtils.isBlank(mediaId)){
+			String accessToken = getAccessToken(mpAccount);
+			String content = WxMessageBuilder.prepareCustomImage(openid, mediaId);
+			return WxApi.httpsRequest(WxApi.getSendCustomMessageUrl(accessToken), HttpMethod.POST, content);
+		}
+		return null;
+	}
 }
 
 

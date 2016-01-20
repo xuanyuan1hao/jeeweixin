@@ -65,7 +65,7 @@
 	</update>
 
 	<update id="updateRecommendMediaId" parameterType="com.wxcms.domain.AccountFans" flushCache="true">
-		UPDATE t_wxcms_account_fans SET mediaId = #{mediaId} WHERE OPENID = #{openId}
+		UPDATE t_wxcms_account_fans SET mediaId = #{mediaId} WHERE OPENID = #{openId} ,createtime=#{createtime}
 	</update>
 	<update id="updateLastUpdateTime" parameterType="com.wxcms.domain.AccountFans" flushCache="true">
 		UPDATE t_wxcms_account_fans SET lastUpdateTime = #{lastUpdateTime} WHERE OPENID = #{openId}
@@ -93,6 +93,23 @@
 		UPDATE t_wxcms_account_fans SET userMoney =(userMoney + (#{userMoney}))
 		WHERE id = #{id}
 	</update>
+	<update id="updateUserLevel" flushCache="true">
+		UPDATE t_wxcms_account_fans m SET userLevel1 =( select count(id) from t_wxcms_account_fans m2 where m2.userReferId=m.id );
+	</update>
+
+	<update id="updateUserLevel1" parameterType="com.wxcms.domain.AccountFans" flushCache="true">
+		UPDATE t_wxcms_account_fans SET userLevel1 =(userLevel1 + (#{userLevel1}))
+		WHERE id = #{id}
+	</update>
+	<update id="updateUserLevel2" parameterType="com.wxcms.domain.AccountFans" flushCache="true">
+		UPDATE t_wxcms_account_fans SET userLevel2 =(userLevel2 + (#{userLevel2}))
+		WHERE id = #{id}
+	</update>
+	<update id="updateUserLevel3" parameterType="com.wxcms.domain.AccountFans" flushCache="true">
+		UPDATE t_wxcms_account_fans SET userLevel3 =(userLevel3 + (#{userLevel3}))
+		WHERE id = #{id}
+	</update>
+
 
 	<delete id="delete" parameterType="com.wxcms.domain.AccountFans" >
 		DELETE FROM t_wxcms_account_fans WHERE ID = #{id}

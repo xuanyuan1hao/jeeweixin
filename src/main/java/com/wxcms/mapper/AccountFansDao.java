@@ -34,7 +34,7 @@ public interface AccountFansDao {
 
 	public void deleteByOpenId(String openId);
 
-	void updateRecommendMediaId(@Param("openId") String openId,@Param("mediaId") String mediaId);
+	void updateRecommendMediaId(@Param("openId") String openId,@Param("mediaId") String mediaId,@Param("createtime") Date createTime);
 
 	void updateLastUpdateTime(@Param("openId") String openId,@Param("lastUpdateTime") Date date);
 	void updateUserReferId(@Param("openId") String openId,@Param("userReferId") long userReferId);
@@ -46,4 +46,8 @@ public interface AccountFansDao {
 	void updateAddUserMoney(@Param("userMoney") double userMoney,@Param("openId")  String openId);
 
 	void updateAddUserMoneyByUserId(@Param("userMoney") double userMoney,@Param("id") long id);
+	//更新新增加的下级数量（注意：参数为新增数量）
+	void updateUserLevel1(@Param("userLevel1") int userLevel1,@Param("id") long id);
+	void updateUserLevel2(@Param("userLevel2") int userLevel2,@Param("id") long id);
+	void updateUserLevel3(@Param("userLevel3") int userLevel3,@Param("id") long id);
 }

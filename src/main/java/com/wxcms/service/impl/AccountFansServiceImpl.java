@@ -2,11 +2,15 @@ package com.wxcms.service.impl;
 
 import com.core.page.Pagination;
 import com.wxapi.process.MpAccount;
+import com.wxapi.process.MsgType;
 import com.wxapi.process.WxApiClient;
+import com.wxapi.service.impl.MyServiceImpl;
 import com.wxcms.domain.AccountFans;
 import com.wxcms.domain.FansTixian;
 import com.wxcms.domain.Flow;
+import com.wxcms.domain.MsgText;
 import com.wxcms.mapper.AccountFansDao;
+import com.wxcms.mapper.MsgBaseDao;
 import com.wxcms.service.AccountFansService;
 import com.wxcms.service.FansTixianSrevice;
 import com.wxcms.service.FlowService;
@@ -16,7 +20,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
 
 
 @Service
@@ -24,6 +27,8 @@ public class AccountFansServiceImpl implements AccountFansService{
 
 	@Autowired
 	private AccountFansDao entityDao;
+	@Autowired
+	private MsgBaseDao msgBaseDao;
 	@Autowired
 	private FansTixianSrevice fansTixianSrevice;
 	@Autowired
@@ -81,7 +86,7 @@ public class AccountFansServiceImpl implements AccountFansService{
 	}
 
 	public void updateRecommendMediaId(String userOpenId, String mediaId) {
-		entityDao.updateRecommendMediaId(userOpenId, mediaId);
+		entityDao.updateRecommendMediaId(userOpenId, mediaId, new Date());
 	}
 	public void updateLastUpdateTime(String userOpenId,Date date){
 		entityDao.updateLastUpdateTime(userOpenId, date);
@@ -100,14 +105,26 @@ public class AccountFansServiceImpl implements AccountFansService{
 		fansTixianSrevice.add(fansTixian);
 	}
 
-	public void updateUserAddMoney(AccountFans fans, double money, long referUserId,MpAccount mpAccount){
+	public void updateUserAddMoney(AccountFans fans, double money, long referUserId,MpAccount mpAccount,int times){
 		entityDao.updateAddUserMoney(money, fans.getOpenId());//当前关注的用户获取的金额
-		if(referUserId!=0){
-			AccountFans referAccountFans=getById(referUserId + "");
-			Random random = new Random();
-			double referMoney=50.00*random.nextDouble();
+		AccountFans referAccountFans=getById(referUserId + "");
+		if((referAccountFans!=null)&&times<3){
+			if(times==0)
+				updateUserLevel1(1,referAccountFans.getId());
+			else if(times==1)
+				updateUserLevel2(1, referAccountFans.getId());
+			else if(times==2)
+				updateUserLevel3(1, referAccountFans.getId());
+
+			double referMoney=0.5*money;
 			//推广赠送金额写入到数据库
-			String log="您的好友"+fans.getNicknameStr()+"扫描了您的二维码，您获取到了"+String.format("%.2f",referMoney)+"元红包";
+			String logAdd="";
+			for (int i=0;i<times;i++){
+				logAdd=logAdd+"的好友";
+			}
+			String log="您的好友#{friendName}扫描了您的二维码，您获取到了#{money}元红包";
+			log=getContent(MsgType.SUBSCRIBE_REWARD_LEVEL.toString(),log);
+			log=log.replace("#{friendName}",fans.getNicknameStr()+logAdd).replace("#{money}",String.format("%.2f",referMoney));
 			Flow flow=new Flow();
 			flow.setCreatetime(new Date());
 			flow.setUserFlowMoney(referMoney);
@@ -117,11 +134,31 @@ public class AccountFansServiceImpl implements AccountFansService{
 			flow.setUserFlowLog(log);
 			flowService.add(flow);
 			entityDao.updateAddUserMoneyByUserId(referMoney,referUserId);
-			//发送得到钱的客服消息
-			JSONObject result = WxApiClient.sendCustomTextMessage(referAccountFans.getOpenId(), log, mpAccount);
+			//发送得到钱的客服消息(有效时间段内发消息，非有效时间就不发消息了。)
+			int intervalHours= MyServiceImpl.getIntervalHours(referAccountFans.getLastUpdateTime(), new Date());
+			if(intervalHours<48&&intervalHours>0){
+				JSONObject result = WxApiClient.sendCustomTextMessage(referAccountFans.getOpenId(), log, mpAccount);
+			}
+			//处理二级
+			AccountFans referFans=getById(referUserId + "");
+			if(null!=referFans){
+				updateUserAddMoney(referFans,referMoney,referFans.getUserReferId(),mpAccount,times+1);
+			}
 		}
 	}
-	public void updateAddUserMoneyByUserId(double money, long userId){
-		entityDao.updateAddUserMoneyByUserId(money,userId);
+	private String getContent(String code,String defalut){
+		MsgText text = msgBaseDao.getMsgTextByInputCode(code);
+		if(text != null){
+			return  text.getContent();
+		}
+		return defalut;
 	}
+	public void updateAddUserMoneyByUserId(double money, long userId){
+		entityDao.updateAddUserMoneyByUserId(money, userId);
+	}
+	public void updateUserLevel1( int userLevel1, long id){
+		entityDao.updateUserLevel1(userLevel1,id);
+	}
+	public void updateUserLevel2( int userLevel2,long id){entityDao.updateUserLevel2(userLevel2, id);}
+	public void updateUserLevel3(int userLevel3, long id){entityDao.updateUserLevel3(userLevel3, id);}
 }

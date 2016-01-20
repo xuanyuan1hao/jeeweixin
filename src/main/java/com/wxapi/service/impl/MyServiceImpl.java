@@ -123,7 +123,9 @@ public class MyServiceImpl implements MyService{
 					//发钱，发送客服消息
 					Random random = new Random();
 					double money=50.00*random.nextDouble();
-					String content="你已经获得了"+String.format("%.2f",money)+"元红包，满100.00元就可以提现了，点击我的海报邀请好友扫一扫就可以增加余额了。";
+					String content="你已经获得了#{money}元红包，满100.00元就可以提现了，点击我的海报邀请好友扫一扫就可以增加余额了。";
+					content=getContent(MsgType.SUBSCRIBE_REWARD.toString(),content);
+					content=content.replace("#{money}",String.format("%.2f",money));
 					Flow flow=new Flow();
 					flow.setCreatetime(new Date());
 					flow.setUserFlowMoney(money);
@@ -134,7 +136,7 @@ public class MyServiceImpl implements MyService{
 					flowService.add(flow);
 					//JSONObject result = WxApiClient.sendCustomTextMessage(msgRequest.getFromUserName(), content, mpAccount);
 					//给自己加钱，给上级发消息，给上级发推广费。
-					accountFansService.updateUserAddMoney(fans,money,userId, mpAccount);
+					accountFansService.updateUserAddMoney(fans,money,userId, mpAccount,0);
 					MsgText text = new MsgText();
 					text.setContent(content);
 					if(text != null){
@@ -155,20 +157,7 @@ public class MyServiceImpl implements MyService{
 					if(null!=ret&&ret.size()>0){
 						double money=ret.get(0).getUserFlowMoney();//获取当初推广赠送的金额
 						//减少其上级的金额
-						AccountFans recommendAccountFans=accountFansService.getById(accountFans.getUserReferId()+"");
-						if(null!=recommendAccountFans){
-							String log="您的好友"+accountFans.getNicknameStr()+"取消了关注，您被扣除"+money+"元红包";
-							Flow flow=new Flow();
-							flow.setCreatetime(new Date());
-							flow.setUserFlowMoney(money);
-							flow.setFansId(accountFans.getUserReferId());
-							flow.setFlowType(3);//取消关注减去的红包。
-							flow.setFromFansId(accountFans.getId());
-							flow.setUserFlowLog(log);
-							flowService.add(flow);
-							JSONObject result = WxApiClient.sendCustomTextMessage(recommendAccountFans.getOpenId(), log, mpAccount);
-							accountFansService.updateAddUserMoneyByUserId(0-money,accountFans.getUserReferId());
-						}
+						subRecommendLevelMoney(money,accountFans,mpAccount,0);
 					}
 				}
 				accountFansService.deleteByOpenId(openId);
@@ -215,21 +204,23 @@ public class MyServiceImpl implements MyService{
 					AccountFans accountFans=accountFansService.getByOpenId(userOpenId);
 					if(null!=accountFans){
 						String headImg=webRootPath+"/res/upload/"+userOpenId+".jpg";
-						if(!hasCreateRecommendPic(headImg+".text.jpg")||(null==accountFans.getMediaId())){
+						if(!hasCreateRecommendPic(headImg+".text.jpg")||(null==accountFans.getMediaId())||getIntervalDays(accountFans.getCreatetime(),new Date())>=30){
 							//创建生成图片的线程，并且直接返回文字信息
 							String log="生成我的海报大概需要5秒钟，请等待！";
+							log=getContent(MsgType.WaitCreateLog.toString(),log);
 							JSONObject result = WxApiClient.sendCustomTextMessage(userOpenId, log, mpAccount);
 							//带参二维码
 							byte[] qrcode = WxApiClient.createQRCode(2592000,accountFans.getId().intValue(),mpAccount);
 							String url = webRootPath+UploadUtil.byteToImg(webRootPath, qrcode);
-							String headImgUrl=accountFans.getHeadimgurl();
+							String headImgUrl=accountFans.getHeadimgurl()==null?(webUrl+"/res/upload/head.jpg"):accountFans.getHeadimgurl();
 							try {
 								UploadUtil.download(headImgUrl,userOpenId+".jpg",webRootPath+"/res/upload/");
 								String baseRecommendImgPath=webRootPath+"/res/css/images/base_recommend.jpg";
 								//生成带图片的二维码
 								ImageUtils.pressImage(headImg, url, url+".qrcode.jpg", 0, 0,true,100,100);
 								ImageUtils.pressImage(url + ".qrcode.jpg", baseRecommendImgPath, url + ".last.jpg", 150, 420, false, 250, 250);
-								ImageUtils.pressText("我是"+accountFans.getNicknameStr(), url+".last.jpg",
+								ImageUtils.pressImage(headImg, url + ".last.jpg", url + ".last_head.jpg", 200, 150, false, 100, 100);
+								ImageUtils.pressText("我是"+accountFans.getNicknameStr(), url+".last_head.jpg",
 										headImg+".text.jpg","宋体", Font.BOLD, 0, 36, 100, 260);
 								//上传图片到微信
 								String picPath=webUrl+"/res/upload/"+userOpenId+".jpg"+".text.jpg";
@@ -237,18 +228,24 @@ public class MyServiceImpl implements MyService{
 								System.out.println(mediaId);
 								accountFansService.updateRecommendMediaId(userOpenId, mediaId);
 								log="生成海报成功，转发您的海报就可以获得推广费！";
-								WxApiClient.sendCustomTextMessage(userOpenId, log, mpAccount);
-								return MsgXmlUtil.imageToXml(WxMessageBuilder.getMsgResponseImage(msgRequest, mediaId));
+								log=getContent(MsgType.SuccessCreateLog.toString(),log);
+								WxApiClient.sendCustomImageMessage(userOpenId, mediaId, mpAccount);//图片以客服消息形式发送
+								MsgResponseText msgResponseText=new MsgResponseText();
+								msgResponseText.setContent(log);
+								return MsgXmlUtil.textToXml(msgResponseText);
 							} catch (Exception e) {
 								e.printStackTrace();
 							}
 							MsgResponseText msgResponseText=new MsgResponseText();
-							msgResponseText.setContent("生成图片识别，请再次点击我的海报生成推广图片！");
+							log="生成图片失败，请再次点击我的海报生成推广图片！";
+							log=getContent(MsgType.FailCreateLog.toString(),log);
+							msgResponseText.setContent(log);
 							return MsgXmlUtil.textToXml(msgResponseText);
 						}else{
 							String mediaId =accountFans.getMediaId();
 							if(null!=mediaId&&(!"".equals(mediaId))){
 								String log="生成海报成功，转发您的海报就可以获得推广费！";
+								log=getContent(MsgType.SuccessCreateLog.toString(),log);
 								WxApiClient.sendCustomTextMessage(userOpenId, log, mpAccount);
 								return MsgXmlUtil.imageToXml(WxMessageBuilder.getMsgResponseImage(msgRequest, mediaId));
 							}
@@ -258,6 +255,62 @@ public class MyServiceImpl implements MyService{
 			}
 		}
 		return null;
+	}
+	private String getContent(String code,String defalut){
+		MsgText text = msgBaseDao.getMsgTextByInputCode(code);
+		if(text != null){
+			return  text.getContent();
+		}
+		return defalut;
+	}
+	public static int getIntervalDays(Date fDate, Date oDate) {
+		if (null == fDate || null == oDate) {
+			return -1;
+		}
+		long intervalMilli = oDate.getTime()-fDate.getTime();
+		return (int) (intervalMilli / (24 * 60 * 60 * 1000));
+	}
+	public static int getIntervalHours(Date fDate, Date oDate) {
+		if (null == fDate || null == oDate) {
+			return -1;
+		}
+		long intervalMilli = oDate.getTime()-fDate.getTime();
+		return (int) (intervalMilli / (  60 * 60 * 1000));
+	}
+	private void subRecommendLevelMoney( double money, AccountFans accountFans, MpAccount mpAccount,int times) {
+		AccountFans recommendAccountFans=accountFansService.getById(accountFans.getUserReferId()+"");
+		if(null!=recommendAccountFans&&times<3){
+			String logAdd="";
+			if(times==0)
+				accountFansService.updateUserLevel1(-1, recommendAccountFans.getId());
+			else if(times==1)
+				accountFansService.updateUserLevel2(-1, recommendAccountFans.getId());
+			else if(times==2)
+				accountFansService.updateUserLevel3(-1, recommendAccountFans.getId());
+			for (int i=0;i<times;i++){
+				logAdd=logAdd+"的好友";
+			}
+			String log="您的好友#{friendName}取消了关注，您被扣除#{money}元红包";
+			log=getContent(MsgType.UNSUBSCRIBE_REWARD.toString(),log);
+			log=log.replace("#{friendName}",accountFans.getNicknameStr()+logAdd).replace("#{money}",money+"");
+			Flow flow=new Flow();
+			flow.setCreatetime(new Date());
+			flow.setUserFlowMoney(money);
+			flow.setFansId(accountFans.getUserReferId());
+			flow.setFlowType(3);//取消关注减去的红包。
+			flow.setFromFansId(accountFans.getId());
+			flow.setUserFlowLog(log);
+			flowService.add(flow);
+			int intervalHours=getIntervalHours(recommendAccountFans.getLastUpdateTime(),new Date());
+			if(intervalHours<48&&intervalHours>0){
+				JSONObject result = WxApiClient.sendCustomTextMessage(recommendAccountFans.getOpenId(), log, mpAccount);
+			}
+			accountFansService.updateAddUserMoneyByUserId(0 - money, accountFans.getUserReferId());
+			//获取推荐人
+			if(recommendAccountFans.getUserReferId()!=0)
+				subRecommendLevelMoney(money*0.5,recommendAccountFans,mpAccount,times+1);
+		}
+
 	}
 
 	private boolean hasCreateRecommendPic(String recommendPicPath) {
