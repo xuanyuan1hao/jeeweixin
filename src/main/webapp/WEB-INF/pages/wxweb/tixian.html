@@ -1,52 +1,93 @@
-<!DOCTYPE HTML>
-<html>
+<!doctype html>
+<html class="no-js">
+
 <head>
     <meta charset="UTF-8">
-    <meta content="width=device-width,user-scalable=no" name="viewport">
-    <title>提现</title>
-    <style>
-        #id_description p{
-            font-size: 16px;
-            letter-spacing:2px;
-            line-height:22px;
-            font-family: "Microsoft YaHei" ! important;
-            color: #3e3e3e;
-        }
-        #id_description img{
-            margin-top: 2px;
-            border-radius:5px;
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="renderer" content="webkit">
+
+    <script type="text/javascript" src="${s.base}/res/jquery-1.9.1.min.js"></script>
+    <link rel="stylesheet" href="${s.base}/res/AmazeUI-2.5.1/assets/css/amazeui.min.css"/>
+    <link rel="stylesheet" href="${s.base}/res/AmazeUI-2.5.1/assets/css/admin.css">
+    <script src="${s.base}/res/AmazeUI-2.5.1/assets/js/amazeui.min.js"></script>
+    <script src="${s.base}/res/AmazeUI-2.5.1/assets/js/app.js"></script>
 </head>
-
-<body style="margin: 0px;padding: 0px;background-color:#e7e8eb;">
-<div style="margin:0 auto;background-color:#fff;">
-    <div style="padding: 0px 20px;">
-        <div>
-            <#if fans??>
-                <div>我的信息：</div>
-                <div style="margin-top:5px;"><img src="${fans.headimgurl!}" width="80px;"/></div>
-                <div style="margin-top:5px;">${fans.nicknameStr!}</div>
-                <div style="margin-top:5px;">${fans.province!}-${fans.city!}</div>
-
-                <form id="tixian_form" name="form">
-                    <input id="openId" name="openId" value="${fans.openId!}" type="hidden">
-                    <div>可提现金额：${fans.userMoney!}</div>
-                        <input type="hidden" id="canTixianMoney" value="${fans.userMoney!}">
-                    <div>提现金额：<input type="text" id="money" name="money" value="${fans.userMoney!}"/></div>
-                    <div>提现密码：<input type="password" id="userMoneyPassword" name="userMoneyPassword" value=""/></div>
-                    <div>收款人：<input type="text" id="alipayName" name="fansTixian.alipayName" value=""/></div>
-                    <div>收款支付宝：<input type="text" id="alipayEmail" name="fansTixian.alipayEmail" value=""/></div>
-
-                    <div><input id="tixian_btn" type="button" value="提现" /></div>
-                </form>
-
-            </#if>
-        </div>
+<body>
+<header class="am-topbar admin-header">
+    <div class="am-topbar-brand">
+        <small>会员中心-提现</small>
     </div>
-    <#include "../common/wx_footer.html">
+</header>
+<div class="am-cf admin-main">
+    <!-- content start -->
+    <div class="admin-content">
+        <div class="am-tabs am-margin" data-am-tabs>
+            <ul class="am-tabs-nav am-nav am-nav-tabs">
+                <li class="am-active"><a href="#tab1">提现</a></li>
+            </ul>
+            <div class="am-tabs-bd">
+                <#if fans??>
+                    <form id="tixian_form" name="form">
+                        <input id="openId" name="openId" value="${fans.openId!}" type="hidden">
+                    <div class="am-tab-panel am-fade am-in am-active" id="tab1">
+                        <div class="am-g am-margin-top">
+                            <div class="am-u-sm-4 am-u-md-2 am-text-right">
+                                可用：
+                            </div>
+                            <div class="am-u-sm-8 am-u-md-4">
+                                <label class="am-input-sm">${fans.userMoney!}元</label>
+                            </div>
+                        </div>
+                        <div class="am-g am-margin-top">
+                            <div class="am-u-sm-4 am-u-md-2 am-text-right">
+                                提现金额：
+                            </div>
+                            <div class="am-u-sm-8 am-u-md-4">
+
+                                <input type="radio" name="money" value="${account.tixianMinMoney}" checked /> ${account.tixianMinMoney}元
+                                <input type="radio" name="money" value="${account.tixianMinMoney*2}" /> ${account.tixianMinMoney*2}元
+                                <input type="radio" name="money" value="${account.tixianMinMoney*4}" /> ${account.tixianMinMoney*4}元
+                                <input type="radio" name="money" value="${account.tixianMinMoney*8}" /> ${account.tixianMinMoney*8}元
+                            </div>
+                        </div>
+                        <div class="am-g am-margin-top">
+                            <div class="am-u-sm-4 am-u-md-2 am-text-right">
+                                提现密码：
+                            </div>
+                            <div class="am-u-sm-8 am-u-md-4">
+                                <input type="password" class="am-input-sm" id="userMoneyPassword" name="userMoneyPassword" value=""/>
+                            </div>
+                        </div>
+                        <div class="am-g am-margin-top">
+                            <div class="am-u-sm-4 am-u-md-2 am-text-right">
+                               收款人：
+                            </div>
+                            <div class="am-u-sm-8 am-u-md-4">
+                                <input type="text" id="alipayName" class="am-input-sm" name="fansTixian.alipayName" value=""/>
+                            </div>
+                        </div>
+                        <div class="am-g am-margin-top">
+                            <div class="am-u-sm-4 am-u-md-2 am-text-right">
+                                收款支付宝：
+                            </div>
+                            <div class="am-u-sm-8 am-u-md-4">
+                                <input type="text" id="alipayEmail" class="am-input-sm" name="fansTixian.alipayEmail" value=""/>
+                            </div>
+                        </div>
+                    </div>
+                    </form>
+                </#if>
+            </div>
+            <div class="am-margin">
+                <input class="am-btn am-btn-primary am-btn-xs"  id="tixian_btn" type="button" value="提现" />
+                <input class="am-btn am-btn-primary am-btn-xs" onclick="javascript:history.back(-1);"  type="button" value="返回" />
+            </div>
+        </div>
+
+    </div>
 </div>
-<script type="text/javascript" src="${s.base}/res/jquery-1.9.1.min.js"></script>
+
+
 <script>
     $("#tixian_btn").click(function(){
         var canTixianMoney=$("#canTixianMoney").val();
@@ -90,5 +131,8 @@
 </script>
 </body>
 </html>
+
+
+
 
 

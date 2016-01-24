@@ -16,6 +16,8 @@
         <if test="flowType!=0">
             and m.flowType = #{flowType}
         </if>
+        order by createtime desc
+        limit 100;
     </select>
     <select id="getById" parameterType="java.lang.String" resultType="com.wxcms.domain.Flow">
         SELECT * FROM t_wxcms_flow WHERE ID = #{id}

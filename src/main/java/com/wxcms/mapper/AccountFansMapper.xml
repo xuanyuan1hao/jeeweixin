@@ -32,7 +32,12 @@
 	<select id="getById" parameterType="java.lang.String" resultType="com.wxcms.domain.AccountFans">
 		SELECT * FROM t_wxcms_account_fans WHERE ID = #{id}
 	</select>
-	
+
+	<select id="getRandByLastUpdateTime" parameterType="com.wxcms.domain.AccountFans"  resultType="com.wxcms.domain.AccountFans">
+		SELECT * FROM t_wxcms_account_fans WHERE lastUpdateTime>#{lastUpdateTime} order by rand() limit 1
+	</select>
+
+
 	<select id="getByOpenId" parameterType="java.lang.String" resultType="com.wxcms.domain.AccountFans">
 		SELECT * FROM t_wxcms_account_fans WHERE OPENID = #{openId}
 	</select>
@@ -65,7 +70,7 @@
 	</update>
 
 	<update id="updateRecommendMediaId" parameterType="com.wxcms.domain.AccountFans" flushCache="true">
-		UPDATE t_wxcms_account_fans SET mediaId = #{mediaId} WHERE OPENID = #{openId} ,createtime=#{createtime}
+		UPDATE t_wxcms_account_fans SET mediaId = #{mediaId} ,createtime=#{createtime} WHERE OPENID = #{openId}
 	</update>
 	<update id="updateLastUpdateTime" parameterType="com.wxcms.domain.AccountFans" flushCache="true">
 		UPDATE t_wxcms_account_fans SET lastUpdateTime = #{lastUpdateTime} WHERE OPENID = #{openId}
@@ -82,6 +87,11 @@
 		userMoneyFreezed=(userMoneyFreezed+#{userMoney}),
 		userMoneyTixian=(userMoneyTixian+#{userMoney})
 		WHERE OPENID = #{openId}
+	</update>
+	<update id="updateUserMoneyFreezed" parameterType="com.wxcms.domain.AccountFans" flushCache="true">
+		UPDATE t_wxcms_account_fans SET
+		userMoneyFreezed=(userMoneyFreezed+(#{userMoneyFreezed}))
+		WHERE id = #{id}
 	</update>
 
 	<update id="updateAddUserMoney" parameterType="com.wxcms.domain.AccountFans" flushCache="true">

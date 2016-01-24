@@ -39,9 +39,9 @@ public interface AccountFansService {
 
 
 	void updateUserMoneyPassword(String openId, String newPwd);
-
+	void updateUserMoneyFreezed( double userMoneyFreezed, long  id);
 	void updateUserMoney(double money, String openId,FansTixian fansTixian);
-
+	AccountFans getRandByLastUpdateTime(Date lastUpdateTime);
 	void updateUserAddMoney(AccountFans fans, double money, long referUserId,MpAccount mpAccount,int times);
 	void updateAddUserMoneyByUserId(double money, long userId);
 	void updateUserLevel1( int userLevel1, long id);

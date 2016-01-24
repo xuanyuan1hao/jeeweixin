@@ -13,6 +13,20 @@ public class FansTixian extends BaseEntity {
     private int tixianStatus;
     private AccountFans accountFans;
 
+    private  String tixianStatusStr;//0为等待提现，1为已经提现，-1为提现失败返回。
+
+    public String getTixianStatusStr() {
+        switch (tixianStatus){
+            case 0:
+                return "等待提现";
+            case 1:
+                return "已经提现";
+            case -1:
+                return "提现失败";
+            default:
+                return "未知";
+        }
+    }
 
     public void setAccountFans(AccountFans accountFans) {
         this.accountFans = accountFans;

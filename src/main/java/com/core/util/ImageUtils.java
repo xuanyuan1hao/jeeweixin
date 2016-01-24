@@ -98,7 +98,7 @@ public final class ImageUtils {
         BufferedImage bimage = new BufferedImage(width, height,
                 BufferedImage.TYPE_INT_RGB);
         Graphics2D g = bimage.createGraphics();
-        g.setColor(Color.white);
+        g.setColor(Color.red);
         g.setFont(new Font(fontName, fontStyle, fontSize));
         //g.setBackground(Color.yellow);
         g.drawImage(theImg, 0, 0, null);

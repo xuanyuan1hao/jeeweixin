@@ -1,8 +1,8 @@
 package com.wxcms.domain;
 
-import java.util.Date;
-
 import com.wxapi.process.MpAccount;
+
+import java.util.Date;
 
 /**
  * 微信公众账号
@@ -12,9 +12,7 @@ public class Account extends MpAccount{
 	private String name;//名称
 	private Long id;
 	private Date createtime = new Date();//创建时间
-	
-	
-	
+
 	public String getName() {
 		return name;
 	}

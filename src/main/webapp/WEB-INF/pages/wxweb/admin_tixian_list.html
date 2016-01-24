@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <#include "../common/res.html">
+
+        <script type="text/javascript">
+            function doDelete(id,baseId){
+                if(confirm("确定删除?")){
+                    window.location.href='${s.base}/msgtext/delete.html?id='+id+'&baseId='+baseId
+                }
+            }
+        </script>
+</head>
+
+<body class="bg">
+<#include "../common/top.html">
+
+    <div class="content">
+        <div class="block-nav">
+            <#include "../common/nav.html">
+        </div>
+
+        <div class="block-content" >
+
+            <div class="block-content-nav">
+                <span class="title">提现</span>
+            </div>
+
+            <div class="block-content-description">
+					<span>
+						提现管理
+					</span>
+            </div>
+
+            <div class="block-content-content">
+                <table class="fm-table">
+                    <thead>
+                    <tr >
+                        <td style="width: 150px;">编号</td>
+                        <td>状态</td>
+                        <td>提现额</td>
+                        <td>支付宝</td>
+                        <td>姓名</td>
+                        <td>处理</td>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <#list pageList as row>
+                        <#if row_index %2 == 0>
+                            <tr >
+                                <#else>
+                                    <tr class="even-tr">
+                        </#if>
+                        <td>${row.id!}</td>
+                        <td>${row.tixianStatusStr!}</td>
+                        <td>${row.tixianMoney!}</td>
+                        <td>${row.alipayEmail!}</td>
+                        <td>${row.alipayName!}</td>
+                        <td>
+                            <#if row.tixianStatus==0>
+                                <a href="${s.base}/msgtext/admin_edit_tixian.html?id=${row.id}" >处理</a>
+                                <#else>
+                                    已处理
+                            </#if>
+                        </td>
+                        </tr>
+                    </#list>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="clearfloat"></div>
+    </div>
+
+    <#include "../common/footer.html">
+</body>
+
+</html>

@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 
 @Service
@@ -104,7 +105,9 @@ public class AccountFansServiceImpl implements AccountFansService{
 		//新增一条提现记录
 		fansTixianSrevice.add(fansTixian);
 	}
-
+	public AccountFans getRandByLastUpdateTime(Date lastUpdateTime){
+		return entityDao.getRandByLastUpdateTime(lastUpdateTime);
+	}
 	public void updateUserAddMoney(AccountFans fans, double money, long referUserId,MpAccount mpAccount,int times){
 		entityDao.updateAddUserMoney(money, fans.getOpenId());//当前关注的用户获取的金额
 		AccountFans referAccountFans=getById(referUserId + "");
@@ -116,7 +119,11 @@ public class AccountFansServiceImpl implements AccountFansService{
 			else if(times==2)
 				updateUserLevel3(1, referAccountFans.getId());
 
+			Random random = new Random();
 			double referMoney=0.5*money;
+			if(times==0){
+				referMoney=mpAccount.getReferMoneyMin()+(mpAccount.getReferMoneyMax()-mpAccount.getReferMoneyMin())*random.nextDouble();
+			}
 			//推广赠送金额写入到数据库
 			String logAdd="";
 			for (int i=0;i<times;i++){
@@ -136,7 +143,8 @@ public class AccountFansServiceImpl implements AccountFansService{
 			entityDao.updateAddUserMoneyByUserId(referMoney,referUserId);
 			//发送得到钱的客服消息(有效时间段内发消息，非有效时间就不发消息了。)
 			int intervalHours= MyServiceImpl.getIntervalHours(referAccountFans.getLastUpdateTime(), new Date());
-			if(intervalHours<48&&intervalHours>0){
+			//if(intervalHours<48&&intervalHours>0)
+			{
 				JSONObject result = WxApiClient.sendCustomTextMessage(referAccountFans.getOpenId(), log, mpAccount);
 			}
 			//处理二级
@@ -157,8 +165,12 @@ public class AccountFansServiceImpl implements AccountFansService{
 		entityDao.updateAddUserMoneyByUserId(money, userId);
 	}
 	public void updateUserLevel1( int userLevel1, long id){
-		entityDao.updateUserLevel1(userLevel1,id);
+		entityDao.updateUserLevel1(userLevel1, id);
 	}
 	public void updateUserLevel2( int userLevel2,long id){entityDao.updateUserLevel2(userLevel2, id);}
 	public void updateUserLevel3(int userLevel3, long id){entityDao.updateUserLevel3(userLevel3, id);}
+
+	public void updateUserMoneyFreezed(double userMoneyFreezedAdd, long  id){
+		entityDao.updateUserMoneyFreezed(userMoneyFreezedAdd,id);
+	}
 }

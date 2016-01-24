@@ -25,7 +25,12 @@
 	</insert>
 
 	<update id="update" parameterType="com.wxcms.domain.Account" flushCache="true">
-		UPDATE t_wxcms_account SET NAME = #{name},ACCOUNT = #{account},APPID = #{appid},APPSECRET = #{appsecret},URL = #{url},TOKEN = #{token},MSGCOUNT = #{msgcount},CREATETIME = #{createtime} WHERE ID = #{id} 
+		UPDATE t_wxcms_account SET NAME = #{name},ACCOUNT = #{account},APPID = #{appid},APPSECRET = #{appsecret},
+		URL = #{url},TOKEN = #{token},MSGCOUNT = #{msgcount},CREATETIME = #{createtime}
+		,referMoneyMin = #{referMoneyMin},referMoneyMax = #{referMoneyMax}
+		,initSendMoneyMax = #{initSendMoneyMax},tixianMinMoney = #{tixianMinMoney},
+		initSendMoneyMin=#{initSendMoneyMin}
+		WHERE ID = #{id}
 	</update>
 
 	<delete id="delete" parameterType="com.wxcms.domain.Account" >

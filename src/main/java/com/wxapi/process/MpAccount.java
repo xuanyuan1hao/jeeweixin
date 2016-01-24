@@ -16,8 +16,54 @@ public class MpAccount implements Serializable{
 	
 	//ext
 	private Integer msgcount;//自动回复消息条数;默认是5条
-	
-	
+
+	private double referMoneyMin;//推荐最小金额
+	private double referMoneyMax;//推荐最大金额
+	private double initSendMoneyMax;//初始关注赠送金额
+	private double initSendMoneyMin;//初始关注赠送金额
+	private double tixianMinMoney;//提现最小金额
+
+	public double getInitSendMoneyMin() {
+		return initSendMoneyMin;
+	}
+
+	public void setInitSendMoneyMin(double initSendMoneyMin) {
+		this.initSendMoneyMin = initSendMoneyMin;
+	}
+
+
+	public void setReferMoneyMin(double referMoneyMin) {
+		this.referMoneyMin = referMoneyMin;
+	}
+
+	public void setReferMoneyMax(double referMoneyMax) {
+		this.referMoneyMax = referMoneyMax;
+	}
+
+	public void setInitSendMoneyMax(double initSendMoneyMax) {
+		this.initSendMoneyMax = initSendMoneyMax;
+	}
+
+	public void setTixianMinMoney(double tixianMinMoney) {
+		this.tixianMinMoney = tixianMinMoney;
+	}
+
+	public double getReferMoneyMin() {
+		return referMoneyMin;
+	}
+
+	public double getReferMoneyMax() {
+		return referMoneyMax;
+	}
+
+	public double getInitSendMoneyMax() {
+		return initSendMoneyMax;
+	}
+
+	public double getTixianMinMoney() {
+		return tixianMinMoney;
+	}
+
 	public String getAccount() {
 		return account;
 	}

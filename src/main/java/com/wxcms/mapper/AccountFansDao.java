@@ -11,7 +11,6 @@ import java.util.List;
 public interface AccountFansDao {
 
 	public AccountFans getById(String id);
-
 	public AccountFans getByOpenId(String openId);
 	
 	public List<AccountFans> list(AccountFans searchEntity);
@@ -34,6 +33,9 @@ public interface AccountFansDao {
 
 	public void deleteByOpenId(String openId);
 
+
+	public AccountFans getRandByLastUpdateTime(@Param("lastUpdateTime") Date lastUpdateTime);
+
 	void updateRecommendMediaId(@Param("openId") String openId,@Param("mediaId") String mediaId,@Param("createtime") Date createTime);
 
 	void updateLastUpdateTime(@Param("openId") String openId,@Param("lastUpdateTime") Date date);
@@ -43,6 +45,7 @@ public interface AccountFansDao {
 
 	void updateUserMoney(@Param("userMoney") double userMoney,@Param("openId") String openId);
 
+	void updateUserMoneyFreezed(@Param("userMoneyFreezed") double userMoneyFreezed,@Param("id") long  id);
 	void updateAddUserMoney(@Param("userMoney") double userMoney,@Param("openId")  String openId);
 
 	void updateAddUserMoneyByUserId(@Param("userMoney") double userMoney,@Param("id") long id);

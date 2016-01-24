@@ -1,56 +1,92 @@
-<!DOCTYPE HTML>
-<html>
+<!doctype html>
+<html class="no-js">
+
 <head>
     <meta charset="UTF-8">
-    <meta content="width=device-width,user-scalable=no" name="viewport">
-    <title>会员中心</title>
-    <style>
-        #id_description p{
-            font-size: 16px;
-            letter-spacing:2px;
-            line-height:22px;
-            font-family: "Microsoft YaHei" ! important;
-            color: #3e3e3e;
-        }
-        #id_description img{
-            margin-top: 2px;
-            border-radius:5px;
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="renderer" content="webkit">
+
+    <script type="text/javascript" src="${s.base}/res/jquery-1.9.1.min.js"></script>
+    <link rel="stylesheet" href="${s.base}/res/AmazeUI-2.5.1/assets/css/amazeui.min.css"/>
+    <link rel="stylesheet" href="${s.base}/res/AmazeUI-2.5.1/assets/css/admin.css">
+    <script src="${s.base}/res/AmazeUI-2.5.1/assets/js/amazeui.min.js"></script>
+    <script src="${s.base}/res/AmazeUI-2.5.1/assets/js/app.js"></script>
 </head>
-
-<body style="margin: 0px;padding: 0px;background-color:#e7e8eb;">
-<div style="margin:0 auto;background-color:#fff;">
-    <div style="padding: 0px 20px;">
-        <div style="height:10px;"></div>
-
-        <div style="font-weight:bold;font-size:20px;border-bottom:1px solid #e7e8eb;">
-           会员中心
-        </div>
-
-        <div style="display: none; margin:10px 0px;">
-            我的openid : ${openid!}
-        </div>
-
-        <div>
-            <#if fans??>
-                <div>我的信息：</div>
-                <div style="margin-top:5px;"><img src="${fans.headimgurl!}" width="80px;"/></div>
-                <div style="margin-top:5px;">${fans.nicknameStr!}</div>
-                <div style="margin-top:5px;">${fans.province!}-${fans.city!}</div>
-                <div>可提现金额：${fans.userMoney!}</div>
-                <div>提现冻结金额：${fans.userMoneyFreezed!}</div>
-                <div>我的同盟</div>
-                <div>我的一级同盟${fans.userLevel1!}</div>
-                <div>我的二级同盟${fans.userLevel2!}</div>
-                <div>我的三级同盟${fans.userLevel3!}</div>
-                <div><a href="/wxapi/tixian.html?openId=${openid!}">提现</a></div>
-                <div><a href="/wxapi/change_password.html?openId=${openid!}">设置修改提现密码</a></div>
-            </#if>
-        </div>
+<body>
+<header class="am-topbar admin-header">
+    <div class="am-topbar-brand">
+        <small>会员中心</small>
     </div>
-    <#include "../common/wx_footer.html">
+</header>
+<div class="am-cf admin-main">
+    <!-- content start -->
+    <div class="admin-content">
+        <div class="am-tabs am-margin" data-am-tabs>
+            <ul class="am-tabs-nav am-nav am-nav-tabs">
+                <li class="am-active"><a href="#tab1">基本信息</a></li>
+                <li><a href="#tab2">我的同盟</a></li>
+            </ul>
+            <div class="am-tabs-bd">
+                <#if fans??>
+                <div class="am-tab-panel am-fade am-in am-active" id="tab1">
+                    <div class="am-g am-margin-top am-text-center" >
+                        <img src="${fans.headimgurl!}" width="80px;"/>
+                    </div>
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-4 am-u-md-2 am-text-right">
+                            昵称：
+                        </div>
+                        <div class="am-u-sm-8 am-u-md-4">
+                            <label class="am-input-sm">${fans.nicknameStr!}</label>
+                        </div>
+                    </div>
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-4 am-u-md-2 am-text-right">
+                            省市：
+                        </div>
+                        <div class="am-u-sm-8 am-u-md-4">
+                            <label class="am-input-sm">${fans.province!}-${fans.city!}</label>
+                        </div>
+                    </div>
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-4 am-u-md-2 am-text-right">
+                            可用：
+                        </div>
+                        <div class="am-u-sm-8 am-u-md-4">
+                            <label class="am-input-sm">${fans.userMoney!}元</label>
+                        </div>
+                    </div>
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-4 am-u-md-2 am-text-right">
+                            冻结：
+                        </div>
+                        <div class="am-u-sm-8 am-u-md-4">
+                            <label class="am-input-sm">${fans.userMoneyFreezed!}元</label>
+                        </div>
+                    </div>
+                    <div class="am-margin">
+                        <a class="am-btn am-btn-primary am-btn-xs" href="/wxapi/tixian.html?openId=${openid!}">提现</a>
+                        <a class="am-btn am-btn-primary am-btn-xs" href="/wxapi/change_password.html?openId=${openid!}">设置修改提现密码</a>
+                    </div>
+                </div>
+                <div class="am-tab-panel am-fade" id="tab2">
+                    <div class="am-g am-margin-top">我的一级同盟${fans.userLevel1!}个</div>
+                    <div class="am-g am-margin-top">我的二级同盟${fans.userLevel2!}个</div>
+                    <div class="am-g am-margin-top">我的三级同盟${fans.userLevel3!}个</div>
+                    <div class="am-g am-margin-top">我的推广地址：
+                        <a class="am-btn am-btn-primary am-btn-xs" href="/wxapi/referer.html?id=${fans.id!}">点我推广</a>
+                    </div>
+                    <div class="am-g am-margin-top">我的推广明细：
+                        <a class="am-btn am-btn-primary am-btn-xs" href="/wxapi/referer_detail.html?id=${fans.id!}">推广明细</a>
+                    </div>
+                </div>
+                </#if>
+            </div>
+        </div>
+
+    </div>
 </div>
+
 </body>
 </html>
 

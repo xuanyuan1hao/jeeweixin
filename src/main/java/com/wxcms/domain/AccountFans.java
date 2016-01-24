@@ -193,7 +193,7 @@ public class AccountFans extends BaseEntity{
 	}
 	public String getHeadimgurl() {
 		if(null!=headimgurl&&!"".equals(headimgurl))
-			return headimgurl.substring(0,headimgurl.length()-1)+"96";
+			return headimgurl.substring(0,headimgurl.lastIndexOf("/")+1)+"96";
 		else
 			return null;
 	}

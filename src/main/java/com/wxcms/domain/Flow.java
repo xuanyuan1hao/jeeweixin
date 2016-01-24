@@ -10,7 +10,7 @@ public class Flow extends BaseEntity {
     private long fromFansId;
     private double userFlowMoney;
     private String userFlowLog;
-    private int flowType;//流水类型
+    private int flowType;//流水类型1为推广红包，2为关注红包，3为取消关注扣除红包,4为提现记录情况
 
     public void setFlowType(int flowType) {
         this.flowType = flowType;

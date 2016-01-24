@@ -10,8 +10,10 @@ import com.wxapi.service.impl.MyServiceImpl;
 import com.wxapi.vo.*;
 import com.wxcms.domain.AccountFans;
 import com.wxcms.domain.FansTixian;
+import com.wxcms.domain.Flow;
 import com.wxcms.domain.MsgNews;
 import com.wxcms.service.AccountFansService;
+import com.wxcms.service.FlowService;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
@@ -39,6 +42,8 @@ public class WxApiCtrl {
 
 	@Autowired
 	private AccountFansService accountFansService;
+	@Autowired
+	private FlowService flowService;
 
 
 	@InitBinder("fansTixian")
@@ -271,6 +276,7 @@ public class WxApiCtrl {
 			AccountFans fans = myService.syncAccountFans(openId,mpAccount,true);//同时更新数据库
 			mv.addObject("openid", openId);
 			mv.addObject("fans", fans);
+			mv.addObject("account",mpAccount);
 			return mv;
 		}else{
 			ModelAndView mv = new ModelAndView("common/failureMobile");
@@ -285,6 +291,31 @@ public class WxApiCtrl {
 			mv.addObject("listAccountFans",listAccountFans);
 			return mv;
 	}
+	@RequestMapping(value = "/referer")
+	public ModelAndView referer(HttpServletRequest request,@RequestParam("id") String id){
+		ModelAndView mv = new ModelAndView("wxweb/referer");
+		AccountFans accountFans=accountFansService.getById(id);
+		String webRootPath=request.getServletContext().getRealPath("/");
+		String headImg=webRootPath+"/res/upload/"+accountFans.getOpenId()+".jpg";
+		if(!hasCreateRecommendPic(headImg+".text.jpg")){
+			//创建图片
+			mv.addObject("msg", "暂无推广图，请点击我的海报生成推广图片！");
+		}else{
+			mv.addObject("fans", accountFans);
+		}
+		return mv;
+	}
+	@RequestMapping(value = "/referer_detail")
+	public ModelAndView refererDetail(HttpServletRequest request,@RequestParam("id") long id){
+		ModelAndView mv = new ModelAndView("wxweb/referer_detail");
+		Flow flow=new Flow();
+		flow.setFansId(id);
+		List<Flow>  list=flowService.listForPage(flow);
+		mv.addObject("listFlow", list);
+		return mv;
+	}
+
+
 	@RequestMapping(value = "/change_password")
 	public ModelAndView changePassword(HttpServletRequest request,@RequestParam("openId") String openId){
 		MpAccount mpAccount = WxMemoryCacheClient.getSingleMpAccount();//获取缓存中的唯一账号
@@ -336,6 +367,13 @@ public class WxApiCtrl {
 		jsonObject.put("msg", "提现失败");
 		AccountFans fans = accountFansService.getByOpenId(openId);
 		if(null!=fans) {
+			MpAccount mpAccount = WxMemoryCacheClient.getSingleMpAccount();//获取缓存中的唯一账号
+			if(null!=mpAccount){
+				if(mpAccount.getTixianMinMoney()>money){
+					jsonObject.put("msg", "最少提现"+mpAccount.getTixianMinMoney()+"元");
+					return jsonObject.toString();
+				}
+			}
 			if(money<=fans.getUserMoney()&&(userMoneyPassword.equals(fans.getUserMoneyPassword()))){
 				fansTixian.setCreatetime(new Date());
 				fansTixian.setFansId(fans.getId());
@@ -362,7 +400,7 @@ public class WxApiCtrl {
 		mv.addObject("cur_nav", "qrcode");
 		MpAccount mpAccount = WxMemoryCacheClient.getSingleMpAccount();//获取缓存中的唯一账号
 		if(num != null){
-			byte[] qrcode = WxApiClient.createQRCode(60,num,mpAccount);//有效期60s
+			byte[] qrcode = WxApiClient.createQRCode(60, num, mpAccount);//有效期60s
 			String url = UploadUtil.byteToImg(request.getServletContext().getRealPath("/"), qrcode);
 			mv.addObject("qrcode", url);
 		}
@@ -478,7 +516,10 @@ public class WxApiCtrl {
 		
 		return jv.toString();
 	}
-	
+
+	private boolean hasCreateRecommendPic(String recommendPicPath) {
+		return new File(recommendPicPath).exists();
+	}
 }
 
 

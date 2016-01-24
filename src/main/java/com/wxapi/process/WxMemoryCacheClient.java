@@ -1,9 +1,9 @@
 package com.wxapi.process;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import org.apache.commons.lang.StringUtils;
 /**
  * 缓存工具类；
  * 目前使用 服务器内存的方式；
@@ -25,7 +25,8 @@ public class WxMemoryCacheClient {
 	
 	
 	public static void addMpAccount(MpAccount account){
-		if(account != null && !mpAccountMap.containsKey(account.getAccount())){
+		//if(account != null && !mpAccountMap.containsKey(account.getAccount()))
+		if(account != null){
 			mpAccountMap.put(account.getAccount(), account);
 		}
 	}

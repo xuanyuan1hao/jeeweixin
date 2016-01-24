@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <#include "../common/res.html">
+
+</head>
+
+<body class="bg">
+<#include "../common/top.html">
+
+    <div class="content">
+        <div class="block-nav">
+            <#include "../common/nav.html">
+        </div>
+
+        <div class="block-content" >
+
+            <div class="block-content-nav">
+                <span class="title">提现处理</span>
+            </div>
+
+            <div class="block-content-description">
+					<span>
+						提现处理，处理拒绝或者成功的不能再处理。
+					</span>
+            </div>
+
+            <div class="block-content-content">
+                <form class="fm-form" action="${s.base}/msgtext/admin_edit_tixian_merge.html" method="post">
+                    <input type="hidden" name="id" value="${entity.id!}"/>
+                    <ul>
+                        <li>
+                            <label>提现金额</label>
+                            <input name="tixianMoney" type="text" value="${entity.tixianMoney!}"/>
+                        </li>
+                        <li>
+                            <label>支付宝账号</label>
+                            <input name="alipayEmail" type="text" value="${entity.alipayEmail!}"/>
+                        </li>
+                        <li>
+                            <label>支付宝姓名</label>
+                            <input name="alipayName" type="text" value="${entity.alipayName!}"/>
+                        </li>
+                        <li>
+                            <label>提现情况</label>
+                            <input type="radio" name="tixianStatus" value="1" checked /> 提现成功
+                            <input type="radio" name="tixianStatus" value="-1" /> 提现拒绝
+                        </li>
+                    </ul>
+
+                    <div style="margin-left:75px;margin-top: 20px;">
+                        <input class="btn" type="submit" value="保 存"/>
+                        <input class="btn" type="button" onclick="javascript:history.back(-1);" value="返 回"/>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="clearfloat"></div>
+    </div>
+
+    <#include "../common/footer.html">
+</body>
+
+</html>

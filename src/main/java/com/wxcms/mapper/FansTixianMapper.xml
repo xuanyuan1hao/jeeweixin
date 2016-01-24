@@ -6,7 +6,11 @@
     <select id="listForPage" parameterType="com.wxcms.domain.FansTixian" resultType="com.wxcms.domain.FansTixian">
         SELECT m.*,m2.*
         from t_wxcms_fans_tixian m,t_wxcms_account_fans m2
-        WHERE m.fansId = #{fansId} and m2.id=m.fansId
+        WHERE  m2.id=m.fansId
+        <if test="fansId!=0">
+            and  m.fansId = #{fansId}
+        </if>
+         order by m.id desc
     </select>
 
     <select id="getById" parameterType="java.lang.String" resultType="com.wxcms.domain.FansTixian">

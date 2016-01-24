@@ -1,0 +1,44 @@
+<!doctype html>
+<html class="no-js">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="renderer" content="webkit">
+
+    <script type="text/javascript" src="${s.base}/res/jquery-1.9.1.min.js"></script>
+    <link rel="stylesheet" href="${s.base}/res/AmazeUI-2.5.1/assets/css/amazeui.min.css"/>
+    <link rel="stylesheet" href="${s.base}/res/AmazeUI-2.5.1/assets/css/admin.css">
+    <script src="${s.base}/res/AmazeUI-2.5.1/assets/js/amazeui.min.js"></script>
+    <script src="${s.base}/res/AmazeUI-2.5.1/assets/js/app.js"></script>
+    <title>分享给好友即可获取佣金☝</title>
+</head>
+<body>
+<header class="am-topbar admin-header">
+    <div class="am-topbar-brand  am-text-center">
+        <small>点击右上角分享给好友即可获取佣金☝</small>
+    </div>
+</header>
+<div class="am-cf admin-main">
+    <!-- content start -->
+    <div class="admin-content">
+        <div class="am-g error-log">
+            <div class="am-u-sm-12 am-u-sm-centered">
+                <pre class="am-pre-scrollable">
+                <#if listFlow??>
+                    <#list listFlow as flow>
+                    <span class="am-text-success">[${flow.createtime?string("yyyy-MM-dd HH:mm:ss")}]</span> <span class="am-text-danger">${flow.userFlowMoney}</span>
+                        ${flow.userFlowLog}
+                    </#list>
+                </#if>
+                </pre>
+                <p>这里是推广明细，只显示最新100条</p>
+            </div>
+        </div>
+    </div>
+    </div>
+</div>
+</body>
+</html>
+
+
