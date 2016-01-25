@@ -130,7 +130,7 @@ public class MyServiceImpl implements MyService{
 					//发钱，发送客服消息
 					Random random = new Random();
 					double money=mpAccount.getInitSendMoneyMin()+ (mpAccount.getInitSendMoneyMax()-mpAccount.getInitSendMoneyMin())*random.nextDouble();
-					String content="你已经获得了#{money}元红包，满100.00元就可以提现了，点击我的海报邀请好友扫一扫就可以增加余额了。";
+					String content="你已经获得了#{money}元红包，满"+mpAccount.getTixianMinMoney()+"元就可以提现了，点击我的海报邀请好友扫一扫就可以增加余额了。";
 					content=getContent(MsgType.SUBSCRIBE_REWARD.toString(),content);
 					content=content.replace("#{money}",String.format("%.2f",money));
 					Flow flow=new Flow();
@@ -164,7 +164,7 @@ public class MyServiceImpl implements MyService{
 					if(null!=ret&&ret.size()>0){
 						double money=ret.get(0).getUserFlowMoney();//获取当初推广赠送的金额
 						//减少其上级的金额
-						subRecommendLevelMoney(money,accountFans,mpAccount,0);
+						accountFansService.updateSubRecommendLevelMoney(money, accountFans, mpAccount, 0);
 					}
 				}
 				accountFansService.deleteByOpenId(openId);
@@ -281,49 +281,8 @@ public class MyServiceImpl implements MyService{
 		long intervalMilli = oDate.getTime()-fDate.getTime();
 		return (int) (intervalMilli / (24 * 60 * 60 * 1000));
 	}
-	public static int getIntervalHours(Date fDate, Date oDate) {
-		if (null == fDate || null == oDate) {
-			return -1;
-		}
-		long intervalMilli = oDate.getTime()-fDate.getTime();
-		return (int) (intervalMilli / (  60 * 60 * 1000));
-	}
-	private void subRecommendLevelMoney( double money, AccountFans accountFans, MpAccount mpAccount,int times) {
-		AccountFans recommendAccountFans=accountFansService.getById(accountFans.getUserReferId()+"");
-		if(null!=recommendAccountFans&&times<3){
-			String logAdd="";
-			if(times==0)
-				accountFansService.updateUserLevel1(-1, recommendAccountFans.getId());
-			else if(times==1)
-				accountFansService.updateUserLevel2(-1, recommendAccountFans.getId());
-			else if(times==2)
-				accountFansService.updateUserLevel3(-1, recommendAccountFans.getId());
-			for (int i=0;i<times;i++){
-				logAdd=logAdd+"的好友";
-			}
-			String log="您的好友#{friendName}取消了关注，您被扣除#{money}元红包";
-			log=getContent(MsgType.UNSUBSCRIBE_REWARD.toString(),log);
-			log=log.replace("#{friendName}",accountFans.getNicknameStr()+logAdd).replace("#{money}",money+"");
-			Flow flow=new Flow();
-			flow.setCreatetime(new Date());
-			flow.setUserFlowMoney(0-money);
-			flow.setFansId(accountFans.getUserReferId());
-			flow.setFlowType(3);//取消关注减去的红包。
-			flow.setFromFansId(accountFans.getId());
-			flow.setUserFlowLog(log);
-			flowService.add(flow);
-			int intervalHours=getIntervalHours(recommendAccountFans.getLastUpdateTime(),new Date());
-			//if(intervalHours<48&&intervalHours>0)
-			{
-				JSONObject result = WxApiClient.sendCustomTextMessage(recommendAccountFans.getOpenId(), log, mpAccount);
-			}
-			accountFansService.updateAddUserMoneyByUserId(0 - money, recommendAccountFans.getId());//上级扣钱
-			//获取推荐人
-			if(recommendAccountFans.getUserReferId()!=0)
-				subRecommendLevelMoney(money*0.5,recommendAccountFans,mpAccount,times+1);
-		}
 
-	}
+
 
 	private boolean hasCreateRecommendPic(String recommendPicPath) {
 		return new File(recommendPicPath).exists();
@@ -423,7 +382,7 @@ public class MyServiceImpl implements MyService{
 			}
 		}else
 		{
-			fans = fansDao.getByOpenId(openId);
+				fans = fansDao.getByOpenId(openId);
 		}
 		return fans;
 	}

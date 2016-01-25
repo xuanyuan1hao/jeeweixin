@@ -4,7 +4,6 @@ import com.core.page.Pagination;
 import com.wxapi.process.MpAccount;
 import com.wxapi.process.MsgType;
 import com.wxapi.process.WxApiClient;
-import com.wxapi.service.impl.MyServiceImpl;
 import com.wxcms.domain.AccountFans;
 import com.wxcms.domain.FansTixian;
 import com.wxcms.domain.Flow;
@@ -109,7 +108,8 @@ public class AccountFansServiceImpl implements AccountFansService{
 		return entityDao.getRandByLastUpdateTime(lastUpdateTime);
 	}
 	public void updateUserAddMoney(AccountFans fans, double money, long referUserId,MpAccount mpAccount,int times){
-		entityDao.updateAddUserMoney(money, fans.getOpenId());//当前关注的用户获取的金额
+		if(times==0)
+			entityDao.updateAddUserMoney(money, fans.getOpenId());//当前关注的用户获取的金额
 		AccountFans referAccountFans=getById(referUserId + "");
 		if((referAccountFans!=null)&&times<3){
 			if(times==0)
@@ -142,7 +142,7 @@ public class AccountFansServiceImpl implements AccountFansService{
 			flowService.add(flow);
 			entityDao.updateAddUserMoneyByUserId(referMoney,referUserId);
 			//发送得到钱的客服消息(有效时间段内发消息，非有效时间就不发消息了。)
-			int intervalHours= MyServiceImpl.getIntervalHours(referAccountFans.getLastUpdateTime(), new Date());
+			//int intervalHours= MyServiceImpl.getIntervalHours(referAccountFans.getLastUpdateTime(), new Date());
 			//if(intervalHours<48&&intervalHours>0)
 			{
 				JSONObject result = WxApiClient.sendCustomTextMessage(referAccountFans.getOpenId(), log, mpAccount);
@@ -171,6 +171,52 @@ public class AccountFansServiceImpl implements AccountFansService{
 	public void updateUserLevel3(int userLevel3, long id){entityDao.updateUserLevel3(userLevel3, id);}
 
 	public void updateUserMoneyFreezed(double userMoneyFreezedAdd, long  id){
-		entityDao.updateUserMoneyFreezed(userMoneyFreezedAdd,id);
+		entityDao.updateUserMoneyFreezed(userMoneyFreezedAdd, id);
+	}
+	public void updateSubRecommendLevelMoney( double money, AccountFans accountFans, MpAccount mpAccount,int times) {
+		AccountFans recommendAccountFans=this.getById(accountFans.getUserReferId() + "");
+		if(null!=recommendAccountFans&&times<3){
+			String logAdd="";
+			if(times==0)
+				this.updateUserLevel1(-1, recommendAccountFans.getId());
+			else if(times==1)
+				this.updateUserLevel2(-1, recommendAccountFans.getId());
+			else if(times==2)
+				this.updateUserLevel3(-1, recommendAccountFans.getId());
+			for (int i=0;i<times;i++){
+				logAdd=logAdd+"的好友";
+			}
+			String log="您的好友#{friendName}取消了关注，您被扣除#{money}元红包";
+			log=getContent(MsgType.UNSUBSCRIBE_REWARD.toString(),log);
+			log=log.replace("#{friendName}",accountFans.getNicknameStr()+logAdd).replace("#{money}",money+"");
+			Flow flow=new Flow();
+			flow.setCreatetime(new Date());
+			flow.setUserFlowMoney(0-money);
+			flow.setFansId(accountFans.getUserReferId());
+			flow.setFlowType(3);//取消关注减去的红包。
+			flow.setFromFansId(accountFans.getId());
+			flow.setUserFlowLog(log);
+			flowService.add(flow);
+			//int intervalHours=getIntervalHours(recommendAccountFans.getLastUpdateTime(),new Date());
+			//if(intervalHours<48&&intervalHours>0)
+			{
+				JSONObject result = WxApiClient.sendCustomTextMessage(recommendAccountFans.getOpenId(), log, mpAccount);
+			}
+			this.updateAddUserMoneyByUserId(0 - money, recommendAccountFans.getId());//上级扣钱
+			//获取推荐人
+			if(recommendAccountFans.getUserReferId()!=0)
+				updateSubRecommendLevelMoney(money*0.5,recommendAccountFans,mpAccount,times+1);
+		}
+
+	}
+	private static int getIntervalHours(Date fDate, Date oDate) {
+		if (null == fDate || null == oDate) {
+			return -1;
+		}
+		long intervalMilli = oDate.getTime()-fDate.getTime();
+		return (int) (intervalMilli / (  60 * 60 * 1000));
+	}
+	public void updateUserMoneyCheck(long id){
+		entityDao.updateUserMoneyCheck(id);
 	}
 }

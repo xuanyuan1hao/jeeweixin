@@ -80,6 +80,10 @@
                         <a class="am-btn am-btn-primary am-btn-xs" href="/wxapi/referer_detail.html?id=${fans.id!}">推广明细</a>
                     </div>
                 </div>
+                <#else>
+                    <div class="am-tab-panel am-fade am-in am-active" id="tab1">
+                        获取用户信息失败，请关注微信公众号点击个人中心进入。
+                    </div>
                 </#if>
             </div>
         </div>

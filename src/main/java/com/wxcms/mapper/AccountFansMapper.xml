@@ -99,6 +99,11 @@
 		WHERE OPENID = #{openId}
 	</update>
 
+	<update id="updateUserMoneyCheck" parameterType="com.wxcms.domain.AccountFans" flushCache="true">
+		UPDATE t_wxcms_account_fans SET userMoney =(select if(isnull(sum(userFlowMoney)),0,sum(userFlowMoney)) from t_wxcms_flow where fansId=#{id})
+		WHERE id = #{id}
+	</update>
+
 	<update id="updateAddUserMoneyByUserId" parameterType="com.wxcms.domain.AccountFans" flushCache="true">
 		UPDATE t_wxcms_account_fans SET userMoney =(userMoney + (#{userMoney}))
 		WHERE id = #{id}

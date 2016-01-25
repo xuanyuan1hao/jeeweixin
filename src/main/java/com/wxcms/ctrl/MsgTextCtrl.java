@@ -1,13 +1,18 @@
 package com.wxcms.ctrl;
 
 import com.wxcms.domain.FansTixian;
+import com.wxcms.domain.Flow;
 import com.wxcms.domain.MsgBase;
 import com.wxcms.domain.MsgText;
-import com.wxcms.service.*;
+import com.wxcms.service.FansTixianSrevice;
+import com.wxcms.service.FlowService;
+import com.wxcms.service.MsgBaseService;
+import com.wxcms.service.MsgTextService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
@@ -27,7 +32,8 @@ public class MsgTextCtrl{
 	private MsgBaseService baseService;
 	@Autowired
 	private FansTixianSrevice fansTixianSrevice;
-
+	@Autowired
+	private FlowService flowService;
 
 	@RequestMapping(value = "/getById")
 	public ModelAndView getById(String id){
@@ -48,6 +54,16 @@ public class MsgTextCtrl{
 		ModelAndView modelAndView = new ModelAndView("wxweb/admin_tixian_list");
 		FansTixian fansTixian=new FansTixian();
 		List<FansTixian> pageList = fansTixianSrevice.listForPage(fansTixian);
+		modelAndView.addObject("pageList", pageList);
+		modelAndView.addObject("cur_nav", "tixian");
+		return modelAndView;
+	}
+	@RequestMapping(value = "/admin_flow_list")
+	public  ModelAndView flowList(@RequestParam("fansId") long fansId){
+		ModelAndView modelAndView = new ModelAndView("wxweb/admin_flow_list");
+		Flow flow=new Flow();
+		flow.setFansId(fansId);
+		List<Flow> pageList=flowService.listForPage(flow);
 		modelAndView.addObject("pageList", pageList);
 		modelAndView.addObject("cur_nav", "tixian");
 		return modelAndView;

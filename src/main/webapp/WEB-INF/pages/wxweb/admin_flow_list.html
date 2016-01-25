@@ -24,12 +24,12 @@
         <div class="block-content" >
 
             <div class="block-content-nav">
-                <span class="title">提现</span>
+                <span class="title">资金明细</span>
             </div>
 
             <div class="block-content-description">
 					<span>
-						提现管理
+						资金明细
 					</span>
             </div>
 
@@ -38,11 +38,10 @@
                     <thead>
                     <tr >
                         <td style="width: 150px;">编号</td>
-                        <td>状态</td>
-                        <td>提现额</td>
-                        <td>支付宝</td>
-                        <td>姓名</td>
-                        <td>处理</td>
+                        <td>描述</td>
+                        <td>金额</td>
+                        <td>描述</td>
+                        <td>时间</td>
                     </tr>
                     </thead>
                     <tbody>
@@ -53,18 +52,10 @@
                                     <tr class="even-tr">
                         </#if>
                         <td>${row.id!}</td>
-                        <td>${row.tixianStatusStr!}</td>
-                        <td>${row.tixianMoney!}</td>
-                        <td>${row.alipayEmail!}</td>
-                        <td>${row.alipayName!}</td>
-                        <td>
-                            <#if row.tixianStatus==0>
-                                <a href="${s.base}/msgtext/admin_edit_tixian.html?id=${row.id}" >处理</a>
-                                <#else>
-                                    已处理
-                            </#if>
-                            <a href="${s.base}/msgtext/admin_flow_list.html?fansId=${row.fansId}" >查看明细</a>
-                        </td>
+                        <td>${row.flowTypeStr!}</td>
+                        <td>${row.userFlowMoney!}</td>
+                        <td>${row.userFlowLog!}</td>
+                        <td>${row.createtime?string("yyyy-MM-dd HH:mm:ss")}</td>
                         </tr>
                     </#list>
                     </tbody>

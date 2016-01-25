@@ -38,8 +38,7 @@ public class FansTixianSreviceImpl implements FansTixianSrevice {
         //更新提现用户的冻结金额，并加上日志信息
         AccountFans accountFans=accountFansService.getById(entityOld.getFansId() + "");
         Flow flow=new Flow();
-        flow.setUserFlowMoney(entityOld.getTixianMoney());
-        flow.setFlowType(4);
+
         flow.setCreatetime(new Date());
         flow.setFromFansId(entityOld.getFansId());
         flow.setFansId(entityOld.getFansId());
@@ -48,6 +47,11 @@ public class FansTixianSreviceImpl implements FansTixianSrevice {
         if(entityOld.getTixianStatus()==-1){
             log="提现失败，请重新申请提现，返回金额"+entityOld.getTixianMoney();
             accountFansService.updateAddUserMoneyByUserId(entityOld.getTixianMoney(),accountFans.getId());//新增可用金额，回滚
+            flow.setUserFlowMoney(0+entityOld.getTixianMoney());//提现失败，钱加回去。
+            flow.setFlowType(4);
+        }else{
+            flow.setUserFlowMoney(0);//提现减少的金额
+            flow.setFlowType(4);
         }
         flow.setUserFlowLog(log);
         flowService.add(flow);

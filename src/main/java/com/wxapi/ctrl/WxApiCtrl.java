@@ -259,8 +259,11 @@ public class WxApiCtrl {
 			//拦截器已经处理了缓存,这里直接取
 			String openid = WxMemoryCacheClient.getOpenid(request.getSession().getId());
 			AccountFans fans = myService.syncAccountFans(openid, mpAccount, true);//同时更新数据库
-			mv.addObject("openid", openid);
-			mv.addObject("fans", fans);
+			if(null!=fans){
+				accountFansService.updateUserMoneyCheck(fans.getId());
+				mv.addObject("openid", openid);
+				mv.addObject("fans", fans);
+			}
 			return mv;
 		}else{
 			ModelAndView mv = new ModelAndView("common/failureMobile");
@@ -380,7 +383,16 @@ public class WxApiCtrl {
 				fansTixian.setTixianStatus(0);
 				fansTixian.setTixianMoney(money);
 				accountFansService.updateUserMoney(money, openId,fansTixian);
-				jsonObject.put("msg", "提现成功");
+				//提交提现之后用户金额要减少
+				Flow flow=new Flow();
+				flow.setCreatetime(new Date());
+				flow.setFromFansId(fans.getId());
+				flow.setFansId(fans.getId());
+				String log="成功提交提现"+money+"元，等待收款";
+				flow.setUserFlowMoney(0 - money);//成功提交，用户金额减少
+				flow.setFlowType(4);
+				flowService.add(flow);
+				jsonObject.put("msg", "提现提交成功，等待收款");
 			}else{
 				jsonObject.put("msg", "提现密码不正确或提现金额不足");
 			}

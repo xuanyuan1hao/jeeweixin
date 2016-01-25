@@ -43,8 +43,10 @@ public interface AccountFansService {
 	void updateUserMoney(double money, String openId,FansTixian fansTixian);
 	AccountFans getRandByLastUpdateTime(Date lastUpdateTime);
 	void updateUserAddMoney(AccountFans fans, double money, long referUserId,MpAccount mpAccount,int times);
+	void updateSubRecommendLevelMoney( double money, AccountFans accountFans, MpAccount mpAccount,int times);
 	void updateAddUserMoneyByUserId(double money, long userId);
 	void updateUserLevel1( int userLevel1, long id);
 	void updateUserLevel2( int userLevel2,long id);
 	void updateUserLevel3(int userLevel3, long id);
+	void updateUserMoneyCheck(long id);
 }
