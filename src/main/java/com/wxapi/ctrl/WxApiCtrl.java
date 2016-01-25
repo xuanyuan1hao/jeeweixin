@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.*;
 
 
@@ -389,6 +390,11 @@ public class WxApiCtrl {
 				flow.setFromFansId(fans.getId());
 				flow.setFansId(fans.getId());
 				String log="成功提交提现"+money+"元，等待收款";
+				try {
+					flow.setUserFlowLogBinary(log.getBytes("UTF-8"));
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
+				}
 				flow.setUserFlowMoney(0 - money);//成功提交，用户金额减少
 				flow.setFlowType(4);
 				flowService.add(flow);

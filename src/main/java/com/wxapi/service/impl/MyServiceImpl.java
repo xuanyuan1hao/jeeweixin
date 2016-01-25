@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.awt.*;
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.util.*;
 import java.util.List;
 
@@ -139,7 +140,12 @@ public class MyServiceImpl implements MyService{
 					flow.setFansId(fans.getId());
 					flow.setFlowType(2);//关注获取的红包。
 					flow.setFromFansId(0);
-					flow.setUserFlowLog(content);
+					//flow.setUserFlowLog(content);
+					try {
+						flow.setUserFlowLogBinary(content.getBytes("UTF-8"));
+					} catch (UnsupportedEncodingException e) {
+						e.printStackTrace();
+					}
 					flowService.add(flow);
 					//JSONObject result = WxApiClient.sendCustomTextMessage(msgRequest.getFromUserName(), content, mpAccount);
 					//给自己加钱，给上级发消息，给上级发推广费。
@@ -155,6 +161,15 @@ public class MyServiceImpl implements MyService{
 			String openId=msgRequest.getFromUserName();//获取取消关注的用户openId
 			AccountFans accountFans=accountFansService.getByOpenId(openId);
 			if(null!=accountFans){
+				String headImg=webRootPath+"/res/upload/"+accountFans.getOpenId()+".jpg";
+				if(hasCreateRecommendPic(headImg+".text.jpg")){
+					//删除图片
+					File file = new File(headImg+".text.jpg");
+					// 路径为文件且不为空则进行删除
+					if (file.isFile() && file.exists()) {
+						file.delete();
+					}
+				}
 				if(accountFans.getUserReferId()!=0){
 					Flow searchFlow=new Flow();
 					searchFlow.setFansId(accountFans.getUserReferId());

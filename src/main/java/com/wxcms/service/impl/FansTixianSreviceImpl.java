@@ -10,6 +10,7 @@ import com.wxcms.service.FlowService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.List;
 
@@ -53,7 +54,12 @@ public class FansTixianSreviceImpl implements FansTixianSrevice {
             flow.setUserFlowMoney(0);//提现减少的金额
             flow.setFlowType(4);
         }
-        flow.setUserFlowLog(log);
+        //flow.setUserFlowLog(log);
+        try {
+            flow.setUserFlowLogBinary(log.getBytes("UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         flowService.add(flow);
         entityDao.update(entityOld);
     }

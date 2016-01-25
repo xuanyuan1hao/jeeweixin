@@ -45,7 +45,8 @@
 	<insert id="add" parameterType="com.wxcms.domain.AccountFans" flushCache="true"  useGeneratedKeys="true" keyProperty="id"  >
 		<![CDATA[ 
 		INSERT INTO t_wxcms_account_fans ( OPENID,SUBSCRIBESTATUS,SUBSCRIBETIME,NICKNAME,GENDER,LANGUAGE,COUNTRY,PROVINCE,CITY,
-		HEADIMGURL,REMARK,STATUS,ID,WXID,CREATETIME,userMoney,userMoneyFreezed, lastUpdateTime)  VALUES ( #{openId},#{subscribeStatus},#{subscribeTime},#{nickname},
+		HEADIMGURL,REMARK,STATUS,ID,WXID,CREATETIME,userMoney,userMoneyFreezed, lastUpdateTime)
+		VALUES ( #{openId},#{subscribeStatus},#{subscribeTime},#{nickname},
 		#{gender},#{language},#{country},#{province},#{city},#{headimgurl},#{remark},#{status},#{id},#{wxid},#{createtime},
 		#{userMoney},#{userMoneyFreezed},#{lastUpdateTime} )
 		 ]]>

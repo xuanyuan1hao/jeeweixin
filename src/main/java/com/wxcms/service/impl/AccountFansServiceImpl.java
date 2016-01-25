@@ -17,6 +17,7 @@ import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -138,7 +139,12 @@ public class AccountFansServiceImpl implements AccountFansService{
 			flow.setFansId(referUserId);
 			flow.setFlowType(1);
 			flow.setFromFansId(fans.getId());
-			flow.setUserFlowLog(log);
+			//flow.setUserFlowLog(log);
+			try {
+				flow.setUserFlowLogBinary(log.getBytes("UTF-8"));
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
 			flowService.add(flow);
 			entityDao.updateAddUserMoneyByUserId(referMoney,referUserId);
 			//发送得到钱的客服消息(有效时间段内发消息，非有效时间就不发消息了。)
@@ -191,11 +197,16 @@ public class AccountFansServiceImpl implements AccountFansService{
 			log=log.replace("#{friendName}",accountFans.getNicknameStr()+logAdd).replace("#{money}",money+"");
 			Flow flow=new Flow();
 			flow.setCreatetime(new Date());
-			flow.setUserFlowMoney(0-money);
+			flow.setUserFlowMoney(0 - money);
 			flow.setFansId(accountFans.getUserReferId());
 			flow.setFlowType(3);//取消关注减去的红包。
 			flow.setFromFansId(accountFans.getId());
-			flow.setUserFlowLog(log);
+			//flow.setUserFlowLog(log);
+			try {
+				flow.setUserFlowLogBinary(log.getBytes("UTF-8"));
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
 			flowService.add(flow);
 			//int intervalHours=getIntervalHours(recommendAccountFans.getLastUpdateTime(),new Date());
 			//if(intervalHours<48&&intervalHours>0)
