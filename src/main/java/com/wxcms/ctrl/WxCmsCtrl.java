@@ -76,6 +76,8 @@ public class WxCmsCtrl {
 			tmpAccount.setReferMoneyMin(account.getReferMoneyMin());
 			tmpAccount.setTixianMinMoney(account.getTixianMinMoney());
 			tmpAccount.setInitSendMoneyMin(account.getInitSendMoneyMin());
+			tmpAccount.setServerAppid(account.getServerAppid());
+			tmpAccount.setServerAppsecret(account.getServerAppsecret());
 			accountDao.update(tmpAccount);
 		}
 		WxMemoryCacheClient.addMpAccount(account);

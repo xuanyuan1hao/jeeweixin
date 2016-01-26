@@ -30,7 +30,7 @@ public class WxApiClient {
 		if(token != null && !token.isExpires()){//不为空，并且没有过期
 			return token.getAccessToken();
 		}else{
-			token = WxApi.getAccessToken(mpAccount.getAppid(),mpAccount.getAppsecret());
+			token = WxApi.getAccessToken(mpAccount.getServerAppid(),mpAccount.getServerAppsecret());
 			if(token != null){
 				if(token.getErrcode() != null){//获取失败
 					System.out.println("## getAccessToken Error = " + token.getErrmsg());
@@ -87,7 +87,7 @@ public class WxApiClient {
 	
 	//获取openId
 	public static String getOAuthOpenId(MpAccount mpAccount,String code){
-		OAuthAccessToken token = WxApi.getOAuthAccessToken(mpAccount.getAppid(), mpAccount.getAppsecret(), code);
+		OAuthAccessToken token = WxApi.getOAuthAccessToken(mpAccount.getServerAppid(), mpAccount.getServerAppsecret(), code);
 		if(token != null){
 			if(token.getErrcode() != null){//获取失败
 				System.out.println("## getOAuthAccessToken Error = " + token.getErrmsg());

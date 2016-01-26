@@ -21,7 +21,10 @@
 	</select>
 
 	<insert id="add" parameterType="com.wxcms.domain.Account" flushCache="true">
-		INSERT INTO t_wxcms_account ( NAME,ACCOUNT,APPID,APPSECRET,URL,TOKEN,MSGCOUNT,ID,CREATETIME )  VALUES ( #{name},#{account},#{appid},#{appsecret},#{url},#{token},#{msgcount},#{id},#{createtime} ) 
+		INSERT INTO t_wxcms_account ( NAME,ACCOUNT,APPID,APPSECRET,URL,TOKEN,MSGCOUNT,ID,CREATETIME,referMoneyMin,
+		referMoneyMax,initSendMoneyMax,tixianMinMoney,initSendMoneyMin,serverAppid,serverAppsecret )
+		VALUES ( #{name},#{account},#{appid},#{appsecret},#{url},#{token},#{msgcount},#{id},#{createtime},#{referMoneyMin} ,
+		#{referMoneyMax},#{initSendMoneyMax},#{tixianMinMoney},#{initSendMoneyMin},#{serverAppid},#{serverAppsecret})
 	</insert>
 
 	<update id="update" parameterType="com.wxcms.domain.Account" flushCache="true">
@@ -29,7 +32,7 @@
 		URL = #{url},TOKEN = #{token},MSGCOUNT = #{msgcount},CREATETIME = #{createtime}
 		,referMoneyMin = #{referMoneyMin},referMoneyMax = #{referMoneyMax}
 		,initSendMoneyMax = #{initSendMoneyMax},tixianMinMoney = #{tixianMinMoney},
-		initSendMoneyMin=#{initSendMoneyMin}
+		initSendMoneyMin=#{initSendMoneyMin},serverAppid=#{serverAppid},serverAppsecret=#{serverAppsecret}
 		WHERE ID = #{id}
 	</update>
 

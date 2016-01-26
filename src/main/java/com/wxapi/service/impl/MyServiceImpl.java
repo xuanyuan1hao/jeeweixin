@@ -230,43 +230,10 @@ public class MyServiceImpl implements MyService{
 							//创建生成图片的线程，并且直接返回文字信息
 							String log="生成我的海报大概需要5秒钟，请等待！";
 							log=getContent(MsgType.WaitCreateLog.toString(),log);
-							JSONObject result = WxApiClient.sendCustomTextMessage(userOpenId, log, mpAccount);
-							//带参二维码
-							byte[] qrcode = WxApiClient.createQRCode(2592000,accountFans.getId().intValue(),mpAccount);
-							String url = webRootPath+UploadUtil.byteToImg(webRootPath, qrcode);
-							String headImgUrl=accountFans.getHeadimgurl()==null?(webUrl+"/res/upload/head.jpg"):accountFans.getHeadimgurl();
-							try {
-								String headImgSavePath=webRootPath+"/res/upload/"+userOpenId+".jpg";
-								if(!hasCreateRecommendPic(headImgSavePath))
-									UploadUtil.download(headImgUrl,userOpenId+".jpg",webRootPath+"/res/upload/");
-								String baseRecommendImgPath=webRootPath+"/res/css/images/base_recommend.jpg";
-								//生成带图片的二维码
-								ImageUtils.pressImage(headImg, url, url+".qrcode.jpg", 0, 0,true,50,50);
-								ImageUtils.pressImage(url + ".qrcode.jpg", baseRecommendImgPath, url + ".last.jpg", 165, 380, false, 220, 220);//贴二维码
-								ImageUtils.pressImage(headImg, url + ".last.jpg", url + ".last_head.jpg", 18, 10, false, 110, 110);//贴头像
-								ImageUtils.pressText(accountFans.getNicknameStr(), url+".last_head.jpg",//贴文字
-										headImg+".text.jpg","宋体", Font.BOLD, 0, 30, 225, 60);
-								//上传图片到微信
-								String picPath=webUrl+"/res/upload/"+userOpenId+".jpg"+".text.jpg";
-								String mediaId = WxApi.uploadMedia(WxApiClient.getAccessToken(mpAccount),MediaType.Image.toString(),picPath);
-								System.out.println(mediaId);
-								if(null!=mediaId){
-									accountFansService.updateRecommendMediaId(userOpenId, mediaId);
-									log="生成海报成功，转发您的海报就可以获得推广费！";
-									log=getContent(MsgType.SuccessCreateLog.toString(),log);
-									WxApiClient.sendCustomImageMessage(userOpenId, mediaId, mpAccount);//图片以客服消息形式发送
-								}
-								MsgResponseText msgResponseText=new MsgResponseText();
-								msgResponseText.setContent(log);
-								return MsgXmlUtil.textToXml(msgResponseText);
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
-							MsgResponseText msgResponseText=new MsgResponseText();
-							log="生成图片失败，请再次点击我的海报生成推广图片！";
-							log=getContent(MsgType.FailCreateLog.toString(),log);
+							createQRCode (accountFans, webRootPath, webUrl, mpAccount, userOpenId ,headImg);
+							MsgText msgResponseText=new MsgText();
 							msgResponseText.setContent(log);
-							return MsgXmlUtil.textToXml(msgResponseText);
+							return MsgXmlUtil.textToXml(WxMessageBuilder.getMsgResponseText(msgRequest, msgResponseText));
 						}else{
 							String mediaId =accountFans.getMediaId();
 							if(null!=mediaId&&(!"".equals(mediaId))){
@@ -282,6 +249,52 @@ public class MyServiceImpl implements MyService{
 		}
 		return null;
 	}
+
+	private void createQRCode(final AccountFans  accountFans,final String webRootPath,final String webUrl,
+							  final MpAccount mpAccount,final String userOpenId,final String headImg) {
+		new Thread(new Runnable(){
+			public void run(){
+				System.out.println("running");
+				String log="";
+				//带参二维码
+				byte[] qrcode = WxApiClient.createQRCode(2592000,accountFans.getId().intValue(),mpAccount);
+				String url = webRootPath+UploadUtil.byteToImg(webRootPath, qrcode);
+				String headImgUrl=accountFans.getHeadimgurl()==null?(webUrl+"/res/upload/head.jpg"):accountFans.getHeadimgurl();
+				try {
+					String headImgSavePath=webRootPath+"/res/upload/"+userOpenId+".jpg";
+					if(!hasCreateRecommendPic(headImgSavePath))
+						UploadUtil.download(headImgUrl,userOpenId+".jpg",webRootPath+"/res/upload/");
+					String baseRecommendImgPath=webRootPath+"/res/css/images/base_recommend.jpg";
+					//生成带图片的二维码
+					ImageUtils.pressImage(headImg, url, url+".qrcode.jpg", 0, 0,true,50,50);
+					ImageUtils.pressImage(url + ".qrcode.jpg", baseRecommendImgPath, url + ".last.jpg", 165, 380, false, 220, 220);//贴二维码
+					ImageUtils.pressImage(headImg, url + ".last.jpg", url + ".last_head.jpg", 18, 10, false, 110, 110);//贴头像
+					ImageUtils.pressText(accountFans.getNicknameStr(), url+".last_head.jpg",//贴文字
+							headImg+".text.jpg","宋体", Font.BOLD, 0, 30, 225, 60);
+					//上传图片到微信
+					String picPath=webUrl+"/res/upload/"+userOpenId+".jpg"+".text.jpg";
+					String mediaId = WxApi.uploadMedia(WxApiClient.getAccessToken(mpAccount),MediaType.Image.toString(),picPath);
+					System.out.println(mediaId);
+					if(null!=mediaId){
+						accountFansService.updateRecommendMediaId(userOpenId, mediaId);
+						log="生成海报成功，转发您的海报就可以获得推广费！";
+						log=getContent(MsgType.SuccessCreateLog.toString(),log);
+						WxApiClient.sendCustomImageMessage(userOpenId, mediaId, mpAccount);//图片以客服消息形式发送
+					}
+					JSONObject result = WxApiClient.sendCustomTextMessage(userOpenId, log, mpAccount);
+					return;
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				MsgResponseText msgResponseText=new MsgResponseText();
+				log="生成图片失败，请再次点击我的海报生成推广图片！";
+				log=getContent(MsgType.FailCreateLog.toString(),log);
+				msgResponseText.setContent(log);
+				JSONObject result = WxApiClient.sendCustomTextMessage(userOpenId, log, mpAccount);
+			}
+		}).start();
+	}
+
 	private String getContent(String code,String defalut){
 		MsgText text = msgBaseDao.getMsgTextByInputCode(code);
 		if(text != null){

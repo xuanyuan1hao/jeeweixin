@@ -11,9 +11,12 @@ public class MpAccount implements Serializable{
 	private String account;//账号
 	private String appid;//appid
 	private String appsecret;//appsecret
+	private String serverAppid;//设置服务号Appid
+	private String serverAppsecret;//设置服务号secret
 	private String url;//验证时用的url
 	private String token;//token
-	
+
+
 	//ext
 	private Integer msgcount;//自动回复消息条数;默认是5条
 
@@ -22,6 +25,26 @@ public class MpAccount implements Serializable{
 	private double initSendMoneyMax;//初始关注赠送金额
 	private double initSendMoneyMin;//初始关注赠送金额
 	private double tixianMinMoney;//提现最小金额
+
+	public void setServerAppid(String serverAppid) {
+		this.serverAppid = serverAppid;
+	}
+
+	public void setServerAppsecret(String serverAppsecret) {
+		this.serverAppsecret = serverAppsecret;
+	}
+
+	public String getServerAppid() {
+		if(null==serverAppid)
+			return appid;
+		return serverAppid;
+	}
+
+	public String getServerAppsecret() {
+		if(null==serverAppsecret)
+			return appsecret;
+		return serverAppsecret;
+	}
 
 	public double getInitSendMoneyMin() {
 		return initSendMoneyMin;

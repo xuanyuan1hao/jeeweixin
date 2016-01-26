@@ -76,6 +76,14 @@
 								<input name="appsecret" style="width:500px;" type="text" value="${account.appsecret!}"/>
 							</li>
 							<li>
+								<label>服务号授权AppId </label>
+								<input name="serverAppid" style="width:500px;" type="text" value="${account.serverAppid!}"/>
+							</li>
+							<li>
+								<label>服务号授权AppSecret </label>
+								<input name="serverAppsecret" style="width:500px;" type="text" value="${account.serverAppsecret!}"/>
+							</li>
+							<li>
 								<label>消息条数 </label>
 								<select name="msgcount">
 									<option value="1" <#if account.msgcount?? && account.msgcount == 1>selected = "selected"</#if> >1条</option>
