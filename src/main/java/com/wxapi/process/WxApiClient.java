@@ -16,13 +16,16 @@ import com.wxapi.vo.MaterialItem;
 import com.wxapi.vo.TemplateMessage;
 import com.wxcms.domain.AccountFans;
 import com.wxcms.domain.MsgNews;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 微信 客户端，统一处理微信相关接口
  */
 
 public class WxApiClient {
-	
+
+	private static final Logger logger = LoggerFactory.getLogger(WxApiClient.class);
 	//获取accessToken
 	public static String getAccessToken(MpAccount mpAccount){
 		//获取唯一的accessToken，如果是多账号，请自行处理
@@ -34,6 +37,7 @@ public class WxApiClient {
 			if(token != null){
 				if(token.getErrcode() != null){//获取失败
 					System.out.println("## getAccessToken Error = " + token.getErrmsg());
+					logger.error("## getAccessToken Error = " + token.getErrmsg());
 				}else{
 					WxMemoryCacheClient.addAccessToken(mpAccount.getAccount(), token);
 					return token.getAccessToken();
@@ -55,6 +59,7 @@ public class WxApiClient {
 			if(jsTicket != null){
 				if(jsTicket.getErrcode() != null){//获取失败
 					System.out.println("## getJSTicket Error = " + jsTicket.getErrmsg());
+					logger.error("##getJSTicket  getJSTicket Error = " + jsTicket.getErrmsg());
 				}else{
 					WxMemoryCacheClient.addJSTicket(mpAccount.getAccount(), jsTicket);
 					return jsTicket.getTicket();
@@ -75,6 +80,7 @@ public class WxApiClient {
 			if(token != null){
 				if(token.getErrcode() != null){//获取失败
 					System.out.println("## getOAuthAccessToken Error = " + token.getErrmsg());
+					logger.error("## getOAuthAccessToken Error = " + token.getErrmsg());
 				}else{
 					token.setOpenid(null);//获取OAuthAccessToken的时候设置openid为null；不同用户openid缓存
 					WxMemoryCacheClient.addOAuthAccessToken(mpAccount.getAccount(), token);
@@ -91,6 +97,7 @@ public class WxApiClient {
 		if(token != null){
 			if(token.getErrcode() != null){//获取失败
 				System.out.println("## getOAuthAccessToken Error = " + token.getErrmsg());
+				logger.error("##getOAuthOpenId  getOAuthAccessToken Error = " + token.getErrmsg());
 			}else{
 				return token.getOpenid();
 			}
@@ -127,7 +134,8 @@ public class WxApiClient {
 		if (null != jsonObj) {
 			if(jsonObj.containsKey("errcode")){
 				int errorCode = jsonObj.getInt("errcode");
-				System.out.println(String.format("获取用户信息失败 errcode:{} errmsg:{}", errorCode, ErrCode.errMsg(errorCode)));
+				System.out.println(String.format("获取用户信息失败 errcode:{%d} errmsg:{%s}", errorCode, ErrCode.errMsg(errorCode)));
+				logger.error(String.format("获取用户信息失败 errcode:{%d} errmsg:{%s}", errorCode, ErrCode.errMsg(errorCode)));
 				return null;
 			}else{
 				AccountFans fans = new AccountFans();
@@ -192,6 +200,8 @@ public class WxApiClient {
 			JSONObject jsonObj = WxApi.httpsRequest(url, "POST", body);
 			if (jsonObj.containsKey("errcode")) {//获取素材失败
 				System.out.println(ErrCode.errMsg(jsonObj.getInt("errcode")));
+				logger.error(String.format("syncBatchMaterial errcode:{%d} errmsg:{%s}", jsonObj.getInt("errcode"), ErrCode.errMsg(jsonObj.getInt("errcode"))));
+
 				return null;
 			}else{
 				Material material = new Material();

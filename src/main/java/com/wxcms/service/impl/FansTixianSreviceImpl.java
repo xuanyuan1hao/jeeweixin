@@ -1,5 +1,6 @@
 package com.wxcms.service.impl;
 
+import com.core.page.Pagination;
 import com.wxcms.domain.AccountFans;
 import com.wxcms.domain.FansTixian;
 import com.wxcms.domain.Flow;
@@ -25,10 +26,6 @@ public class FansTixianSreviceImpl implements FansTixianSrevice {
     private FlowService flowService;
     public FansTixian getById(String id) {
         return entityDao.getById(id);
-    }
-
-    public List<FansTixian> listForPage(FansTixian searchEntity) {
-        return entityDao.listForPage(searchEntity);
     }
 
     public void add(FansTixian entity) {
@@ -70,5 +67,14 @@ public class FansTixianSreviceImpl implements FansTixianSrevice {
 
     public void delete(FansTixian entity) {
         entityDao.delete(entity);
+    }
+
+    @Override
+    public Pagination<FansTixian> paginationEntity(FansTixian searchEntity, Pagination<FansTixian> pagination) {
+        Integer totalItemsCount = entityDao.getTotalItemsCount(searchEntity);
+        List<FansTixian> items = entityDao.paginationEntity(searchEntity, pagination);
+        pagination.setTotalItemsCount(totalItemsCount);
+        pagination.setItems(items);
+        return pagination;
     }
 }

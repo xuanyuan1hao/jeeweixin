@@ -3,14 +3,19 @@
 
 <mapper namespace="com.wxcms.mapper.FansTixianDao">
 
-    <select id="listForPage" parameterType="com.wxcms.domain.FansTixian" resultType="com.wxcms.domain.FansTixian">
+    <select id="paginationEntity" resultType="com.wxcms.domain.FansTixian">
         SELECT m.*,m2.*
         from t_wxcms_fans_tixian m,t_wxcms_account_fans m2
         WHERE  m2.id=m.fansId
-        <if test="fansId!=0">
-            and  m.fansId = #{fansId}
+        <if test="param1.fansId!=0">
+            and  m.fansId = #{aram1.fansId}
         </if>
          order by m.id desc
+        LIMIT #{param2.start} , #{param2.pageSize}
+    </select>
+    <select id="getTotalItemsCount" parameterType="com.wxcms.domain.FansTixian" resultType="java.lang.Integer">
+        SELECT count(m.id) FROM t_wxcms_fans_tixian m,t_wxcms_account_fans m2
+        WHERE  m2.id=m.fansId
     </select>
 
     <select id="getById" parameterType="java.lang.String" resultType="com.wxcms.domain.FansTixian">

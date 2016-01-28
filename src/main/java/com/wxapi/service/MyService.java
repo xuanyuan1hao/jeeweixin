@@ -27,7 +27,7 @@ public interface MyService {
 	public AccountFans syncAccountFans(String openId, MpAccount mpAccount, boolean merge);
 	
 	//根据openid 获取粉丝，如果没有，同步粉丝
-	public AccountFans getFansByOpenId(String openid,MpAccount mpAccount);
+	//public AccountFans getFansByOpenId(String openid,MpAccount mpAccount);
 	
 }
 

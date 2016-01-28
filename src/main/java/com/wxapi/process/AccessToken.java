@@ -53,7 +53,8 @@ public class AccessToken {
 	 */
 	public boolean isExpires(){
 		long now = CalendarUtil.getTimeInSeconds();
-		return now - this.createTime - 10 >= this.expiresIn; //预留 10s 
+		//Date dt= new Date();
+		return now - this.createTime - 60 >= this.expiresIn; //预留 10s
 	}
 	
 	/**
@@ -62,7 +63,7 @@ public class AccessToken {
 	 */
 	public boolean isExpires(Long expireTime){
 		long now = CalendarUtil.getTimeInSeconds();
-		return now - this.createTime - 10 >= expireTime; //预留 10s 
+		return now - this.createTime - 60 >= expireTime; //预留 10s
 	}
 	
 	

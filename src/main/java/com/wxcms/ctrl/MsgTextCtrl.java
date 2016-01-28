@@ -1,5 +1,6 @@
 package com.wxcms.ctrl;
 
+import com.core.page.Pagination;
 import com.wxcms.domain.FansTixian;
 import com.wxcms.domain.Flow;
 import com.wxcms.domain.MsgBase;
@@ -49,14 +50,22 @@ public class MsgTextCtrl{
 		modelAndView.addObject("cur_nav", "text");
 		return modelAndView;
 	}
-	@RequestMapping(value = "/tixian_list")
-	public  ModelAndView tixianList(@ModelAttribute MsgText searchEntity){
+
+	/*public  ModelAndView tixianList(@ModelAttribute MsgText searchEntity){
 		ModelAndView modelAndView = new ModelAndView("wxweb/admin_tixian_list");
 		FansTixian fansTixian=new FansTixian();
 		List<FansTixian> pageList = fansTixianSrevice.listForPage(fansTixian);
 		modelAndView.addObject("pageList", pageList);
 		modelAndView.addObject("cur_nav", "tixian");
 		return modelAndView;
+	}*/
+	@RequestMapping(value = "/tixian_list")
+	public  ModelAndView paginationEntity(FansTixian searchEntity, Pagination<FansTixian> pagination){
+		ModelAndView mv = new ModelAndView("wxweb/admin_tixian_list");
+		pagination = fansTixianSrevice.paginationEntity(searchEntity,pagination);
+		mv.addObject("pagination",pagination);
+		mv.addObject("cur_nav","fans");
+		return mv;
 	}
 	@RequestMapping(value = "/admin_flow_list")
 	public  ModelAndView flowList(@RequestParam("fansId") long fansId){

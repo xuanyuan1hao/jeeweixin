@@ -1,5 +1,6 @@
 package com.wxcms.mapper;
 
+import com.core.page.Pagination;
 import com.wxcms.domain.FansTixian;
 
 import java.util.List;
@@ -10,7 +11,8 @@ import java.util.List;
 public interface FansTixianDao {
     public FansTixian getById(String id);
 
-    public List<FansTixian> listForPage(FansTixian searchEntity);
+    public List<FansTixian> paginationEntity(FansTixian searchEntity, Pagination<FansTixian> pagination);
+    public Integer getTotalItemsCount(FansTixian searchEntity);
 
     public void add(FansTixian entity);
 

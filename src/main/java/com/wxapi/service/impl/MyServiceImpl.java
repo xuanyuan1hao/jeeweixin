@@ -131,9 +131,10 @@ public class MyServiceImpl implements MyService{
 					//发钱，发送客服消息
 					Random random = new Random();
 					double money=mpAccount.getInitSendMoneyMin()+ (mpAccount.getInitSendMoneyMax()-mpAccount.getInitSendMoneyMin())*random.nextDouble();
-					String content="你已经获得了#{money}元红包，满"+mpAccount.getTixianMinMoney()+"元就可以提现了，点击我的海报邀请好友扫一扫就可以增加余额了。";
-					content=getContent(MsgType.SUBSCRIBE_REWARD.toString(),content);
+					String content="你已经获得了#{money}元红包，满#{tixianMinMoney}元就可以提现了，点击我的海报邀请好友扫一扫就可以增加余额了。";
+					content=getContent(MsgType.SUBSCRIBE_REWARD.toString(), content);
 					content=content.replace("#{money}",String.format("%.2f",money));
+					content=content.replace("#{tixianMinMoney}",String.format("%.2f",mpAccount.getTixianMinMoney()));
 					Flow flow=new Flow();
 					flow.setCreatetime(new Date());
 					flow.setUserFlowMoney(money);
@@ -226,7 +227,7 @@ public class MyServiceImpl implements MyService{
 					AccountFans accountFans=accountFansService.getByOpenId(userOpenId);
 					if(null!=accountFans){
 						String headImg=webRootPath+"/res/upload/"+userOpenId+".jpg";
-						if(!hasCreateRecommendPic(headImg+".text.jpg")||(null==accountFans.getMediaId())||getIntervalDays(accountFans.getCreatetime(),new Date())>=30){
+						if((null==accountFans.getMediaId())||("".equals(accountFans.getMediaId()))){
 							//创建生成图片的线程，并且直接返回文字信息
 							String log="生成我的海报大概需要5秒钟，请等待！";
 							log=getContent(MsgType.WaitCreateLog.toString(),log);
@@ -275,6 +276,12 @@ public class MyServiceImpl implements MyService{
 					String picPath=webUrl+"/res/upload/"+userOpenId+".jpg"+".text.jpg";
 					String mediaId = WxApi.uploadMedia(WxApiClient.getAccessToken(mpAccount),MediaType.Image.toString(),picPath);
 					System.out.println(mediaId);
+					//删除文件
+					deleteFile(url);
+					deleteFile(url+".qrcode.jpg");
+					deleteFile(url + ".last.jpg");
+					deleteFile(url + ".last_head.jpg");
+
 					if(null!=mediaId){
 						accountFansService.updateRecommendMediaId(userOpenId, mediaId);
 						log="生成海报成功，转发您的海报就可以获得推广费！";
@@ -294,7 +301,13 @@ public class MyServiceImpl implements MyService{
 			}
 		}).start();
 	}
-
+	private  void deleteFile(String path){
+		File file = new File(path);
+		// 路径为文件且不为空则进行删除
+		if (file.isFile() && file.exists()) {
+			file.delete();
+		}
+	}
 	private String getContent(String code,String defalut){
 		MsgText text = msgBaseDao.getMsgTextByInputCode(code);
 		if(text != null){
@@ -416,7 +429,7 @@ public class MyServiceImpl implements MyService{
 	}
 	
 	//根据openid 获取粉丝，如果没有，同步粉丝
-	public AccountFans getFansByOpenId(String openId,MpAccount mpAccount){
+	/*public AccountFans getFansByOpenId(String openId,MpAccount mpAccount){
 		AccountFans fans = fansDao.getByOpenId(openId);
 		if(fans == null){//如果没有，添加
 			fans = WxApiClient.syncAccountFans(openId, mpAccount);
@@ -425,7 +438,7 @@ public class MyServiceImpl implements MyService{
 			}
 		}
 		return fans;
-	}
+	}*/
 	
 	/**
 	 * 获取微信公众账号的菜单
