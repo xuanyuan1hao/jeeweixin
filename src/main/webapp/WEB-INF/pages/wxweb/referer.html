@@ -27,7 +27,7 @@
                 <div class="am-panel am-panel-default">
                     <div id="collapse-panel-2" class="am-in">
                         <#if fans??>
-                            <img src="/res/upload/${fans.openId!}.jpg.text.jpg" style="max-width:100%;"/>
+                            <img src="/wxapi/getImageByAccountFansId/${fans.id!}.jpg.text.jpg.html" style="max-width:100%;"/>
                             <#else>
                                 <div class="am-g am-margin-top am-text-center">
                                     ${msg!}

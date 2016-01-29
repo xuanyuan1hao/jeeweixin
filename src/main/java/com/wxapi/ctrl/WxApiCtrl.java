@@ -3,6 +3,7 @@ package com.wxapi.ctrl;
 import com.core.page.Pagination;
 import com.core.spring.JsonView;
 import com.core.util.DateUtil;
+import com.core.util.ImageByteUtils;
 import com.core.util.UploadUtil;
 import com.core.util.wx.SignUtil;
 import com.wxapi.process.*;
@@ -27,9 +28,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.util.*;
 
 
@@ -314,7 +313,19 @@ public class WxApiCtrl {
         String headImg = webRootPath + "/res/upload/" + accountFans.getOpenId() + ".jpg";
         if (!hasCreateRecommendPic(headImg + ".text.jpg")) {
             //创建图片
-            mv.addObject("msg", "暂无推广图，请点击我的海报生成推广图片！");
+            //创建图片
+            if(null!=accountFans.getRecommendImgBlob()){
+                try {
+                    //写图片到磁盘
+                    ImageByteUtils.byte2image(accountFans.getRecommendImgBlob(),headImg+ ".text.jpg");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                mv.addObject("fans", accountFans);
+            }
+            else{
+                mv.addObject("msg", "暂无推广图，请点击我的海报生成推广图片！");
+            }
         } else {
             mv.addObject("fans", accountFans);
         }
@@ -553,6 +564,49 @@ public class WxApiCtrl {
         jv.setData(sign);
 
         return jv.toString();
+    }
+    @RequestMapping(value = "/getImageByAccountFansId/{id}.jpg.text.jpg.html", method = RequestMethod.GET)
+    public void getImageByAccountFansId(HttpServletRequest request, HttpServletResponse response,@PathVariable  String id) {
+        AccountFans accountFans= accountFansService.getById(id);
+        String webRootPath = request.getServletContext().getRealPath("/");
+        String headImg = webRootPath + "/res/upload/" + accountFans.getOpenId() + ".jpg";
+        if (!hasCreateRecommendPic(headImg + ".text.jpg")) {
+            //创建图片
+            if(null!=accountFans.getRecommendImgBlob()){
+                response.setContentType("image/gif");
+                try {
+                    OutputStream out = response.getOutputStream();
+                    out.write(accountFans.getRecommendImgBlob());
+                    out.flush();
+                    //写图片到磁盘
+                    ImageByteUtils.byte2image(accountFans.getRecommendImgBlob(),headImg);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        } else {
+            FileInputStream fis = null;
+            response.setContentType("image/gif");
+            try {
+                OutputStream out = response.getOutputStream();
+                File file = new File(headImg + ".text.jpg");
+                fis = new FileInputStream(file);
+                byte[] b = new byte[fis.available()];
+                fis.read(b);
+                out.write(b);
+                out.flush();
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                if (fis != null) {
+                    try {
+                        fis.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
     }
 
     private boolean hasCreateRecommendPic(String recommendPicPath) {
