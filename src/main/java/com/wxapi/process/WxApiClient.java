@@ -1,23 +1,21 @@
 package com.wxapi.process;
 
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-
-import org.apache.commons.lang.StringUtils;
-
 import com.wxapi.vo.Material;
 import com.wxapi.vo.MaterialArticle;
 import com.wxapi.vo.MaterialItem;
 import com.wxapi.vo.TemplateMessage;
 import com.wxcms.domain.AccountFans;
 import com.wxcms.domain.MsgNews;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 微信 客户端，统一处理微信相关接口
@@ -33,7 +31,7 @@ public class WxApiClient {
 		if(token != null && !token.isExpires()){//不为空，并且没有过期
 			return token.getAccessToken();
 		}else{
-			token = WxApi.getAccessToken(mpAccount.getServerAppid(),mpAccount.getServerAppsecret());
+			token = WxApi.getAccessToken(mpAccount.getAppid(), mpAccount.getAppsecret());
 			if(token != null){
 				if(token.getErrcode() != null){//获取失败
 					System.out.println("## getAccessToken Error = " + token.getErrmsg());
@@ -93,7 +91,7 @@ public class WxApiClient {
 	
 	//获取openId
 	public static String getOAuthOpenId(MpAccount mpAccount,String code){
-		OAuthAccessToken token = WxApi.getOAuthAccessToken(mpAccount.getServerAppid(), mpAccount.getServerAppsecret(), code);
+		OAuthAccessToken token = WxApi.getOAuthAccessToken(mpAccount.getAppid(), mpAccount.getAppsecret(), code);
 		if(token != null){
 			if(token.getErrcode() != null){//获取失败
 				System.out.println("## getOAuthAccessToken Error = " + token.getErrmsg());
@@ -136,6 +134,11 @@ public class WxApiClient {
 				int errorCode = jsonObj.getInt("errcode");
 				System.out.println(String.format("获取用户信息失败 errcode:{%d} errmsg:{%s}", errorCode, ErrCode.errMsg(errorCode)));
 				logger.error(String.format("获取用户信息失败 errcode:{%d} errmsg:{%s}", errorCode, ErrCode.errMsg(errorCode)));
+				//这里进行自救活动
+				if(40001==errorCode){
+					System.out.println("token无效自救");
+					flushAccessToken(mpAccount);
+				}
 				return null;
 			}else{
 				AccountFans fans = new AccountFans();
@@ -180,7 +183,21 @@ public class WxApiClient {
 		}
 		return null;
 	}
-	
+
+	private static void flushAccessToken(MpAccount mpAccount) {
+		AccessToken token = WxApi.getAccessToken(mpAccount.getAppid(), mpAccount.getAppsecret());
+		if(token != null){
+			if(token.getErrcode() != null){//获取失败
+				System.out.println("## getAccessToken Error = " + token.getErrmsg());
+				logger.error("## getAccessToken Error = " + token.getErrmsg());
+			}else{
+				WxMemoryCacheClient.addAccessToken(mpAccount.getAccount(), token);
+			}
+		}else{
+			System.out.println("自救失败 " );
+		}
+	}
+
 	/**
 	 * 获取素材
 	 * @param mediaType 素材类型
@@ -358,8 +375,8 @@ public class WxApiClient {
 	
 	/**
 	 * 发送模板消息
-	 * @param openid
-	 * @param content 消息内容
+	 * @param tplMsg
+	 * @param mpAccount 消息内容
 	 * @return
 	 */
 	public static JSONObject sendTemplateMessage(TemplateMessage tplMsg,MpAccount mpAccount){

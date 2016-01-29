@@ -35,15 +35,17 @@ public class MpAccount implements Serializable{
 	}
 
 	public String getServerAppid() {
-		if(null==serverAppid)
+		if(null==serverAppid||"".equals(serverAppid))
 			return appid;
-		return serverAppid;
+		else
+			return serverAppid;
 	}
 
 	public String getServerAppsecret() {
-		if(null==serverAppsecret)
+		if(null==serverAppsecret||"".equals(serverAppsecret))
 			return appsecret;
-		return serverAppsecret;
+		else
+			return serverAppsecret;
 	}
 
 	public double getInitSendMoneyMin() {

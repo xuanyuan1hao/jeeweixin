@@ -4,6 +4,8 @@ import org.apache.commons.lang.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 /**
  * 缓存工具类；
  * 目前使用 服务器内存的方式；
@@ -16,7 +18,7 @@ public class WxMemoryCacheClient {
 
 	//服务器内存的方式缓存account、accessToken、jsTicket
 	private static Map<String,MpAccount> mpAccountMap = new HashMap<String,MpAccount>();
-	private static Map<String,AccessToken> accountAccessTokenMap = new HashMap<String,AccessToken>();
+	private static Map<String,AccessToken> accountAccessTokenMap = new ConcurrentHashMap<String,AccessToken>();
 	private static Map<String,JSTicket> accountJSTicketMap = new HashMap<String,JSTicket>();
 	
 	//微信OAuth认证的时候，服务器内存的方式缓存openid; key=sessionid ，value=openid
