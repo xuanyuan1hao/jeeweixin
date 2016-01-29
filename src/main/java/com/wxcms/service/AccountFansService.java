@@ -49,4 +49,7 @@ public interface AccountFansService {
 	void updateUserLevel2( int userLevel2,long id);
 	void updateUserLevel3(int userLevel3, long id);
 	void updateUserMoneyCheck(long id);
+
+	void updateHeadImgBlobToDb(String headImgSavePath,long id);
+	void updateRecommendImgBlob(String recommendImgBlob,long id);
 }

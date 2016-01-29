@@ -125,6 +125,14 @@
 		UPDATE t_wxcms_account_fans SET userLevel3 =(userLevel3 + (#{userLevel3}))
 		WHERE id = #{id}
 	</update>
+	<update id="updateHeadImgBlob" parameterType="com.wxcms.domain.AccountFans" flushCache="true">
+		UPDATE t_wxcms_account_fans SET headImgBlob =(#{headImgBlob})
+		WHERE id = #{id}
+	</update>
+	<update id="updateRecommendImgBlob" parameterType="com.wxcms.domain.AccountFans" flushCache="true">
+		UPDATE t_wxcms_account_fans SET recommendImgBlob =(#{recommendImgBlob})
+		WHERE id = #{id}
+	</update>
 
 
 	<delete id="delete" parameterType="com.wxcms.domain.AccountFans" >

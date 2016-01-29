@@ -1,6 +1,7 @@
 package com.wxcms.service.impl;
 
 import com.core.page.Pagination;
+import com.core.util.ImageByteUtils;
 import com.wxapi.process.MpAccount;
 import com.wxapi.process.MsgType;
 import com.wxapi.process.WxApiClient;
@@ -229,5 +230,16 @@ public class AccountFansServiceImpl implements AccountFansService{
 	}
 	public void updateUserMoneyCheck(long id){
 		entityDao.updateUserMoneyCheck(id);
+	}
+
+	public void updateHeadImgBlobToDb(String headImgSavePath,long id) {
+		//读取图片文件为byte
+		byte[] imageByte=ImageByteUtils.image2byte(headImgSavePath);
+		entityDao.updateHeadImgBlob(imageByte,id);
+	}
+	public void updateRecommendImgBlob(String recommendImgBlob,long id) {
+		//读取图片文件为byte
+		byte[] imageByte=ImageByteUtils.image2byte(recommendImgBlob);
+		entityDao.updateRecommendImgBlob(imageByte,id);
 	}
 }

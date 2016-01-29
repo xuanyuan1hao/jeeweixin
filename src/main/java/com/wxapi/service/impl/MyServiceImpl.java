@@ -1,5 +1,6 @@
 package com.wxapi.service.impl;
 
+import com.core.util.ImageByteUtils;
 import com.core.util.ImageUtils;
 import com.core.util.UploadUtil;
 import com.wxapi.process.*;
@@ -262,18 +263,39 @@ public class MyServiceImpl implements MyService{
 				String url = webRootPath+UploadUtil.byteToImg(webRootPath, qrcode);
 				String headImgUrl=accountFans.getHeadimgurl()==null?(webUrl+"/res/upload/head.jpg"):accountFans.getHeadimgurl();
 				try {
-					String headImgSavePath=webRootPath+"/res/upload/"+userOpenId+".jpg";
-					if(!hasCreateRecommendPic(headImgSavePath))
-						UploadUtil.download(headImgUrl,userOpenId+".jpg",webRootPath+"/res/upload/");
-					String baseRecommendImgPath=webRootPath+"/res/css/images/base_recommend.jpg";
-					//生成带图片的二维码
-					ImageUtils.pressImage(headImg, url, url+".qrcode.jpg", 0, 0,true,50,50);
-					ImageUtils.pressImage(url + ".qrcode.jpg", baseRecommendImgPath, url + ".last.jpg", 165, 380, false, 220, 220);//贴二维码
-					ImageUtils.pressImage(headImg, url + ".last.jpg", url + ".last_head.jpg", 18, 10, false, 110, 110);//贴头像
-					ImageUtils.pressText(accountFans.getNicknameStr(), url+".last_head.jpg",//贴文字
-							headImg+".text.jpg","宋体", Font.BOLD, 0, 30, 225, 60);
+					String picPath=webUrl+"/res/upload/"+userOpenId+".jpg"+".text.jpg";//最终图片
+					if(!hasCreateRecommendPic(headImg + ".text.jpg")){
+						//已经生成了图片，就重新上传到微信即可，无需再重新上传
+						String headImgSavePath=webRootPath+"/res/upload/"+userOpenId+".jpg";
+						if(!hasCreateRecommendPic(headImgSavePath)){
+							if (null==accountFans.getHeadImgBlob()){
+								UploadUtil.download(headImgUrl, userOpenId + ".jpg", webRootPath + "/res/upload/");
+							}else{
+								byte[] imageByte=accountFans.getHeadImgBlob();
+								ImageByteUtils.byte2image(imageByte,headImgSavePath);
+							}
+							//上传头像图片到数据库
+							accountFansService.updateHeadImgBlobToDb(headImgSavePath, accountFans.getId());
+						}else{
+							if (null==accountFans.getHeadImgBlob()){
+								accountFansService.updateHeadImgBlobToDb(headImgSavePath, accountFans.getId());
+							}
+						}
+						String baseRecommendImgPath=webRootPath+"/res/css/images/base_recommend.jpg";
+						//生成带图片的二维码
+						ImageUtils.pressImage(headImg, url, url+".qrcode.jpg", 0, 0,true,50,50);
+						ImageUtils.pressImage(url + ".qrcode.jpg", baseRecommendImgPath, url + ".last.jpg", 165, 380, false, 220, 220);//贴二维码
+						ImageUtils.pressImage(headImg, url + ".last.jpg", url + ".last_head.jpg", 18, 10, false, 110, 110);//贴头像
+						ImageUtils.pressText(accountFans.getNicknameStr(), url + ".last_head.jpg",//贴文字
+								headImg + ".text.jpg", "宋体", Font.BOLD, 0, 30, 225, 60);
+						accountFansService.updateRecommendImgBlob(headImg + ".text.jpg",accountFans.getId());
+					}else{
+						//已经生成好了图片，看是否已经更新入库，没入库就读取文件入库
+						if (null==accountFans.getRecommendImgBlob()){
+							accountFansService.updateRecommendImgBlob(headImg + ".text.jpg",accountFans.getId());
+						}
+					}
 					//上传图片到微信
-					String picPath=webUrl+"/res/upload/"+userOpenId+".jpg"+".text.jpg";
 					String mediaId = WxApi.uploadMedia(WxApiClient.getAccessToken(mpAccount),MediaType.Image.toString(),picPath);
 					System.out.println(mediaId);
 					//删除文件
@@ -287,6 +309,9 @@ public class MyServiceImpl implements MyService{
 						log="生成海报成功，转发您的海报就可以获得推广费！";
 						log=getContent(MsgType.SuccessCreateLog.toString(),log);
 						WxApiClient.sendCustomImageMessage(userOpenId, mediaId, mpAccount);//图片以客服消息形式发送
+					}else{
+						log="生成海报成功，点击个人中心-我的同盟-我要推广即可获取海报图片！";
+						log=getContent(MsgType.FailCreateLog.toString(),log);
 					}
 					JSONObject result = WxApiClient.sendCustomTextMessage(userOpenId, log, mpAccount);
 					return;

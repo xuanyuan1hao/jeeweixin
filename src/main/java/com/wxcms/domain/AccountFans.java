@@ -35,6 +35,25 @@ public class AccountFans extends BaseEntity{
 	private int userLevel1;//一级下线数量
 	private int userLevel2;//2级下线数量
 	private int userLevel3;//3级下线数量
+	private byte[] headImgBlob;//头像图片
+	private byte[] recommendImgBlob;//推荐二维码图片
+
+
+	public byte[] getHeadImgBlob() {
+		return headImgBlob;
+	}
+
+	public byte[] getRecommendImgBlob() {
+		return recommendImgBlob;
+	}
+
+	public void setHeadImgBlob(byte[] headImgBlob) {
+		this.headImgBlob = headImgBlob;
+	}
+
+	public void setRecommendImgBlob(byte[] recommendImgBlob) {
+		this.recommendImgBlob = recommendImgBlob;
+	}
 
 	public void setUserLevel1(int userLevel1) {
 		this.userLevel1 = userLevel1;
