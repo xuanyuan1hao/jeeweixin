@@ -17,19 +17,25 @@
     </style>
     <title>简单操作领取两次福利</title></head>
 <body>
-
-<div class="row text-center" style="margin-top:150px">
+<div class="row text-center">
+    <div>您的红包口令为：</div>
+    <div style="font-size:22px;color:#fff;font-weight:bold;line-height:40px;color:#fa3137">领福利<#if referId??>${referId}<#else><#if fans??>${fans.id?c}</#if></#if></div>
+</div>
+<div class="row text-center">
     <img src="http://open.weixin.qq.com/qr/code/?username=${account}" width="210">
 </div>
 <div class="row text-center">
     <div style="font-size:22px;color:#fff;font-weight:bold;line-height:40px;color:#fa3137">第一步：长按识别图中二维码即可领取第一个红包</div>
 </div>
-<div class="row text-center" style="margin-top:150px">
-    <img src="/res/upload/sendMessage.jpg" width="380">
+<div class="row text-center">
+    <div style="font-size:22px;color:#fff;font-weight:bold;line-height:40px;color:#fa3137">第二步：关注后发送【领福利<#if referId??>${referId}<#else><#if fans??>${fans.id?c}</#if></#if>】)到关注的公众号即可领取第二个红包吆</div>
 </div>
 <div class="row text-center">
-    <div>领福利<#if fans??>${fans.id}</#if></div>
-    <div style="font-size:22px;color:#fff;font-weight:bold;line-height:40px;color:#fa3137">第二步：发送【领福利<#if fans??>${fans.id}</#if>】)到关注的公众号即可领取第二个红包。如上图</div>
+    <div style="font-size:22px;color:#fff;font-weight:bold;line-height:40px;color:#fa3137">不懂看下面的教程</div>
 </div>
+<div class="row text-center">
+    <img src="/res/upload/sendMessage.jpg" width="380">
+</div>
+
 </body>
 <iframe id="__WeixinJSBridgeIframe_SetResult" style="display: none;"></iframe><iframe id="__WeixinJSBridgeIframe" style="display: none;"></iframe></html>

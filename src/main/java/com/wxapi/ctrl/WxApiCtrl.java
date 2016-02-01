@@ -2,6 +2,7 @@ package com.wxapi.ctrl;
 
 import com.core.page.Pagination;
 import com.core.spring.JsonView;
+import com.core.spring.SpringFreemarkerContextPathUtil;
 import com.core.util.DateUtil;
 import com.core.util.ImageByteUtils;
 import com.core.util.UploadUtil;
@@ -94,7 +95,8 @@ public class WxApiCtrl {
             System.out.println("=======================" + msgRequest.getMsgType());
             String openId = msgRequest.getFromUserName();
             accountFansService.updateLastUpdateTime(openId, new Date());//更新最后使用时间，用于客服群发消息
-            String webUrl = "http://" + request.getServerName().toString() + ((request.getLocalPort() == 80) ? "" : (":" + request.getLocalPort()));
+            String path = SpringFreemarkerContextPathUtil.getBasePath(request);
+            String webUrl = request.getScheme() + "://" + request.getServerName() + path;
             String webRootPath = request.getServletContext().getRealPath("/");
             return myService.processMsg(msgRequest, mpAccount, webRootPath, webUrl);
         } catch (Exception e) {
@@ -637,6 +639,7 @@ public class WxApiCtrl {
         AccountFans fans = accountFansService.getById(referId);//同时更新数据库
         mv.addObject("fans", fans);
         mv.addObject("account",mpAccount.getAccount());
+        mv.addObject("referId",referId);
         return mv;
     }
     @RequestMapping(value = "/my_referer_jump")
