@@ -105,6 +105,7 @@
 							<value>/wxweb/sendmsg.html</value>
 							<value>/wxapi/oauthOpenid.html</value>
 							<value>/wxapi/my_center.html</value>
+							<!--<value>/wxapi/my_referer.html</value>-->
 						</list>
 	        		</property>
 	        	</bean>

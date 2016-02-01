@@ -1,11 +1,11 @@
 package com.core.util;
 
-import java.io.IOException;
+import org.apache.commons.lang.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.lang.StringUtils;
+import java.io.IOException;
+import java.util.Random;
 
 /**
  * http工具类
@@ -33,7 +33,14 @@ public class HttpUtil  extends org.springframework.web.util.WebUtils{
 		if(request.getServerPort() != 80){
 			port = ":" + request.getServerPort();
 		}
-		return request.getScheme() + "://" + request.getServerName() + port + request.getContextPath() + request.getServletPath();
+		Random random = new Random(9999);
+		String strBackUrl = "http://" + request.getServerName() //服务器地址
+				+ port          //端口号
+				+ request.getContextPath()      //项目名称
+				+ request.getServletPath()      //请求页面或其他地址
+				+ "?" + (request.getQueryString()) //参数
+				+"&no="+random.nextInt();//随机参数
+		return strBackUrl;
 	}
 	
 	public static String getRequestFullUriNoContextPath(HttpServletRequest request){

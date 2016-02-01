@@ -91,8 +91,10 @@ public final class ImageUtils {
     public static void pressText(String markContent, String targetImg,String outPutImg,
                                  String fontName, int fontStyle, int color, int fontSize, int x,
                                  int y) {
-        ImageIcon imgIcon = new ImageIcon(targetImg);
-        Image theImg = imgIcon.getImage();
+        try {
+        //BufferedImage bufferedImage = ImageIO.read( new File( targetImg ) );
+            ImageIcon imgIcon = new ImageIcon(targetImg);
+            Image theImg = imgIcon.getImage();
         int width = theImg.getWidth(null);
         int height = theImg.getHeight(null);
         BufferedImage bimage = new BufferedImage(width, height,
@@ -102,9 +104,9 @@ public final class ImageUtils {
         g.setFont(new Font(fontName, fontStyle, fontSize));
         //g.setBackground(Color.yellow);
         g.drawImage(theImg, 0, 0, null);
-        g.drawString(markContent, x, y); // 添加水印的文字和设置水印文字出现的内容
+        g.drawString((null==markContent?"":markContent), x, y); // 添加水印的文字和设置水印文字出现的内容
         g.dispose();
-        try {
+
             FileOutputStream out = new FileOutputStream(outPutImg);
             JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(out);
             JPEGEncodeParam param = encoder.getDefaultJPEGEncodeParam(bimage);
@@ -112,7 +114,7 @@ public final class ImageUtils {
             encoder.encode(bimage, param);
             out.close();
         } catch (Exception e) {
-
+            System.out.println("贴文字发生异常");
         }
     }
     public static void main(String[] args) throws Exception {

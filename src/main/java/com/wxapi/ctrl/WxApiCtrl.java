@@ -259,6 +259,28 @@ public class WxApiCtrl {
         }
     }
 
+    @RequestMapping(value = "/my_center_sub")
+    public ModelAndView myCenter(HttpServletRequest request,@RequestParam("openId") String openId,@RequestParam("id") long id) {
+        MpAccount mpAccount = WxMemoryCacheClient.getSingleMpAccount();//获取缓存中的唯一账号
+        if (mpAccount != null) {
+            ModelAndView mv = new ModelAndView("wxweb/my_center");
+            AccountFans fans = accountFansService.getByOpenId(openId);//同时更新数据库
+            if (null != fans && fans.getId()==id) {
+                accountFansService.updateUserMoneyCheck(fans.getId());
+                mv.addObject("openid", openId);
+                mv.addObject("fans", fans);
+            }else {
+                mv = new ModelAndView("common/failureMobile");
+                mv.addObject("message", "读取用户信息失败");
+                return mv;
+            }
+            return mv;
+        } else {
+            ModelAndView mv = new ModelAndView("common/failureMobile");
+            mv.addObject("message", "OAuth获取openid失败");
+            return mv;
+        }
+    }
     @RequestMapping(value = "/my_center")
     public ModelAndView myCenter(HttpServletRequest request) {
         MpAccount mpAccount = WxMemoryCacheClient.getSingleMpAccount();//获取缓存中的唯一账号
@@ -279,7 +301,6 @@ public class WxApiCtrl {
             return mv;
         }
     }
-
     @RequestMapping(value = "/tixian")
     public ModelAndView tixian(HttpServletRequest request, @RequestParam("openId") String openId) {
         MpAccount mpAccount = WxMemoryCacheClient.getSingleMpAccount();//获取缓存中的唯一账号
@@ -608,7 +629,20 @@ public class WxApiCtrl {
             }
         }
     }
-
+    //打开网页授权的网页
+    @RequestMapping(value = "/my_referer")
+    public ModelAndView myReferer(HttpServletRequest request,@RequestParam(value="referId", defaultValue="0")  String referId) {
+        MpAccount mpAccount = WxMemoryCacheClient.getSingleMpAccount();//获取缓存中的唯一账号
+        ModelAndView mv = new ModelAndView("wxweb/my_referer");
+        AccountFans fans = accountFansService.getById(referId);//同时更新数据库
+        mv.addObject("fans", fans);
+        mv.addObject("account",mpAccount.getAccount());
+        return mv;
+    }
+    @RequestMapping(value = "/my_referer_jump")
+    public String myRefererJump(HttpServletRequest request) {
+        return "redirect:weixin://weixin.qq.com/r/WEjTy_zEqbHWraio9x1K";
+    }
     private boolean hasCreateRecommendPic(String recommendPicPath) {
         return new File(recommendPicPath).exists();
     }

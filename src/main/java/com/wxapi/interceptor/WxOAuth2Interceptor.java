@@ -1,17 +1,12 @@
 package com.wxapi.interceptor;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.core.util.HttpUtil;
+import com.wxapi.process.*;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-import com.core.util.HttpUtil;
-import com.wxapi.process.MpAccount;
-import com.wxapi.process.OAuthScope;
-import com.wxapi.process.WxApi;
-import com.wxapi.process.WxApiClient;
-import com.wxapi.process.WxMemoryCacheClient;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * 微信客户端用户请求验证拦截器
@@ -58,9 +53,10 @@ public class WxOAuth2Interceptor extends HandlerInterceptorAdapter {
 				}
 			}else{//oauth获取code
 				MpAccount mpAccount = WxMemoryCacheClient.getSingleMpAccount();//获取缓存中的唯一账号
-				String redirectUrl = HttpUtil.getRequestFullUriNoContextPath(request);//请求code的回调url
+				String redirectUrl = HttpUtil.getRequestFullUri(request);//请求code的回调url
 				String state = OAuth2RequestParamHelper.prepareState(request);
-				String url = WxApi.getOAuthCodeUrl(mpAccount.getAppid(), redirectUrl, OAuthScope.Base.toString(), state);
+				state="";
+				String url = WxApi.getOAuthCodeUrl(mpAccount.getAppid(), redirectUrl, OAuthScope.Userinfo.toString(), state);
 				HttpUtil.redirectHttpUrl(request, response, url);
 				return false;
 			}

@@ -8,7 +8,7 @@ package com.wxapi.process;
 public enum OAuthScope {
 
 	Base("snsapi_base"),//用户openid
-	Userinfo("userinfo");//用户信息
+	Userinfo("snsapi_userinfo");//用户信息
 	
 	private String name;
 	
