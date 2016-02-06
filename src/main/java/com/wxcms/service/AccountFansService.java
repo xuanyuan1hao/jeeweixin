@@ -52,4 +52,8 @@ public interface AccountFansService {
 
 	void updateHeadImgBlobToDb(String headImgSavePath,long id);
 	void updateRecommendImgBlob(String recommendImgBlob,long id);
+
+	double updateUserYaoyiyao(AccountFans fans);
+
+	void updateUserGoldCoinToMoney(AccountFans fans);
 }

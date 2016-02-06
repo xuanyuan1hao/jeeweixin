@@ -57,4 +57,10 @@ public interface AccountFansDao {
 
 	void updateHeadImgBlob(@Param("headImgBlob") byte[] headImgBlob,@Param("id") long id);
 	void updateRecommendImgBlob(@Param("recommendImgBlob") byte[] recommendImgBlob,@Param("id") long id);
+
+	void updateUserGoldCoin(@Param("userGoldCoin") double userGoldCoin,@Param("id")  long id);
+
+	void updateUserYaoyiyaoTimesUesd(@Param("userYaoyiyaoTimesUesd") int userYaoyiyaoTimesUesd,@Param("id")  long id);
+
+	void updateUserGiveYaoyiyaoTimes(@Param("userGiveYaoyiyaoTimes") int userGiveYaoyiyaoTimes,@Param("id")  long id);
 }

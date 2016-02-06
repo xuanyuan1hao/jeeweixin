@@ -78,6 +78,11 @@ public class WxCmsCtrl {
 			tmpAccount.setInitSendMoneyMin(account.getInitSendMoneyMin());
 			tmpAccount.setServerAppid(account.getServerAppid());
 			tmpAccount.setServerAppsecret(account.getServerAppsecret());
+			tmpAccount.setYaoyiyaoSendGoldCoinMin(account.getYaoyiyaoSendGoldCoinMin());
+			tmpAccount.setYaoyiyaoSendGoldCoinMax(account.getYaoyiyaoSendGoldCoinMax());
+			tmpAccount.setYaoyiyaoPercent(account.getYaoyiyaoPercent());
+			tmpAccount.setGoldCoinToMoney(account.getGoldCoinToMoney());
+			tmpAccount.setGiveYaoyiyaoTimesPerRefer(account.getGiveYaoyiyaoTimesPerRefer());
 			accountDao.update(tmpAccount);
 		}
 		WxMemoryCacheClient.addMpAccount(account);

@@ -24,7 +24,7 @@
     </select>
 
     <insert id="add" parameterType="com.wxcms.domain.Flow" flushCache="true">
-        INSERT INTO t_wxcms_flow ( userFlowMoney,userFlowLog,fansId,fromFansId,createtime,flowType,userFlowLogBinary )
-        VALUES ( #{userFlowMoney},#{userFlowLog},#{fansId},#{fromFansId},#{createtime},#{flowType},#{userFlowLogBinary})
+        INSERT INTO t_wxcms_flow ( userFlowMoney,userFlowLog,fansId,fromFansId,createtime,flowType,userFlowLogBinary,userFlowGoldCoin )
+        VALUES ( #{userFlowMoney},#{userFlowLog},#{fansId},#{fromFansId},#{createtime},#{flowType},#{userFlowLogBinary},#{userFlowGoldCoin})
     </insert>
 </mapper>

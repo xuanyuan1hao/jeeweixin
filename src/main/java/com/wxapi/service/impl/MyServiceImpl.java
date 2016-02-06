@@ -101,7 +101,7 @@ public class MyServiceImpl implements MyService {
         if (!StringUtils.isEmpty(content)) {//文本消息
             String tmpContent = content.trim();
             //正则匹配
-            if (tmpContent.contains("领福利")){
+            if (tmpContent.contains("领福利")||tmpContent.contains("我要摇奖")){
                 //获取当前发消息人的openId
                 String openId=msgRequest.getFromUserName();
                 Pattern p=Pattern.compile("(\\d+)");
@@ -181,10 +181,11 @@ public class MyServiceImpl implements MyService {
                 //发钱，发送客服消息
                 Random random = new Random();
                 double money = mpAccount.getInitSendMoneyMin() + (mpAccount.getInitSendMoneyMax() - mpAccount.getInitSendMoneyMin()) * random.nextDouble();
-                String content = "你已经获得了#{money}元红包，满#{tixianMinMoney}元就可以提现了，点击我的海报邀请好友扫一扫就可以增加余额了。";
+                String content = "你已经获得了#{money}元红包，满#{tixianMinMoney}元就可以提现了，点击我的海报邀请好友扫一扫就可以增加余额了。点击以下链接领输入领福利口令取第二重福利: #{input_refer_url}";
                 content = getContent(MsgType.SUBSCRIBE_REWARD.toString(), content);
                 content = content.replace("#{money}", String.format("%.2f", money));
                 content = content.replace("#{tixianMinMoney}", String.format("%.2f", mpAccount.getTixianMinMoney()));
+                content=content.replace("#{input_refer_url}",webUrl+"/wxapi/my_input_refer_url.html?openId="+fans.getOpenId()+"&id="+fans.getId());
                 Flow flow = new Flow();
                 flow.setCreatetime(new Date());
                 flow.setUserFlowMoney(money);
@@ -319,6 +320,15 @@ public class MyServiceImpl implements MyService {
                         msgResponseText.setContent(log);
                         return MsgXmlUtil.textToXml(WxMessageBuilder.getMsgResponseText(msgRequest, msgResponseText));
                     }
+                }else if(key.indexOf("my_yaoyiyao_sub") >= 0){
+                    String userOpenId = msgRequest.getFromUserName();
+                    AccountFans accountFans = accountFansService.getByOpenId(userOpenId);
+                    if (null != accountFans) {
+                        MsgText msgResponseText = new MsgText();
+                        String log = "点击以下链接进入摇一摇:"+webUrl+"/wxapi/my_yaoyiyao.html?openId="+accountFans.getOpenId()+"&id="+accountFans.getId();
+                        msgResponseText.setContent(log);
+                        return MsgXmlUtil.textToXml(WxMessageBuilder.getMsgResponseText(msgRequest, msgResponseText));
+                    }
                 }
             }
         }
@@ -368,13 +378,18 @@ public class MyServiceImpl implements MyService {
                                 accountFansService.updateHeadImgBlobToDb(headImgSavePath, accountFans.getId());
                             }
                         }
-                        String baseRecommendImgPath = webRootPath + "/res/css/images/base_recommend.jpg";
+                        String baseRecommendImgPath = webRootPath + "/res/css/images/base_recommend22.jpg";
                         //生成带图片的二维码
                         ImageUtils.pressImage(headImg, url, url + ".qrcode.jpg", 0, 0, true, 50, 50);
-                        ImageUtils.pressImage(url + ".qrcode.jpg", baseRecommendImgPath, url + ".last.jpg", 165, 380, false, 220, 220);//贴二维码
+                        /*ImageUtils.pressImage(url + ".qrcode.jpg", baseRecommendImgPath, url + ".last.jpg", 165, 380, false, 220, 220);//贴二维码
                         ImageUtils.pressImage(headImg, url + ".last.jpg", url + ".last_head.jpg", 18, 10, false, 110, 110);//贴头像
                         ImageUtils.pressText(accountFans.getNicknameStr(), url + ".last_head.jpg",//贴文字
-                                headImg + ".text.jpg", "宋体", Font.BOLD, 0, 30, 225, 60);
+                                headImg + ".text.jpg", "宋体", Font.BOLD, 0, 30, 225, 60);*/
+                        ImageUtils.pressImage(url + ".qrcode.jpg", baseRecommendImgPath, url + ".last.jpg", 265, 460, false, 220, 220);//贴二维码
+                        ImageUtils.pressImage(headImg, url + ".last.jpg", url + ".last_head.jpg", 88, 60, false, 90, 90);//贴头像
+                        ImageUtils.pressText(accountFans.getNicknameStr(), url + ".last_head.jpg",//贴文字
+                                headImg + ".text.jpg", "宋体", Font.BOLD, 0, 30, 325, 100);
+
                         accountFansService.updateRecommendImgBlob(headImg + ".text.jpg", accountFans.getId());
                     } else {
                         //已经生成好了图片，看是否已经更新入库，没入库就读取文件入库

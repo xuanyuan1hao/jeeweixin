@@ -38,6 +38,33 @@ public class AccountFans extends BaseEntity{
 	private byte[] headImgBlob;//头像图片
 	private byte[] recommendImgBlob;//推荐二维码图片
 
+	private double userGoldCoin;//用户金币数量
+	private int userYaoyiyaoTimesUesd;//用户摇一摇使用掉的次数
+	private int userGiveYaoyiyaoTimes;//用户摇一摇可以用的次数
+
+	public int getUserGiveYaoyiyaoTimes() {
+		return userGiveYaoyiyaoTimes;
+	}
+
+	public void setUserGiveYaoyiyaoTimes(int userGiveYaoyiyaoTimes) {
+		this.userGiveYaoyiyaoTimes = userGiveYaoyiyaoTimes;
+	}
+
+	public void setUserGoldCoin(double userGoldCoin) {
+		this.userGoldCoin = userGoldCoin;
+	}
+
+	public void setUserYaoyiyaoTimesUesd(int userYaoyiyaoTimesUesd) {
+		this.userYaoyiyaoTimesUesd = userYaoyiyaoTimesUesd;
+	}
+
+	public double getUserGoldCoin() {
+		return userGoldCoin;
+	}
+
+	public int getUserYaoyiyaoTimesUesd() {
+		return userYaoyiyaoTimesUesd;
+	}
 
 	public byte[] getHeadImgBlob() {
 		return headImgBlob;

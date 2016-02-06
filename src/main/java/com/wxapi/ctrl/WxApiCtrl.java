@@ -362,6 +362,9 @@ public class WxApiCtrl {
         flow.setFansId(id);
         List<Flow> list = flowService.listForPage(flow);
         mv.addObject("listFlow", list);
+        AccountFans fans = accountFansService.getById(id+"");//同时更新数据库
+        mv.addObject("openid", fans.getOpenId());
+        mv.addObject("fans", fans);
         return mv;
     }
 
@@ -642,6 +645,160 @@ public class WxApiCtrl {
         mv.addObject("referId",referId);
         return mv;
     }
+    @RequestMapping(value = "/my_yaoyiyao")
+    public ModelAndView myYaoYiYao(HttpServletRequest request,@RequestParam(value = "openId", defaultValue = "") String openId,@RequestParam("id") long id) {
+        MpAccount mpAccount = WxMemoryCacheClient.getSingleMpAccount();//获取缓存中的唯一账号
+        if (mpAccount != null) {
+            ModelAndView mv = new ModelAndView("wxweb/my_yaoyiyao");
+            AccountFans fans = accountFansService.getByOpenId(openId);//同时更新数据库
+            if (null != fans && fans.getId()==id) {
+                accountFansService.updateUserMoneyCheck(fans.getId());
+            }
+            mv.addObject("openId", openId);
+            mv.addObject("fans", fans);
+            mv.addObject("id", id);
+            /*}else {
+                mv = new ModelAndView("common/failureMobile");
+                mv.addObject("message", "读取用户信息失败");
+                return mv;
+            }*/
+            return mv;
+        } else {
+            ModelAndView mv = new ModelAndView("common/failureMobile");
+            mv.addObject("message", "OAuth获取openid失败");
+            return mv;
+        }
+    }
+    @RequestMapping(value = "/my_yaoyiyao_json", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    String myYaoyiyaoJson(ModelMap map, @RequestParam("id") String id, @RequestParam(value = "openId", defaultValue = "") String openId) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("result", "-1");
+        jsonObject.put("msg", "系统错误");
+        if(openId==null||"".equals(openId)){
+            jsonObject.put("result", "-3");
+            jsonObject.put("msg", "请先关注再摇一摇");
+            jsonObject.put("lastChances", 3);
+            return jsonObject.toString();
+        }
+        AccountFans fans = accountFansService.getById(id);
+        if (null != fans) {
+            if(fans.getUserGiveYaoyiyaoTimes()<fans.getUserYaoyiyaoTimesUesd())
+            {
+                jsonObject.put("result", "-2");
+                jsonObject.put("msg", "摇奖次数不够");
+                return jsonObject.toString();
+            }
+            double yaoyiyaoGoldCoin=accountFansService.updateUserYaoyiyao(fans);
+            jsonObject.put("userYaoyiyaoGoldCoin", yaoyiyaoGoldCoin);
+            if(yaoyiyaoGoldCoin<=0){
+                jsonObject.put("result", "1");
+                jsonObject.put("msg", "未中奖");
+                jsonObject.put("lastChances", fans.getUserGiveYaoyiyaoTimes()-fans.getUserYaoyiyaoTimesUesd()+1);
+                return jsonObject.toString();
+            }
+            jsonObject.put("result", "2");
+            jsonObject.put("msg", "中奖了");
+            jsonObject.put("lastChances", fans.getUserGiveYaoyiyaoTimes() - fans.getUserYaoyiyaoTimesUesd() + 1);
+        }
+        return jsonObject.toString();
+    }
+    @RequestMapping(value = "/charge_gold_to_money")
+    public ModelAndView chargeGoldToMoney(HttpServletRequest request, @RequestParam("openId") String openId) {
+        MpAccount mpAccount = WxMemoryCacheClient.getSingleMpAccount();//获取缓存中的唯一账号
+        if (mpAccount != null) {
+            ModelAndView mv = new ModelAndView("wxweb/charge_gold_to_money");
+            AccountFans fans = accountFansService.getByOpenId(openId);//同时更新数据库
+            mv.addObject("openid", openId);
+            mv.addObject("fans", fans);
+            return mv;
+        } else {
+            ModelAndView mv = new ModelAndView("common/failureMobile");
+            mv.addObject("message", "OAuth获取openid失败");
+            return mv;
+        }
+    }
+    @RequestMapping(value = "/charge_gold_to_money_json", method = RequestMethod.POST)
+    public
+    @ResponseBody
+    String chargeGoldToMoneyJson(ModelMap map, @RequestParam("openId") String openId, @RequestParam("userGoldCoin") double userGoldCoin, @RequestParam("userMoneyPassword") String userMoneyPassword) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("result", false);
+        jsonObject.put("msg", "系统错误");
+        AccountFans fans = accountFansService.getByOpenId(openId);
+        if (null != fans) {
+            if(!userMoneyPassword.equals(fans.getUserMoneyPassword())){
+                jsonObject.put("msg", "提现密码不正确");
+                return jsonObject.toString();
+            }
+            if(userGoldCoin>fans.getUserGoldCoin()){
+                jsonObject.put("msg", "金币不足兑换");
+                return jsonObject.toString();
+            }
+            accountFansService.updateUserGoldCoinToMoney(fans);
+            jsonObject.put("result", true);
+            jsonObject.put("msg", "金币兑换成功");
+        }
+        return jsonObject.toString();
+    }
+    @RequestMapping(value = "/my_input_refer_url")
+    public ModelAndView myInputReferUrl(HttpServletRequest request, @RequestParam("openId") String openId) {
+        MpAccount mpAccount = WxMemoryCacheClient.getSingleMpAccount();//获取缓存中的唯一账号
+        if (mpAccount != null) {
+            ModelAndView mv = new ModelAndView("wxweb/my_input_refer_url");
+            AccountFans fans = accountFansService.getByOpenId(openId);//同时更新数据库
+            mv.addObject("openid", openId);
+            mv.addObject("fans", fans);
+            return mv;
+        } else {
+            ModelAndView mv = new ModelAndView("common/failureMobile");
+            mv.addObject("message", "OAuth获取openid失败");
+            return mv;
+        }
+    }
+    @RequestMapping(value = "/my_input_refer_url_json", method = RequestMethod.POST)
+    @ResponseBody
+    String myInputReferUrlJson(ModelMap map,  @RequestParam("awardCode") long referId, @RequestParam("openId") String openId) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("result", false);
+        String content="系统错误";
+        MpAccount mpAccount = WxMemoryCacheClient.getSingleMpAccount();//获取缓存中的唯一账号
+        AccountFans accountFans = accountFansService.getByOpenId(openId);
+        if (null != accountFans) {
+            if(referId>0){
+                if (accountFans.getUserReferId()!=0){
+                    content="已经领取了奖励，请生成海报转发推广获取更多奖励";
+                }else{
+                    accountFansService.updateUserReferId(openId,referId);
+                    accountFans.setUserReferId(referId);
+                    Random random = new Random();
+                    double money = mpAccount.getInitSendMoneyMin() + (mpAccount.getInitSendMoneyMax() - mpAccount.getInitSendMoneyMin()) * random.nextDouble();
+                    accountFansService.updateUserAddMoney(accountFans, money, accountFans.getUserReferId(), mpAccount, 0);
+                    content="领取了#{money}元奖励，请生成海报转发推广获取更多奖励";
+                    content = content.replace("#{money}", String.format("%.2f", money));
+                    Flow flow = new Flow();
+                    flow.setCreatetime(new Date());
+                    flow.setUserFlowMoney(money);
+                    flow.setFansId(accountFans.getId());
+                    flow.setFlowType(2);//二次关注获取的红包。
+                    flow.setFromFansId(0);
+                    try {
+                        flow.setUserFlowLogBinary(content.getBytes("UTF-8"));
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                    flowService.add(flow);
+                }
+                jsonObject.put("result", true);
+            }
+        }
+        jsonObject.put("msg", content);
+        return jsonObject.toString();
+    }
+
+
+
     @RequestMapping(value = "/my_referer_jump")
     public String myRefererJump(HttpServletRequest request) {
         return "redirect:weixin://weixin.qq.com/r/WEjTy_zEqbHWraio9x1K";

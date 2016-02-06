@@ -32,7 +32,10 @@
 		URL = #{url},TOKEN = #{token},MSGCOUNT = #{msgcount},CREATETIME = #{createtime}
 		,referMoneyMin = #{referMoneyMin},referMoneyMax = #{referMoneyMax}
 		,initSendMoneyMax = #{initSendMoneyMax},tixianMinMoney = #{tixianMinMoney},
-		initSendMoneyMin=#{initSendMoneyMin},serverAppid=#{serverAppid},serverAppsecret=#{serverAppsecret}
+		initSendMoneyMin=#{initSendMoneyMin},serverAppid=#{serverAppid},serverAppsecret=#{serverAppsecret},
+		yaoyiyaoSendGoldCoinMin=#{yaoyiyaoSendGoldCoinMin},yaoyiyaoSendGoldCoinMax=#{yaoyiyaoSendGoldCoinMax},yaoyiyaoPercent=#{yaoyiyaoPercent},
+		goldCoinToMoney=#{goldCoinToMoney},
+		giveYaoyiyaoTimesPerRefer=#{giveYaoyiyaoTimesPerRefer}
 		WHERE ID = #{id}
 	</update>
 

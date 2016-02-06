@@ -134,6 +134,20 @@
 		WHERE id = #{id}
 	</update>
 
+	<update id="updateUserGoldCoin" parameterType="com.wxcms.domain.AccountFans" flushCache="true">
+		UPDATE t_wxcms_account_fans SET userGoldCoin =(userGoldCoin + (#{userGoldCoin}))
+		WHERE id = #{id}
+	</update>
+	<update id="updateUserYaoyiyaoTimesUesd" parameterType="com.wxcms.domain.AccountFans" flushCache="true">
+		UPDATE t_wxcms_account_fans SET userYaoyiyaoTimesUesd =(userYaoyiyaoTimesUesd + (#{userYaoyiyaoTimesUesd}))
+		WHERE id = #{id}
+	</update>
+
+	<update id="updateUserGiveYaoyiyaoTimes" parameterType="com.wxcms.domain.AccountFans" flushCache="true">
+		UPDATE t_wxcms_account_fans SET userGiveYaoyiyaoTimes =(userGiveYaoyiyaoTimes + (#{userGiveYaoyiyaoTimes}))
+		WHERE id = #{id}
+	</update>
+
 
 	<delete id="delete" parameterType="com.wxcms.domain.AccountFans" >
 		DELETE FROM t_wxcms_account_fans WHERE ID = #{id}

@@ -1,0 +1,103 @@
+
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title><#if fans??>摇一摇<#else>分享给好友可获取更多机会☞</#if></title>
+    <link rel="stylesheet" type="text/css" href="/res/css/style.css">
+    <link rel="stylesheet" type="text/css" href="/res/css/animate.min.css">
+    <script type="text/javascript" src="/res/js/zepto.min.js"></script>
+    <script type="text/javascript" src="/res/js/red.js"></script>
+    <script type="text/javascript">
+        function hiddenDiv(){
+            $('.red-tc').css('display', 'none');
+        }
+        function goToDetail(){
+            self.location='<#if fans??>/wxapi/referer_detail.html?id=${fans.id?c}<#else>#</#if>';
+        }
+        function goToRefer(){
+            self.location='<#if fans??>/wxapi/my_referer.html?referId=${fans.id!}<#else>#</#if>';
+        }
+        function goToSub(){
+            self.location='/wxapi/my_referer.html?referId=${id?c}';
+        }
+    </script>
+</head>
+<body>
+<!-- 红包音乐 -->
+<audio id="shakemusic" src="/res/music/red-01.mp3" style="display: none;"></audio>
+<audio id="openmusic" src="/res/music/red-02.mp3" style="display: none;"></audio>
+<!-- End 红包音乐 -->
+<!-- 红包 -->
+<div class="red_bg">
+    <div class="red-ts"></div>
+    <div class="red-ss-bg">
+        <span class="red-ss animated"></span>
+    </div>
+    <div class="red-jh">
+        <input type="hidden" id="fanId" value="${id?c}" />
+        <input type="hidden" id="openId" value="${openId}" />
+        您还有<span id="lastChances"><#if fans??>${fans.userGiveYaoyiyaoTimes-fans.userYaoyiyaoTimesUesd+1}<#else>3</#if></span>次机会
+    </div>
+    <div class="red-tc">
+        <!-- 已中奖 -->
+        <div class="red-yzj" id="red-yzj" style="display:none">
+            <div class="red-tc-k">
+                <p>$<span id="userGoldCoin">50.00</span>金豆</p>
+                恭喜您中奖获得金豆
+            </div>
+            <div class="red-tc-btn">
+                <button onclick="goToDetail();">查看明细</button>
+            </div>
+
+            <div class="red-tc-btn">
+                <button onclick="hiddenDiv();">再摇一次</button>
+            </div>
+        </div>
+        <!-- End 已中奖 -->
+        <!-- 未中奖 -->
+         <div class="red-yzj" id="red-wzj" style="display:none">
+            <div class="red-tc-k">
+                <img src="/res/img/red-bw.png">
+                哎呀！</br>您的金豆被风刮走了啊
+            </div>
+            <div class="red-tc-btn">
+                <button onclick="hiddenDiv();">再摇一次</button>
+            </div>
+             <div class="red-tc-btn">
+                 <button onclick="goToRefer();">获取更多机会</button>
+             </div>
+        </div>
+        <!-- End 未中奖 -->
+        <!-- 机会用光了 -->
+        <div class="red-yzj" id="red-mjh" style="display:none">
+            <div class="red-tc-k">
+                <img src="/res/img/red-jh.png">
+                机会用光了哦！</br>推荐一个好友新增一次机会！
+            </div>
+            <div class="red-tc-btn">
+                <button onclick="goToDetail();">查看明细</button>
+            </div>
+
+            <div class="red-tc-btn">
+                <button onclick="goToRefer();">获取更多机会</button>
+            </div>
+        </div>
+        <!-- End 机会用光了 -->
+
+        <div class="red-yzj" id="red-refer" style="display:none">
+            <div class="red-tc-k">
+                <img src="/res/img/red-jh.png">
+                请先关注再摇奖！
+            </div>
+            <div class="red-tc-btn">
+                <button onclick="goToSub();">去关注</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+<!-- End 红包 -->
+</body>
+</html>

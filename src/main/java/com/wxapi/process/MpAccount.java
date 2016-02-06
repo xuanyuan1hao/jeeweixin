@@ -26,6 +26,56 @@ public class MpAccount implements Serializable{
 	private double initSendMoneyMin;//初始关注赠送金额
 	private double tixianMinMoney;//提现最小金额
 
+	private double yaoyiyaoSendGoldCoinMin;//摇一摇中奖最小金额
+	private double yaoyiyaoSendGoldCoinMax;//摇一摇中奖最大金额
+	private double yaoyiyaoPercent;//摇一摇中奖概率
+	private double goldCoinToMoney;//摇一摇金币兑换RMB兑换比率
+	private int giveYaoyiyaoTimesPerRefer;//每次推荐一个好友的摇一摇赠送次数
+
+	public void setGiveYaoyiyaoTimesPerRefer(int giveYaoyiyaoTimesPerRefer) {
+		this.giveYaoyiyaoTimesPerRefer = giveYaoyiyaoTimesPerRefer;
+	}
+
+	public int getGiveYaoyiyaoTimesPerRefer() {
+		return giveYaoyiyaoTimesPerRefer;
+	}
+
+	public static long getSerialVersionUID() {
+		return serialVersionUID;
+	}
+
+	public double getYaoyiyaoSendGoldCoinMin() {
+		return yaoyiyaoSendGoldCoinMin;
+	}
+
+	public double getYaoyiyaoSendGoldCoinMax() {
+		return yaoyiyaoSendGoldCoinMax;
+	}
+
+	public double getYaoyiyaoPercent() {
+		return yaoyiyaoPercent;
+	}
+
+	public double getGoldCoinToMoney() {
+		return goldCoinToMoney;
+	}
+
+	public void setYaoyiyaoSendGoldCoinMin(double yaoyiyaoSendGoldCoinMin) {
+		this.yaoyiyaoSendGoldCoinMin = yaoyiyaoSendGoldCoinMin;
+	}
+
+	public void setYaoyiyaoSendGoldCoinMax(double yaoyiyaoSendGoldCoinMax) {
+		this.yaoyiyaoSendGoldCoinMax = yaoyiyaoSendGoldCoinMax;
+	}
+
+	public void setYaoyiyaoPercent(double yaoyiyaoPercent) {
+		this.yaoyiyaoPercent = yaoyiyaoPercent;
+	}
+
+	public void setGoldCoinToMoney(double goldCoinToMoney) {
+		this.goldCoinToMoney = goldCoinToMoney;
+	}
+
 	public void setServerAppid(String serverAppid) {
 		this.serverAppid = serverAppid;
 	}

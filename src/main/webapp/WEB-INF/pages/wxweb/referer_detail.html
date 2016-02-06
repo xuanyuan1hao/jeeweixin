@@ -27,7 +27,7 @@
                 <pre class="am-pre-scrollable">
                 <#if listFlow??>
                     <#list listFlow as flow>
-                    <span class="am-text-success">[${flow.createtime?string("yyyy-MM-dd HH:mm:ss")}]</span> <span class="am-text-danger">${flow.userFlowMoney}</span>
+                    <span class="am-text-success">[${flow.createtime?string("yyyy-MM-dd HH:mm:ss")}]</span> <span class="am-text-danger">${flow.userFlowMoney}元</span> <span class="am-text-danger">${flow.userFlowGoldCoin?string("#.##")}金币</span>
                         ${flow.userFlowLogText}
                     </#list>
                 </#if>

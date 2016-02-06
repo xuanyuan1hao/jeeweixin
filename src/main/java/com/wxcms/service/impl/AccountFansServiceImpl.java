@@ -5,6 +5,7 @@ import com.core.util.ImageByteUtils;
 import com.wxapi.process.MpAccount;
 import com.wxapi.process.MsgType;
 import com.wxapi.process.WxApiClient;
+import com.wxapi.process.WxMemoryCacheClient;
 import com.wxcms.domain.AccountFans;
 import com.wxcms.domain.FansTixian;
 import com.wxcms.domain.Flow;
@@ -114,8 +115,10 @@ public class AccountFansServiceImpl implements AccountFansService{
 			entityDao.updateAddUserMoney(money, fans.getOpenId());//当前关注的用户获取的金额
 		AccountFans referAccountFans=getById(referUserId + "");
 		if((referAccountFans!=null)&&times<3){
-			if(times==0)
+			if(times==0){
 				updateUserLevel1(1,referAccountFans.getId());
+				entityDao.updateUserGiveYaoyiyaoTimes(mpAccount.getGiveYaoyiyaoTimesPerRefer(), referUserId);
+			}
 			else if(times==1)
 				updateUserLevel2(1, referAccountFans.getId());
 			else if(times==2)
@@ -131,7 +134,7 @@ public class AccountFansServiceImpl implements AccountFansService{
 			for (int i=0;i<times;i++){
 				logAdd=logAdd+"的好友";
 			}
-			String log="您的好友#{friendName}扫描了您的二维码，您获取到了#{money}元红包";
+			String log="您的好友#{friendName}扫描了您的二维码，您获取到了#{money}元红包,并获得摇一摇次数"+mpAccount.getGiveYaoyiyaoTimesPerRefer()+"次";
 			log=getContent(MsgType.SUBSCRIBE_REWARD_LEVEL.toString(),log);
 			log=log.replace("#{friendName}",fans.getNicknameStr()+logAdd).replace("#{money}",String.format("%.2f",referMoney));
 			Flow flow=new Flow();
@@ -184,8 +187,10 @@ public class AccountFansServiceImpl implements AccountFansService{
 		AccountFans recommendAccountFans=this.getById(accountFans.getUserReferId() + "");
 		if(null!=recommendAccountFans&&times<3){
 			String logAdd="";
-			if(times==0)
+			if(times==0){
 				this.updateUserLevel1(-1, recommendAccountFans.getId());
+				entityDao.updateUserGiveYaoyiyaoTimes(0-mpAccount.getGiveYaoyiyaoTimesPerRefer(),recommendAccountFans.getId());
+			}
 			else if(times==1)
 				this.updateUserLevel2(-1, recommendAccountFans.getId());
 			else if(times==2)
@@ -193,7 +198,7 @@ public class AccountFansServiceImpl implements AccountFansService{
 			for (int i=0;i<times;i++){
 				logAdd=logAdd+"的好友";
 			}
-			String log="您的好友#{friendName}取消了关注，您被扣除#{money}元红包";
+			String log="您的好友#{friendName}取消了关注，您被扣除#{money}元红包,并扣除摇一摇次数："+mpAccount.getGiveYaoyiyaoTimesPerRefer()+"次";
 			log=getContent(MsgType.UNSUBSCRIBE_REWARD.toString(),log);
 			log=log.replace("#{friendName}",accountFans.getNicknameStr()+logAdd).replace("#{money}",money+"");
 			Flow flow=new Flow();
@@ -241,5 +246,62 @@ public class AccountFansServiceImpl implements AccountFansService{
 		//读取图片文件为byte
 		byte[] imageByte=ImageByteUtils.image2byte(recommendImgBlob);
 		entityDao.updateRecommendImgBlob(imageByte,id);
+	}
+	//用户摇奖
+	public double updateUserYaoyiyao(AccountFans fans) {
+		MpAccount mpAccount = WxMemoryCacheClient.getSingleMpAccount();//获取缓存中的唯一账号
+		Random random = new Random();
+		double retGoldCoin=0.00f;
+		if(random.nextDouble()<=(mpAccount.getYaoyiyaoPercent()/100)){
+			retGoldCoin=mpAccount.getYaoyiyaoSendGoldCoinMin()+(mpAccount.getYaoyiyaoSendGoldCoinMax()-mpAccount.getYaoyiyaoSendGoldCoinMin())*random.nextDouble();
+			//更新用户剩余金币数量
+			entityDao.updateUserGoldCoin(retGoldCoin, fans.getId());
+		}
+		entityDao.updateUserYaoyiyaoTimesUesd(1, fans.getId());
+		Flow flow=new Flow();
+		flow.setFromFansId(fans.getId());
+		flow.setFansId(fans.getId());
+		flow.setCreatetime(new Date());
+		flow.setUserFlowMoney(0.00f);
+		flow.setUserFlowGoldCoin(retGoldCoin);
+		flow.setFlowType(5);
+		flow.setFromFansId(fans.getId());
+		String log="参与摇一摇奖励金豆活动，获取金豆"+String.format("%.2f",retGoldCoin)+"个";
+		if(retGoldCoin<=0.000001){
+			log="参与摇一摇奖励金豆活动，未中奖";
+		}
+		try {
+			flow.setUserFlowLogBinary(log.getBytes("UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		flowService.add(flow);
+
+		return retGoldCoin;
+	}
+	//这里进行金币兑换成rmb，直接兑换，无需审核
+	public void updateUserGoldCoinToMoney(AccountFans fans) {
+		double chargeGoldCoin=fans.getUserGoldCoin();
+		MpAccount mpAccount = WxMemoryCacheClient.getSingleMpAccount();//获取缓存中的唯一账号
+		if(null!=mpAccount){
+			double chargeMoney=chargeGoldCoin/mpAccount.getGoldCoinToMoney();//计算得到兑换后的RMB金额
+			entityDao.updateAddUserMoney(chargeMoney, fans.getOpenId());
+			entityDao.updateUserGoldCoin(0-chargeGoldCoin,fans.getId());
+			Flow flow=new Flow();
+			flow.setFromFansId(fans.getId());
+			flow.setFansId(fans.getId());
+			flow.setCreatetime(new Date());
+			flow.setUserFlowMoney(chargeMoney);
+			flow.setUserFlowGoldCoin(0-chargeGoldCoin);
+			flow.setFlowType(6);
+			flow.setFromFansId(fans.getId());
+			String log="金币兑换成人民币，消耗金币"+String.format("%.2f",chargeGoldCoin)+"个";
+			try {
+				flow.setUserFlowLogBinary(log.getBytes("UTF-8"));
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+			flowService.add(flow);
+		}
 	}
 }

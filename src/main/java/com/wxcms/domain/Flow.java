@@ -12,10 +12,19 @@ public class Flow extends BaseEntity {
     private long fromFansId;
     private double userFlowMoney;
     private String userFlowLog;
-    private int flowType;//流水类型1为推广红包，2为关注红包，3为取消关注扣除红包,4为提现记录情况
+    private int flowType;//流水类型1为推广红包，2为关注红包，3为取消关注扣除红包,4为提现记录情况,5为摇一摇获得金币，6为金币兑换成RMB
     private String flowTypeStr;//返回流水类型名字
     private byte[] userFlowLogBinary;//由于用户名字会出现非法字符，所以这里用二进制来存储
     private String userFlowLogText;
+    private double userFlowGoldCoin;
+
+    public double getUserFlowGoldCoin() {
+        return userFlowGoldCoin;
+    }
+
+    public void setUserFlowGoldCoin(double userFlowGoldCoin) {
+        this.userFlowGoldCoin = userFlowGoldCoin;
+    }
 
     public String getUserFlowLogText() {
         if(null==userFlowLog){
@@ -48,6 +57,8 @@ public class Flow extends BaseEntity {
                 return "取消红包";
             case 4:
                 return "提现";
+            case 5:
+                return "摇一摇金币获得";
             default:
                 return "未知";
         }
