@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://10.20.91.130/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.wxcms.mapper.TaskCodeDao">
+
+    <select id="listForPage" resultType="com.wxcms.domain.TaskCode">
+        SELECT m.*
+        from t_wxcms_task_code m
+        WHERE 1=1
+        <if test="param1.userId!=0">
+            and m.userId = #{param1.userId}
+        </if>
+        order by moneyPer desc
+        LIMIT #{param2.start} , #{param2.pageSize}
+    </select>
+    <select id="getTotalItemsCount" parameterType="com.wxcms.domain.TaskCode" resultType="java.lang.Integer">
+        SELECT count(m.id) FROM t_wxcms_task_code m
+        WHERE 1=1
+        <if test="userId!=0">
+            and m.userId = #{userId}
+        </if>
+    </select>
+
+    <select id="getById" resultType="com.wxcms.domain.TaskCode">
+        SELECT * FROM t_wxcms_task_code WHERE ID = #{id}
+    </select>
+
+    <insert id="add" parameterType="com.wxcms.domain.TaskCode" flushCache="true">
+        INSERT INTO t_wxcms_task_code ( userId,moneyPer,wxCodeImgHref,wxRemark,validateMenuUrl,createtime,base64WxCode )
+        VALUES ( #{userId},#{moneyPer},#{wxCodeImgHref},#{wxRemark},#{validateMenuUrl},#{createtime},#{base64WxCode})
+    </insert>
+
+    <update id="update" parameterType="com.wxcms.domain.TaskCode" flushCache="true">
+        UPDATE t_wxcms_task_code SET moneyPer = #{moneyPer},userId = #{userId},wxCodeImgHref = #{wxCodeImgHref},
+        wxRemark = #{wxRemark},validateMenuUrl = #{validateMenuUrl},base64WxCode=#{base64WxCode} WHERE ID = #{id}
+    </update>
+
+</mapper>

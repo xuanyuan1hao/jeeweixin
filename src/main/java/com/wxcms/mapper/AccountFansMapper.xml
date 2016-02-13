@@ -76,6 +76,11 @@
 	<update id="updateLastUpdateTime" parameterType="com.wxcms.domain.AccountFans" flushCache="true">
 		UPDATE t_wxcms_account_fans SET lastUpdateTime = #{lastUpdateTime} WHERE OPENID = #{openId}
 	</update>
+	<update id="updateRecommendImgCreateTime" parameterType="com.wxcms.domain.AccountFans" flushCache="true">
+		UPDATE t_wxcms_account_fans SET recommendImgCreateTime = #{recommendImgCreateTime} WHERE OPENID = #{openId}
+	</update>
+
+
 	<update id="updateUserReferId" parameterType="com.wxcms.domain.AccountFans" flushCache="true">
 		UPDATE t_wxcms_account_fans SET userReferId = #{userReferId} WHERE OPENID = #{openId}
 	</update>

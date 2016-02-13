@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta name="baidu-site-verification" content="hwjLzWL9gF" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="${s.base}/res/css/reset.css" rel="stylesheet" type="text/css"/>
+    <script type="text/javascript" src="${s.base}/res/jquery-1.9.1.min.js"></script>
+</head>
+<body style="background-color:#fdfdfd;">
+<form action="#" id="add_form">
+   <input id="userId" value="${userInfo.id?c}" name="userId" type="hidden"/>
+    <input id="id" value="${taskCode.id?c}" name="id" type="hidden"/>
+    <div>二维码地址：<input id="wxCodeImgHref" value="${taskCode.wxCodeImgHref!}" name="wxCodeImgHref" type="text"/></div>
+    <div>备注：<input id="wxRemarkText" value="${taskCode.wxRemarkText!}" name="wxRemarkText" type="text"/></div>
+    <div>关注单价:<input id="moneyPer" value="${taskCode.moneyPer!}" name="moneyPer" type="text"/></div>
+<div>
+    <input type="button" name="add_btn" id="add_btn" value="修改"/></div>
+</form>
+</body>
+<script>
+    $("#add_btn").click(function(){
+        var wxCodeImgHref=$("#wxCodeImgHref").val();
+        if(wxCodeImgHref==""){
+            alert("二维码地址不能为空");
+            return;
+        }
+        var moneyPer=$("#moneyPer").val();
+        if(moneyPer==""){
+            alert("单价不能为空");
+            return;
+        }
+        $.ajax({
+            type: "POST",
+            url:"/user/edit_code_task_json.html",
+            data:$('#add_form').serialize(),// 要提交的表单
+            success: function(ret)
+            {
+                var returnJson=JSON.parse(ret);
+                alert(returnJson.msg);
+                if(returnJson.result)
+                {
+                    window.location.href="/user/manage_code_task.html";
+                }
+            },
+            error: function(error){alert(error);}
+        });
+    });
+</script>
+</html>

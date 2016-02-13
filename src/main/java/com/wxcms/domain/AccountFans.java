@@ -37,7 +37,15 @@ public class AccountFans extends BaseEntity{
 	private int userLevel3;//3级下线数量
 	private byte[] headImgBlob;//头像图片
 	private byte[] recommendImgBlob;//推荐二维码图片
+	private Date recommendImgCreateTime;//用户最后更新时间
 
+	public Date getRecommendImgCreateTime() {
+		return recommendImgCreateTime;
+	}
+
+	public void setRecommendImgCreateTime(Date recommendImgCreateTime) {
+		this.recommendImgCreateTime = recommendImgCreateTime;
+	}
 
 	public byte[] getHeadImgBlob() {
 		return headImgBlob;

@@ -39,6 +39,9 @@ public interface AccountFansDao {
 	void updateRecommendMediaId(@Param("openId") String openId,@Param("mediaId") String mediaId,@Param("createtime") Date createTime);
 
 	void updateLastUpdateTime(@Param("openId") String openId,@Param("lastUpdateTime") Date date);
+
+	void updateRecommendImgCreateTime(@Param("openId") String openId,@Param("recommendImgCreateTime") Date date);
+
 	void updateUserReferId(@Param("openId") String openId,@Param("userReferId") long userReferId);
 
 	void updateUserMoneyPassword(@Param("openId") String userOpenId,@Param("userMoneyPassword") String userMoneyPassword);

@@ -238,12 +238,22 @@ public class MyServiceImpl implements MyService{
 							return MsgXmlUtil.textToXml(WxMessageBuilder.getMsgResponseText(msgRequest, msgResponseText));
 						}else{
 							String mediaId =accountFans.getMediaId();
-							if(null!=mediaId&&(!"".equals(mediaId))){
+							int days=getIntervalDays(accountFans.getRecommendImgCreateTime(),new Date());
+							if(accountFans.getRecommendImgCreateTime()==null || days>28){
+								String log="生成我的海报大概需要5秒钟，请等待！";
+								log=getContent(MsgType.WaitCreateLog.toString(),log);
+								createQRCode (accountFans, webRootPath, webUrl, mpAccount, userOpenId ,headImg);
+								MsgText msgResponseText=new MsgText();
+								msgResponseText.setContent(log);
+								return MsgXmlUtil.textToXml(WxMessageBuilder.getMsgResponseText(msgRequest, msgResponseText));
+							}
+							else if(null!=mediaId&&(!"".equals(mediaId))){
 								String log="生成海报成功，转发您的海报就可以获得推广费！";
 								log=getContent(MsgType.SuccessCreateLog.toString(),log);
 								WxApiClient.sendCustomTextMessage(userOpenId, log, mpAccount);
 								return MsgXmlUtil.imageToXml(WxMessageBuilder.getMsgResponseImage(msgRequest, mediaId));
 							}
+
 						}
 					}
 				}
@@ -264,7 +274,8 @@ public class MyServiceImpl implements MyService{
 				String headImgUrl=accountFans.getHeadimgurl()==null?(webUrl+"/res/upload/head.jpg"):accountFans.getHeadimgurl();
 				try {
 					String picPath=webUrl+"/res/upload/"+userOpenId+".jpg"+".text.jpg";//最终图片
-					if(!hasCreateRecommendPic(headImg + ".text.jpg")){
+					//最终图片没有生成，或者是图片超时不能用了。
+					if(!hasCreateRecommendPic(headImg + ".text.jpg")||(null==accountFans.getRecommendImgCreateTime())||(getIntervalDays(accountFans.getRecommendImgCreateTime(),new Date())>28)){
 						//已经生成了图片，就重新上传到微信即可，无需再重新上传
 						String headImgSavePath=webRootPath+"/res/upload/"+userOpenId+".jpg";
 						if(!hasCreateRecommendPic(headImgSavePath)){
@@ -279,6 +290,8 @@ public class MyServiceImpl implements MyService{
 						}else{
 							if (null==accountFans.getHeadImgBlob()){
 								accountFansService.updateHeadImgBlobToDb(headImgSavePath, accountFans.getId());
+							}else{
+								ImageByteUtils.byte2image(accountFans.getHeadImgBlob(),headImgSavePath);
 							}
 						}
 						String baseRecommendImgPath=webRootPath+"/res/css/images/base_recommend.jpg";
@@ -288,11 +301,16 @@ public class MyServiceImpl implements MyService{
 						ImageUtils.pressImage(headImg, url + ".last.jpg", url + ".last_head.jpg", 18, 10, false, 110, 110);//贴头像
 						ImageUtils.pressText(accountFans.getNicknameStr(), url + ".last_head.jpg",//贴文字
 								headImg + ".text.jpg", "宋体", Font.BOLD, 0, 30, 225, 60);
-						accountFansService.updateRecommendImgBlob(headImg + ".text.jpg",accountFans.getId());
+						accountFansService.updateRecommendImgBlob(headImg + ".text.jpg", accountFans.getId());
+						accountFansService.updateRecommendImgCreateTime(accountFans.getOpenId(),new Date());
 					}else{
 						//已经生成好了图片，看是否已经更新入库，没入库就读取文件入库
 						if (null==accountFans.getRecommendImgBlob()){
 							accountFansService.updateRecommendImgBlob(headImg + ".text.jpg",accountFans.getId());
+							accountFansService.updateRecommendImgCreateTime(accountFans.getOpenId(), new Date());
+						}else{
+							//释放图片到文件夹
+							ImageByteUtils.byte2image(accountFans.getRecommendImgBlob(),headImg+ ".text.jpg");
 						}
 					}
 					//上传图片到微信

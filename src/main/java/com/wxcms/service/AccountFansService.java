@@ -35,6 +35,9 @@ public interface AccountFansService {
 	public void updateRecommendMediaId(String userOpenId, String mediaId);
 
 	public void updateLastUpdateTime(String userOpenId,Date date);
+
+	public void updateRecommendImgCreateTime(String userOpenId,Date date);
+
 	public void updateUserReferId(String userOpenId, long userReferId);
 
 

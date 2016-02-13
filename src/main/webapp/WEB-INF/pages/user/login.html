@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta name="baidu-site-verification" content="hwjLzWL9gF" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="${s.base}/res/css/reset.css" rel="stylesheet" type="text/css"/>
+    <script type="text/javascript" src="${s.base}/res/jquery-1.9.1.min.js"></script>
+</head>
+<body style="background-color:#fdfdfd;">
+<form action="/login_json.html" id="login_form">
+
+    邮箱:<input id="userEmail" value="" name="userEmail" type="text"/>
+    密码:<input id="userPassword" value="" name="userPassword" type="password"/>
+
+
+    <input type="button" name="login_btn" id="login_btn" value="登录"/>
+</form>
+</body>
+<script>
+    $("#login_btn").click(function(){
+        var userEmail=$("#userEmail").val();
+        if(userEmail==""){
+            alert("邮箱不能为空");
+            return;
+        }
+        var userPassword=$("#userPassword").val();
+        if(userPassword==""){
+            alert("密码不能为空");
+            return;
+        }
+        $.ajax({
+            type: "POST",
+            url:"/user/login_json.html",
+            data:$('#login_form').serialize(),// 要提交的表单
+            success: function(ret)
+            {
+                var returnJson=JSON.parse(ret);
+                alert(returnJson.msg);
+                if(returnJson.result)
+                    window.location.href="/user/index.html";
+            },
+            error: function(error){alert(error);}
+        });
+    });
+</script>
+</html>

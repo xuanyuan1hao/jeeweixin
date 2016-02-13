@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta name="baidu-site-verification" content="hwjLzWL9gF" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="${s.base}/res/css/reset.css" rel="stylesheet" type="text/css"/>
+    <script type="text/javascript" src="${s.base}/res/jquery-1.9.1.min.js"></script>
+</head>
+<body>
+<form id="queryPageForm" action="">
+    <div class="block-content-content">
+        <table class="fm-table">
+            <thead>
+            <tr >
+                <td style="width: 150px;">编号</td>
+                <td>微信号</td>
+                <td>单价</td>
+                <td>验证菜单</td>
+                <td>备注</td>
+                <td>二维码</td>
+                <td>处理</td>
+            </tr>
+            </thead>
+            <tbody>
+            <#list pagination.items as row>
+                <#if row_index %2 == 0>
+                    <tr style="height:40px;">
+                        <#else>
+                            <tr style="height:40px;background-color:#f9f9f9;">
+                </#if>
+                <td>${row.id!}</td>
+                <td>${row.wxCodeImgHref!}</td>
+                <td>${row.moneyPer!}</td>
+                <td>${row.validateMenuUrl!}</td>
+                <td><#if row.base64WxCode??><img width="100px;" src="data:image/jpg;base64,${row.base64WxCode!}" /></#if></td>
+                <td>${row.wxRemarkText!}</td>
+                <td>
+                    <a href="${s.base}/user/edit_code_task.html?id=${row.id}" >修改</a>
+
+                    <a href="${s.base}/user/delete_code_task.html?id=${row.id}" >删除</a>
+                </td>
+                </tr>
+            </#list>
+            </tbody>
+        </table>
+
+        <#include "../common/pagination.html">
+    </div>
+</form>
+</body>

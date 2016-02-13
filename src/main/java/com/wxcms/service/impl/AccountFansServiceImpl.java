@@ -94,6 +94,9 @@ public class AccountFansServiceImpl implements AccountFansService{
 		entityDao.updateLastUpdateTime(userOpenId, date);
 	}
 
+	public void updateRecommendImgCreateTime(String userOpenId,Date date){
+		entityDao.updateRecommendImgCreateTime(userOpenId, date);
+	}
 	public void updateUserReferId(String userOpenId, long userReferId) {
 		entityDao.updateUserReferId(userOpenId, userReferId);
 	}

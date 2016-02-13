@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://10.20.91.130/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.wxcms.mapper.UserInfoDao">
+
+    <select id="paginationEntity" resultType="com.wxcms.domain.UserInfo">
+        SELECT m.*
+        from t_wxcms_user m
+        <if test="param1.userEmail!=null">
+            WHERE  m.userEmail = #{aram1.userEmail}
+        </if>
+        order by m.id desc
+        LIMIT #{param2.start} , #{param2.pageSize}
+    </select>
+    <select id="getTotalItemsCount" parameterType="com.wxcms.domain.UserInfo" resultType="java.lang.Integer">
+        SELECT count(m.id) FROM t_wxcms_user m
+    </select>
+
+
+    <select id="listForPage" parameterType="com.wxcms.domain.UserInfo" resultType="com.wxcms.domain.UserInfo">
+        SELECT * FROM t_wxcms_user t  ORDER BY t.ID DESC
+    </select>
+
+    <select id="getById" resultType="com.wxcms.domain.UserInfo">
+        SELECT * FROM t_wxcms_user WHERE ID = #{id}
+    </select>
+
+    <select id="getByEmail" parameterType="java.lang.String" resultType="com.wxcms.domain.UserInfo">
+        SELECT * FROM t_wxcms_user WHERE userEmail = #{userEmail}
+    </select>
+
+
+    <insert id="add" parameterType="com.wxcms.domain.UserInfo" flushCache="true">
+        INSERT INTO t_wxcms_user ( createtime,userEmail,userPassword,userMoney,userForzenedMoney,userMoneyPassword)
+        VALUES ( #{createtime},#{userEmail},#{userPassword},#{userMoney},#{userForzenedMoney},#{userMoneyPassword} )
+    </insert>
+
+    <update id="update" parameterType="com.wxcms.domain.UserInfo" flushCache="true">
+        UPDATE t_wxcms_user SET userPassword = #{userPassword} WHERE ID = #{id}
+    </update>
+
+    <update id="updateUserMoney" parameterType="com.wxcms.domain.UserInfo" flushCache="true">
+        UPDATE t_wxcms_user SET userMoney =(userMoney+ (#{userMoney})) WHERE ID = #{id}
+    </update>
+
+    <update id="updateUserForzenedMoney" parameterType="com.wxcms.domain.UserInfo" flushCache="true">
+        UPDATE t_wxcms_user SET userForzenedMoney =(userForzenedMoney+ (#{userForzenedMoney})) WHERE ID = #{id}
+    </update>
+
+    <delete id="delete" parameterType="com.wxcms.domain.UserInfo" >
+        DELETE FROM t_wxcms_user WHERE ID = #{id}
+    </delete>
+
+</mapper>
