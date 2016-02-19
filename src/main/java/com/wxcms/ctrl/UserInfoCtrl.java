@@ -129,6 +129,10 @@ public class UserInfoCtrl {
                 jsonObject.put("msg", "微信号错误，下载二维码失败");
                 return jsonObject.toString();
             }
+            UserInfo userInfo=(UserInfo)httpSession.getAttribute("userInfo");
+            if(null!=userInfo){
+                taskCode.setUserId(userInfo.getId());
+            }
             String base64WxCode= ImageByteUtils.GetImageStr(webRootPath + "/res/upload/"+taskCode.getWxCodeImgHref() + ".jpg");
             taskCode.setBase64WxCode(base64WxCode);
             taskCode.setCreatetime(new Date());

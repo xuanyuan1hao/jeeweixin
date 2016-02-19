@@ -7,9 +7,12 @@
 		<script type="text/javascript" src="${s.base}/res/jquery-1.9.1.min.js"></script>
 	</head>
 	<body style="background-color:#fdfdfd;">
+	<label>管理员登录</label>
 	<form action="/login_json.html" id="login_form">
 		密码:<input id="pwd" value="" name="pwd" type="password"/><input type="button" name="login_btn" id="login_btn" value="登录"/>
 	</form>
+
+	<a href="/user/login.html">商户登录</a>
 	</body>
 	<script>
 	$("#login_btn").click(function(){

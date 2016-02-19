@@ -1,17 +1,28 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+
+<!doctype html>
+<html lang="en">
 <head>
-    <meta name="baidu-site-verification" content="hwjLzWL9gF" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <link href="${s.base}/res/css/reset.css" rel="stylesheet" type="text/css"/>
-    <script type="text/javascript" src="${s.base}/res/jquery-1.9.1.min.js"></script>
+    <title>商家会员中心</title>
+    <#include "head.html">
 </head>
-<body>
-<div style="background-color:#fdfdfd;">
-<span>用户名：${userInfo.userEmail}</span>
-    <div>
-        <a href="/user/manage_code_task.html">管理公众号关注任务</a>
+<body class=" theme-blue">
+
+<!-- Demo page code -->
+<#include "navigation.html">
+<#include "sidebar-nav.html">
+<div class="content">
+    <div class="header">
+        <h1 class="page-title">商户中心</h1>
+        <!--<ul class="breadcrumb">
+            <li><a href="index.html">Home</a> </li>
+            <li class="active">Dashboard</li>
+        </ul>-->
+
     </div>
-<div><a href="/user/add_code_task.html">新增公众号关注任务</a></div>
-</body>
-</html>
+    <div class="main-content">
+        <label>欢迎使用微信加粉平台</label>
+        <#include "footer.html">
+    </div>
+</div>
+    <#include "js.html">
+</body></html>

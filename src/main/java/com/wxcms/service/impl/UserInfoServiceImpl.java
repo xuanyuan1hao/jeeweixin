@@ -62,21 +62,25 @@ public class UserInfoServiceImpl implements UserInfoService {
     }
 
     public void updateUserMoney(UserInfo entity) {
+        updateUserMoney(entity,null,1);
+    }
+    public void updateUserMoney(UserInfo entity,String log,int type) {
+        if (null==log){
+            log="商户充值，金额新增"+entity.getUserMoney();
+        }
         baseDao.updateUserMoney(entity);
         UserFlow userFlow=new UserFlow();
         userFlow.setUserId(entity.getId());
         userFlow.setUserFlowMoney(entity.getUserMoney());
         userFlow.setCreatetime(new Date());
-        String log="商户充值，金额新增"+entity.getUserMoney();
         try {
             userFlow.setUserFlowLogBinary(log.getBytes("UTF-8"));
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        userFlow.setFlowType(1);
+        userFlow.setFlowType(type);
         userFlowService.add(userFlow);
     }
-
     public void updateUserForzenedMoney(UserInfo entity) {
         baseDao.updateUserForzenedMoney(entity);
     }
@@ -93,7 +97,8 @@ public class UserInfoServiceImpl implements UserInfoService {
     public void updateUserMoneyByTask(long taskId, long userId, TaskLog taskLog) {
         UserInfo userInfo=baseDao.getById(userId);
         userInfo.setUserMoney(0 - taskLog.getMoney());
-        updateUserMoney(userInfo);//减钱
+        String logConsum="用户"+userId+"执行完毕您的任务"+taskId+",消费"+taskLog.getMoney()+"元";
+        updateUserMoney(userInfo,logConsum,3);//减钱
         //做任务的人
         String openId=taskLog.getOpenId();
         AccountFans accountFans= accountFansService.getByOpenId(openId);
