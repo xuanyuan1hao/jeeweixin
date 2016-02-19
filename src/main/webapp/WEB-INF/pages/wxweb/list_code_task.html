@@ -44,7 +44,7 @@
                                         <#else>
                                             <tr style="height:40px;background-color:#f9f9f9;">
                                 </#if>
-                                <td>${row.moneyPer!}元
+                                <td><#if row.moneyPer??>${row.moneyPer*taskProfit}</#if>元
                                     <input id="button_${row.id!}" type="button" value="任务认领" onclick="acceptTask(${row.id!});" />
                                 </td>
                                 <td><#if row.base64WxCode??><img width="100px;" src="data:image/jpg;base64,${row.base64WxCode!}" /></#if></td>
@@ -69,7 +69,7 @@
                                     <#else>
                                         <tr style="height:40px;background-color:#f9f9f9;">
                             </#if>
-                            <td>${row.money!}元
+                            <td><#if row.money??>${row.money*taskProfit}</#if>元
                             </td>
                             <td><#if row.base64WxCode??><img width="100px;" src="data:image/jpg;base64,${row.base64WxCode!}" /></#if></td>
                             <td style="color: red;">${row.taskCodeNum!}
@@ -93,7 +93,7 @@
                                     <#else>
                                         <tr style="height:40px;background-color:#f9f9f9;">
                             </#if>
-                            <td>${row.money!}元
+                            <td><#if row.money??>${row.money*taskProfit}</#if>元
                             </td>
                             <td><#if row.base64WxCode??><img width="100px;" src="data:image/jpg;base64,${row.base64WxCode!}" /></#if></td>
                             </td>

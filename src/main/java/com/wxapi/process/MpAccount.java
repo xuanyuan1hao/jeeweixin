@@ -26,6 +26,16 @@ public class MpAccount implements Serializable{
 	private double initSendMoneyMin;//初始关注赠送金额
 	private double tixianMinMoney;//提现最小金额
 
+	private double taskProfit;//任务完成盈利比例
+
+	public double getTaskProfit() {
+		return taskProfit;
+	}
+
+	public void setTaskProfit(double taskProfit) {
+		this.taskProfit = taskProfit;
+	}
+
 	public void setServerAppid(String serverAppid) {
 		this.serverAppid = serverAppid;
 	}

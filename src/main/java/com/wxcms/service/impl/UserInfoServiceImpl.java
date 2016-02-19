@@ -1,6 +1,8 @@
 package com.wxcms.service.impl;
 
 import com.core.page.Pagination;
+import com.wxapi.process.MpAccount;
+import com.wxapi.process.WxMemoryCacheClient;
 import com.wxcms.domain.*;
 import com.wxcms.mapper.UserInfoDao;
 import com.wxcms.service.*;
@@ -95,6 +97,8 @@ public class UserInfoServiceImpl implements UserInfoService {
      * @param userId
      */
     public void updateUserMoneyByTask(long taskId, long userId, TaskLog taskLog) {
+        MpAccount mpAccount = WxMemoryCacheClient.getSingleMpAccount();//获取缓存中的唯一账号
+        double taskProfit=mpAccount.getTaskProfit();
         UserInfo userInfo=baseDao.getById(userId);
         userInfo.setUserMoney(0 - taskLog.getMoney());
         String logConsum="用户"+userId+"执行完毕您的任务"+taskId+",消费"+taskLog.getMoney()+"元";
@@ -104,7 +108,7 @@ public class UserInfoServiceImpl implements UserInfoService {
         AccountFans accountFans= accountFansService.getByOpenId(openId);
         accountFansService.updateAddUserMoneyByUserId(taskLog.getMoney(),accountFans.getId());
         //加日志信息
-        String log="成功做完了关注任务"+taskId+"，获得"+taskLog.getMoney()+"奖励";
+        String log="成功做完了关注任务"+taskId+"，获得"+taskLog.getMoney()*(1-taskProfit/100)+"奖励";
         Flow flow=new Flow();
         flow.setFromFansId(accountFans.getId());
         flow.setFansId(accountFans.getId());

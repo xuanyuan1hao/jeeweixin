@@ -3,13 +3,12 @@ package com.wxcms.ctrl;
 import com.core.page.Pagination;
 import com.core.util.AESUtil;
 import com.core.util.Str2MD5;
+import com.wxapi.process.MpAccount;
+import com.wxapi.process.WxMemoryCacheClient;
 import com.wxcms.domain.TaskCode;
 import com.wxcms.domain.TaskLog;
 import com.wxcms.domain.UserInfo;
-import com.wxcms.service.AccountFansService;
-import com.wxcms.service.TaskCodeService;
-import com.wxcms.service.TaskLogService;
-import com.wxcms.service.UserInfoService;
+import com.wxcms.service.*;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -34,6 +33,9 @@ public class TaskCtrl {
     private TaskCodeService taskCodeService;
     @Autowired
     private TaskLogService taskLogService;
+    @Autowired
+    private AccountService accountService;
+
 
     @Autowired
     private UserInfoService userInfoService;
@@ -63,6 +65,10 @@ public class TaskCtrl {
         //获取URL
         String webUrl = "http://" + request.getServerName().toString() + ((request.getLocalPort() == 80) ? "" : (":" + request.getLocalPort()));
         mv.addObject("webUrl", webUrl);
+        //获取参数，分成比例
+        MpAccount mpAccount = WxMemoryCacheClient.getSingleMpAccount();//获取缓存中的唯一账号
+        double taskProfit=mpAccount.getTaskProfit();
+        mv.addObject("taskProfit", taskProfit/100);
         return mv;
     }
     @RequestMapping(value = "/my_list_code_task")
