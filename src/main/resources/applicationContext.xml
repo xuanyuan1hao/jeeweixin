@@ -115,10 +115,35 @@
 					<property name="includes">
 						<list>
 							<value>/wxcms/urltoken.html</value>
+							<value>/msgtext/list.html</value>
+							<value>/msgnews/list.html</value>
+							<value>/wxcms/accountMenuGroup/paginationEntity.html</value>
+							<value>/accountfans/paginationEntity.html</value>
+							<value>/wxapi/syncMaterials.html</value>
+							<value>/wxcms/qrcode.html</value>
+							<value>/wxcms/oauthInterceptor.html</value>
+							<value>/wxcms/sendMsg.html</value>
+							<value>/wxcms/jssdk.html</value>
+							<value>/msgtext/tixian_list.html</value>
+							<value>/admin/list_user_info.html</value>
 						</list>
 					</property>
 				</bean>
 			</mvc:interceptor>
+			<mvc:interceptor>
+				<mvc:mapping path="/user/*.*"/>
+				<bean class="com.wxcms.interceptor.UserLoginInterceptor">
+					<property name="excludes">
+						<list>
+							<value>/user/login.html</value>
+							<value>/user/login_json.html</value>
+							<value>/user/reg.html</value>
+							<value>/user/reg_json.html</value>
+						</list>
+					</property>
+				</bean>
+			</mvc:interceptor>
+
 		</mvc:interceptors>
 
         

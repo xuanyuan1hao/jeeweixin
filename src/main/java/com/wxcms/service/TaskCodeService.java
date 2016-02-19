@@ -2,6 +2,7 @@ package com.wxcms.service;
 
 import com.core.page.Pagination;
 import com.wxcms.domain.TaskCode;
+import com.wxcms.domain.TaskLog;
 
 import java.util.List;
 
@@ -17,4 +18,9 @@ public interface TaskCodeService {
     Pagination<TaskCode> paginationEntity(TaskCode searchEntity, Pagination<TaskCode> pagination);
 
     void update(TaskCode taskCode);
+
+    TaskCode getByWxCode(String wxCodeImgHref);
+
+    Pagination<TaskCode> paginationEntityNotGet(TaskLog searchEntity, Pagination<TaskCode> pagination);
+
 }

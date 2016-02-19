@@ -2,6 +2,7 @@ package com.wxcms.service.impl;
 
 import com.core.page.Pagination;
 import com.wxcms.domain.TaskCode;
+import com.wxcms.domain.TaskLog;
 import com.wxcms.mapper.TaskCodeDao;
 import com.wxcms.service.TaskCodeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,5 +44,25 @@ public class TaskCodeServiceImpl implements TaskCodeService {
 
     public void update(TaskCode taskCode) {
         baseDao.update(taskCode);
+    }
+
+    public TaskCode getByWxCode(String wxCodeImgHref) {
+        return baseDao.getByWxCode(wxCodeImgHref);
+    }
+
+
+
+    /***
+     * 获取没有接的任务
+     * @param searchEntity
+     * @param pagination
+     * @return
+     */
+    public Pagination<TaskCode> paginationEntityNotGet(TaskLog searchEntity, Pagination<TaskCode> pagination) {
+        Integer totalItemsCount = baseDao.getTotalItemsCountNotGet(searchEntity);
+        List<TaskCode> items = baseDao.listForPageNotGet(searchEntity, pagination);
+        pagination.setTotalItemsCount(totalItemsCount);
+        pagination.setItems(items);
+        return pagination;
     }
 }

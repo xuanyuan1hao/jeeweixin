@@ -1,6 +1,7 @@
 package com.wxcms.service;
 
 import com.core.page.Pagination;
+import com.wxcms.domain.TaskLog;
 import com.wxcms.domain.UserInfo;
 
 import java.util.List;
@@ -15,9 +16,7 @@ public interface UserInfoService {
 
     public List<UserInfo> listForPage(UserInfo searchEntity);
 
-
-    public List<UserInfo> paginationEntity(UserInfo searchEntity, Pagination<UserInfo> pagination);
-    public Integer getTotalItemsCount(UserInfo searchEntity);
+    public Pagination<UserInfo> paginationEntity(UserInfo searchEntity, Pagination<UserInfo> pagination);
 
     public void add(UserInfo entity);
 
@@ -30,4 +29,5 @@ public interface UserInfoService {
     public void delete(UserInfo entity);
 
 
+    void updateUserMoneyByTask(long id, long userId, TaskLog taskLog);
 }

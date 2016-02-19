@@ -7,7 +7,7 @@
         SELECT m.*
         from t_wxcms_user m
         <if test="param1.userEmail!=null">
-            WHERE  m.userEmail = #{aram1.userEmail}
+            WHERE  m.userEmail = #{param1.userEmail}
         </if>
         order by m.id desc
         LIMIT #{param2.start} , #{param2.pageSize}

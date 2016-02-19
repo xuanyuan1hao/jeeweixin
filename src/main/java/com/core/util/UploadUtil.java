@@ -63,14 +63,17 @@ public class UploadUtil {
 				sf.mkdirs();
 			}
 			OutputStream os = new FileOutputStream(sf.getPath()+"\\"+filename);
+			boolean isZero=true;
 			// 开始读取
 			while ((len = is.read(bs)) != -1) {
 				os.write(bs, 0, len);
+				isZero=false;
 			}
 			// 完毕，关闭所有链接
 			os.close();
 			is.close();
-			return true;
+			if(!isZero)
+				return true;
 		}catch (Exception ex){
 
 		}

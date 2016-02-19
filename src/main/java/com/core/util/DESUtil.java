@@ -98,6 +98,7 @@ public class DESUtil {
         String source = "amigoxie";
         System.out.println("原文: " + source);
         String key = "A1B2C3D4E5F60708";
+       // String key = "12";
         String encryptData = encrypt(source, key);
         System.out.println("加密后: " + encryptData);
         String decryptData = decrypt(encryptData, key);

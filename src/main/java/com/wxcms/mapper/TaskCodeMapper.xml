@@ -21,11 +21,36 @@
         </if>
     </select>
 
+    <select id="listForPageNotGet" resultType="com.wxcms.domain.TaskCode">
+        SELECT m.*
+        from t_wxcms_task_code m,t_wxcms_user u
+        WHERE u.id=m.userId
+        and u.userMoney> 10* m.moneyPer
+        and m.id not in (select taskId from t_wxcms_task_log n where n.openId=#{param1.openId})
+        order by moneyPer desc
+        LIMIT #{param2.start} , #{param2.pageSize}
+    </select>
+    <select id="getTotalItemsCountNotGet" parameterType="com.wxcms.domain.TaskLog" resultType="java.lang.Integer">
+        SELECT count(m.id)
+        from t_wxcms_task_code m,t_wxcms_user u
+        WHERE u.id=m.userId
+        and u.userMoney> 10* m.moneyPer
+        and m.id not in (select taskId from t_wxcms_task_log n where n.openId=#{openId})
+    </select>
+
+
+
+
+
+
     <select id="getById" resultType="com.wxcms.domain.TaskCode">
         SELECT * FROM t_wxcms_task_code WHERE ID = #{id}
     </select>
+    <select id="getByWxCode" resultType="com.wxcms.domain.TaskCode">
+        SELECT * FROM t_wxcms_task_code WHERE wxCodeImgHref = #{wxCodeImgHref} limit 1
+    </select>
 
-    <insert id="add" parameterType="com.wxcms.domain.TaskCode" flushCache="true">
+    <insert id="add" parameterType="com.wxcms.domain.TaskCode" flushCache="true" useGeneratedKeys="true" keyProperty="id" >
         INSERT INTO t_wxcms_task_code ( userId,moneyPer,wxCodeImgHref,wxRemark,validateMenuUrl,createtime,base64WxCode )
         VALUES ( #{userId},#{moneyPer},#{wxCodeImgHref},#{wxRemark},#{validateMenuUrl},#{createtime},#{base64WxCode})
     </insert>

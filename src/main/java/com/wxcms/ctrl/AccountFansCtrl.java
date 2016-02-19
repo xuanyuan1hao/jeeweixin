@@ -1,13 +1,25 @@
 package com.wxcms.ctrl;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.ModelAndView;
-
 import com.core.page.Pagination;
 import com.wxcms.domain.AccountFans;
+import com.wxcms.domain.TaskCode;
+import com.wxcms.domain.TaskLog;
 import com.wxcms.service.AccountFansService;
+import com.wxcms.service.TaskCodeService;
+import com.wxcms.service.TaskLogService;
+import net.sf.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+
+import java.io.UnsupportedEncodingException;
+import java.util.Date;
+import java.util.Random;
 
 /**
  * 
@@ -19,6 +31,10 @@ public class AccountFansCtrl{
 
 	@Autowired
 	private AccountFansService entityService;
+	@Autowired
+	private TaskCodeService taskCodeService;
+	@Autowired
+	private TaskLogService taskLogService;
 
 	@RequestMapping(value = "/getById")
 	public ModelAndView getById(String id){
@@ -59,6 +75,43 @@ public class AccountFansCtrl{
 		return new ModelAndView();
 	}
 
+	@RequestMapping(value = "/accept_task_json", method = RequestMethod.GET)
+	public @ResponseBody String acceptTaskJson(ModelMap map, @RequestParam("openId") String openId
+			, @RequestParam(value = "taskId", defaultValue = "0") long taskId) {
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("result", false);
+		jsonObject.put("msg", "接任务失败");
+		AccountFans fans = entityService.getByOpenId(openId);
+		if (null != fans) {
+			TaskCode taskCode=taskCodeService.getById(taskId);
+			if(null!=taskCode){
+				TaskLog taskLog=new TaskLog();
+				taskLog.setOpenId(openId);
+				taskLog.setCreatetime(new Date());
+				taskLog.setMoney(taskCode.getMoneyPer());
+				taskLog.setTaskId(taskId);
+				taskLog.setTaskStatus(0);//接收任务成功，等待处理
+				taskLog.setTaskCodeNum(getRandomNum(7));
+				String log="接收任务成功";
+				try {
+					taskLog.setLog(log.getBytes("UTF-8"));
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
+				}
+				taskLogService.add(taskLog);
+				jsonObject.put("taskLogId", taskLog.getId());
+				jsonObject.put("result", true);
+				jsonObject.put("msg", "接任务成功");
+			}
+		}
+		return jsonObject.toString();
+	}
 
+	private String getRandomNum(int length) {
+		//获取6位验证码数字
+		int max=(int)Math.pow(10, length);
+		Random random=new Random();
+		return String.valueOf(random.nextInt(max));
+	}
 
 }

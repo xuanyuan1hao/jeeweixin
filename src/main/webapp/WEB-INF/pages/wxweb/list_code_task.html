@@ -1,0 +1,133 @@
+<!doctype html>
+<html class="no-js">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="renderer" content="webkit">
+
+    <script type="text/javascript" src="${s.base}/res/jquery-1.9.1.min.js"></script>
+    <link rel="stylesheet" href="${s.base}/res/AmazeUI-2.5.1/assets/css/amazeui.min.css"/>
+    <link rel="stylesheet" href="${s.base}/res/AmazeUI-2.5.1/assets/css/admin.css">
+    <script src="${s.base}/res/AmazeUI-2.5.1/assets/js/amazeui.min.js"></script>
+    <script src="${s.base}/res/AmazeUI-2.5.1/assets/js/app.js"></script>
+</head>
+<body>
+<header class="am-topbar admin-header">
+    <div class="am-topbar-brand">
+        <small>任务大厅</small>
+    </div>
+</header>
+<div class="am-cf admin-main">
+    <!-- content start -->
+    <div class="admin-content">
+
+        <div class="am-tabs am-margin" data-am-tabs>
+            <ul class="am-tabs-nav am-nav am-nav-tabs">
+                <li class="am-active"><a href="#tab1">可接任务</a></li>
+                <li><a href="#tab2">待执行任务</a></li>
+                <li><a href="#tab3">已完成任务</a></li>
+            </ul>
+            <div class="am-tabs-bd">
+                <div class="am-tab-panel am-fade am-in am-active" id="tab1">
+                    <form id="queryPageForm" action="">
+                        <input type="hidden" id="openId" name="openId" value="${openId!}">
+                        <table class="am-table am-table-bd am-table-bdrs am-table-striped am-table-hover">
+                            <tbody>
+                            <tr>
+                                <th>奖金</th>
+                                <th>二维码</th>
+                            </tr>
+                            <#list pagination.items as row>
+                                <#if row_index %2 == 0>
+                                    <tr style="height:40px;">
+                                        <#else>
+                                            <tr style="height:40px;background-color:#f9f9f9;">
+                                </#if>
+                                <td>${row.moneyPer!}元
+                                    <input id="button_${row.id!}" type="button" value="任务认领" onclick="acceptTask(${row.id!});" />
+                                </td>
+                                <td><#if row.base64WxCode??><img width="100px;" src="data:image/jpg;base64,${row.base64WxCode!}" /></#if></td>
+                                </tr>
+                            </#list>
+                            </tbody>
+                        </table>
+                        <#include "../common/pagination.html">
+                    </form>
+                </div>
+                <div class="am-tab-panel am-fade" id="tab2">
+                    <table class="am-table am-table-bd am-table-bdrs am-table-striped am-table-hover">
+                        <tbody>
+                        <tr>
+                            <th>奖金</th>
+                            <th>二维码</th>
+                            <th>福利码</th>
+                        </tr>
+                        <#list paginationTaskLog.items as row>
+                            <#if row_index %2 == 0>
+                                <tr style="height:40px;">
+                                    <#else>
+                                        <tr style="height:40px;background-color:#f9f9f9;">
+                            </#if>
+                            <td>${row.money!}元
+                            </td>
+                            <td><#if row.base64WxCode??><img width="100px;" src="data:image/jpg;base64,${row.base64WxCode!}" /></#if></td>
+                            <td style="color: red;">${row.taskCodeNum!}
+                            </td>
+                            </tr>
+                        </#list>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="am-tab-panel am-fade" id="tab3">
+                    <table class="am-table am-table-bd am-table-bdrs am-table-striped am-table-hover">
+                        <tbody>
+                        <tr>
+                            <th>奖金</th>
+                            <th>二维码</th>
+                        </tr>
+                        <#list paginationFinishedTaskLog.items as row>
+                            <#if row_index %2 == 0>
+                                <tr style="height:40px;">
+                                    <#else>
+                                        <tr style="height:40px;background-color:#f9f9f9;">
+                            </#if>
+                            <td>${row.money!}元
+                            </td>
+                            <td><#if row.base64WxCode??><img width="100px;" src="data:image/jpg;base64,${row.base64WxCode!}" /></#if></td>
+                            </td>
+                            </tr>
+                        </#list>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+   function acceptTask(taskId){
+       var openId=$("#openId").val();
+       $.ajax({
+           type: "GET",
+           url:"/accountfans/accept_task_json.html",
+           data:"taskId="+taskId+"&openId="+openId,// 要提交的表单
+           success: function(ret)
+           {
+               var returnJson=JSON.parse(ret);
+               alert(returnJson.msg);
+               if(returnJson.result){
+                   location.reload();
+               }
+           },
+           error: function(error){alert(error);}
+       });
+   }
+</script>
+</body>
+</html>
+
+

@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <#include "../common/res.html">
+        <script type="text/javascript">
+            function dosubmit(){
+                var userMoney = $('#userMoney').val();
+                userMoney = userMoney.replace(/(\s*$)/g, '');
+                if(userMoney == ''){
+                    alert('请填写充值金额');
+                    return false;
+                }else{
+                    return true;
+                }
+            }
+        </script>
+</head>
+
+<body class="bg">
+<#include "../common/top.html">
+
+    <div class="content">
+        <div class="block-nav">
+            <#include "../common/nav.html">
+        </div>
+
+        <div class="block-content" >
+
+            <div class="block-content-nav">
+                <span class="title">商户充值</span>
+            </div>
+
+            <div class="block-content-description">
+					<span>
+						商户充值
+					</span>
+            </div>
+            <form id="inputMoneyForm" action="/admin/edit_user_info_input_money_post.html" method="post" onsubmit="return dosubmit();">
+                <div class="block-content-content">
+                    <input type="hidden" name="id" value="${id!}"/>
+                    <ul>
+                        <li>
+                            <label>商户用户名 </label>
+                            <input id="userEmail" name="userEmail" type="text" value="${userInfo.userEmail!}"/>
+                            <span style="color: red;">*(字母或者数字)</span>
+                        </li>
+                        <li>
+                            <label>充值金额 </label>
+                            <input id="userMoney" name="userMoney" type="text" value="${userInfo.userMoney!}"/>
+                            <span style="color: red;">*(数字)</span>
+                        </li>
+                    </ul>
+
+                    <div style="margin-left:75px;margin-top: 20px;">
+                        <input class="btn" type="submit" value="确定"/>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+        <div class="clearfloat"></div>
+    </div>
+
+    <#include "../common/footer.html">
+</body>
+
+</html>

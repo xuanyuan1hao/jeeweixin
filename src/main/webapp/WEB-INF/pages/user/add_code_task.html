@@ -9,7 +9,7 @@
 <body style="background-color:#fdfdfd;">
 <form action="#" id="add_form">
    <input id="userId" value="${userInfo.id?c}" name="userId" type="hidden"/>
-    <div>二维码地址：<input id="wxCodeImgHref" value="" name="wxCodeImgHref" type="text"/></div>
+    <div>微信号：<input id="wxCodeImgHref" value="" name="wxCodeImgHref" type="text"/></div>
     <div>备注：<input id="wxRemarkText" value="" name="wxRemarkText" type="text"/></div>
     <div>关注单价:<input id="moneyPer" value="" name="moneyPer" type="text"/></div>
 <div>
@@ -20,12 +20,16 @@
     $("#add_btn").click(function(){
         var wxCodeImgHref=$("#wxCodeImgHref").val();
         if(wxCodeImgHref==""){
-            alert("二维码地址不能为空");
+            alert("微信号不能为空");
             return;
         }
         var moneyPer=$("#moneyPer").val();
         if(moneyPer==""){
             alert("单价不能为空");
+            return;
+        }
+        if(eval(moneyPer)<=0){
+            alert("单价必须大于0");
             return;
         }
         $.ajax({

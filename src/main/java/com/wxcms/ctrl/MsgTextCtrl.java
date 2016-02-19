@@ -64,7 +64,7 @@ public class MsgTextCtrl{
 		ModelAndView mv = new ModelAndView("wxweb/admin_tixian_list");
 		pagination = fansTixianSrevice.paginationEntity(searchEntity,pagination);
 		mv.addObject("pagination",pagination);
-		mv.addObject("cur_nav","fans");
+		mv.addObject("cur_nav","tixian_list");
 		return mv;
 	}
 	@RequestMapping(value = "/admin_flow_list")
@@ -74,14 +74,14 @@ public class MsgTextCtrl{
 		flow.setFansId(fansId);
 		List<Flow> pageList=flowService.listForPage(flow);
 		modelAndView.addObject("pageList", pageList);
-		modelAndView.addObject("cur_nav", "tixian");
+		modelAndView.addObject("cur_nav", "tixian_list");
 		return modelAndView;
 	}
 
 	@RequestMapping(value = "/admin_edit_tixian")
 	public ModelAndView adminEditTixian(String id){
 		ModelAndView mv = new ModelAndView("wxcms/admin_edit_tixian");
-		mv.addObject("cur_nav", "tixian");
+		mv.addObject("cur_nav", "tixian_list");
 		FansTixian fansTixian=fansTixianSrevice.getById(id);
 		if(fansTixian != null){
 			mv.addObject("entity",fansTixian);

@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <#include "../common/res.html">
+</head>
+
+<body class="bg">
+<#include "../common/top.html">
+
+    <div class="content">
+        <div class="block-nav">
+            <#include "../common/nav.html">
+        </div>
+
+        <div class="block-content" >
+
+            <div class="block-content-nav">
+                <span class="title">商户管理</span>
+            </div>
+
+            <div class="block-content-description">
+					<span>
+						商户管理
+					</span>
+            </div>
+            <form id="queryPageForm" action="">
+                <div class="block-content-content">
+                    <#if successflag??>
+                        <span style="margin-left:10px;color:#44b549;">已成功充值，请查询明细</span>
+                    </#if>
+                    <table class="fm-table">
+                        <thead>
+                        <tr >
+                            <td style="width: 150px;">编号</td>
+                            <td>Email</td>
+                            <td>可用额</td>
+                            <td>冻结金额</td>
+                            <td>用户密码</td>
+                            <td>提现密码</td>
+                            <td>处理</td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <#list pagination.items as row>
+                            <#if row_index %2 == 0>
+                                <tr style="height:40px;">
+                                    <#else>
+                                        <tr style="height:40px;background-color:#f9f9f9;">
+                            </#if>
+                            <td>${row.id!}</td>
+                            <td>${row.userEmail!}</td>
+                            <td>${row.userMoney!}</td>
+                            <td>${row.userForzenedMoney!}</td>
+                            <td>${row.userPassword!}</td>
+                            <td>${row.userMoneyPassword!}</td>
+                            <td>
+                                <a href="${s.base}/admin/edit_user_info_input_money.html?id=${row.id}" >充值</a>
+                                <a href="${s.base}/admin/edit_user_detail_money.html?id=${row.id}" >查看明细</a>
+                            </td>
+                            </tr>
+                        </#list>
+                        </tbody>
+                    </table>
+
+                    <#include "../common/pagination.html">
+                </div>
+            </form>
+        </div>
+        <div class="clearfloat"></div>
+    </div>
+
+    <#include "../common/footer.html">
+</body>
+
+</html>

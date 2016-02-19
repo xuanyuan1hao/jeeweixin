@@ -1,8 +1,9 @@
 package com.wxcms.ctrl;
 
 import com.core.page.Pagination;
-import com.core.util.DESUtil;
+import com.core.util.AESUtil;
 import com.core.util.ImageByteUtils;
+import com.core.util.Str2MD5;
 import com.core.util.UploadUtil;
 import com.wxcms.domain.TaskCode;
 import com.wxcms.domain.UserInfo;
@@ -80,7 +81,7 @@ public class UserInfoCtrl {
             //根据公众号获取用户图片
             boolean ret=UploadUtil.download(headImgUrl, taskCode.getWxCodeImgHref() + ".jpg", webRootPath + "/res/upload/");
             if (!ret){
-                jsonObject.put("msg", "公众号账号错误，下载二维码失败");
+                jsonObject.put("msg", "微信号错误，下载二维码失败");
                 return jsonObject.toString();
             }
             String base64WxCode= ImageByteUtils.GetImageStr(webRootPath + "/res/upload/"+taskCode.getWxCodeImgHref() + ".jpg");
@@ -99,15 +100,19 @@ public class UserInfoCtrl {
 
 
     @RequestMapping(value = "/manage_code_task")
-    public ModelAndView manageCodeTask(ModelMap map,TaskCode searchEntity,Pagination<TaskCode> pagination,HttpSession httpSession){
+    public ModelAndView manageCodeTask(HttpServletRequest request,ModelMap map,TaskCode searchEntity,Pagination<TaskCode> pagination,HttpSession httpSession){
         ModelAndView mv = new ModelAndView("user/manage_code_task");
         if(null==searchEntity)searchEntity=new TaskCode();
         UserInfo sessionUserInfo=(UserInfo)httpSession.getAttribute("userInfo");
         searchEntity.setUserId(sessionUserInfo.getId());
         pagination=taskCodeService.paginationEntity(searchEntity,pagination);
-        mv.addObject("pagination",pagination);
+        mv.addObject("pagination", pagination);
+        //获取URL
+        String webUrl = "http://" + request.getServerName().toString() + ((request.getLocalPort() == 80) ? "" : (":" + request.getLocalPort()));
+        mv.addObject("webUrl", webUrl);
         return mv;
     }
+
 
     @RequestMapping(value = "add_code_task_json")
     public @ResponseBody String addCodeTaskJson(HttpServletRequest request,ModelMap map,
@@ -121,7 +126,7 @@ public class UserInfoCtrl {
             //根据公众号获取用户图片
             boolean ret=UploadUtil.download(headImgUrl, taskCode.getWxCodeImgHref() + ".jpg", webRootPath + "/res/upload/");
             if (!ret){
-                jsonObject.put("msg", "公众号账号错误，下载二维码失败");
+                jsonObject.put("msg", "微信号错误，下载二维码失败");
                 return jsonObject.toString();
             }
             String base64WxCode= ImageByteUtils.GetImageStr(webRootPath + "/res/upload/"+taskCode.getWxCodeImgHref() + ".jpg");
@@ -179,13 +184,13 @@ public class UserInfoCtrl {
     }
 
     public String getValidateMenuUrl(String source,long userId) {
-        String key = ""+userId;
+        String password = Str2MD5.MD5("" + userId, 16);
         try {
-            String encryptData = DESUtil.encrypt(source, key);
-            return encryptData;
+            String encryptData = AESUtil.encryptStr(source, password);
+            return "/"+userId+"/"+encryptData;
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return source;
+        return "/"+userId+"/"+source;
     }
 }

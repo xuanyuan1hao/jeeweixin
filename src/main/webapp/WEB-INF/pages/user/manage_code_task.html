@@ -31,7 +31,7 @@
                 <td>${row.id!}</td>
                 <td>${row.wxCodeImgHref!}</td>
                 <td>${row.moneyPer!}</td>
-                <td>${row.validateMenuUrl!}</td>
+                <td>${webUrl!}/task/validate${row.validateMenuUrl!}.html</td>
                 <td><#if row.base64WxCode??><img width="100px;" src="data:image/jpg;base64,${row.base64WxCode!}" /></#if></td>
                 <td>${row.wxRemarkText!}</td>
                 <td>

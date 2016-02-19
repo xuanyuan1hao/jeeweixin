@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://10.20.91.130/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.wxcms.mapper.TaskLogDao">
+
+    <select id="listForPage" resultType="com.wxcms.domain.TaskLog">
+        SELECT m.*
+        from t_wxcms_task_log m
+        WHERE 1=1
+        <if test="param1.userId!=0">
+            and m.id in ( select id from t_wxcms_task_code where userId= #{param1.userId})
+        </if>
+        order by id desc
+        LIMIT #{param2.start} , #{param2.pageSize}
+    </select>
+    <select id="getTotalItemsCount" parameterType="com.wxcms.domain.TaskCode" resultType="java.lang.Integer">
+        SELECT count(m.id) FROM t_wxcms_task_log m
+        WHERE 1=1
+        <if test="param1.userId!=0">
+            and m.id in ( select id from t_wxcms_task_code where userId= #{param1.userId})
+        </if>
+    </select>
+
+    <select id="getById" resultType="com.wxcms.domain.TaskLog">
+        SELECT * FROM t_wxcms_task_log WHERE ID = #{id}
+    </select>
+    <select id="getByTaskIdAndTaskCodeNum" resultType="com.wxcms.domain.TaskLog">
+        SELECT * FROM t_wxcms_task_log WHERE taskId = #{taskId} and taskCodeNum=#{taskCodeNum} and taskStatus=0  limit 1
+    </select>
+
+    <insert id="add" parameterType="com.wxcms.domain.TaskLog" flushCache="true"  useGeneratedKeys="true" keyProperty="id" >
+        INSERT INTO t_wxcms_task_log ( log,money,openId,createtime,taskId,taskCodeNum,taskStatus )
+        VALUES ( #{log},#{money},#{openId},#{createtime},#{taskId},#{taskCodeNum},#{taskStatus})
+    </insert>
+
+    <update id="updateTaskStatus" parameterType="com.wxcms.domain.TaskLog" flushCache="true">
+        UPDATE t_wxcms_task_log SET taskStatus = #{taskStatus} WHERE ID = #{id}
+    </update>
+
+
+    <select id="listForPageByOpenIdAndTaskStatus" resultType="com.wxcms.domain.TaskLog">
+        SELECT n.*,m.base64WxCode as base64WxCode
+        from t_wxcms_task_code m,t_wxcms_task_log n
+        WHERE m.id=n.taskId
+        <if test="param1.openId!=null">
+            and n.openId = #{param1.openId}
+        </if>
+        <if test="param1.taskStatus!=-1">
+            and n.taskStatus = #{param1.taskStatus}
+        </if>
+        order by m.moneyPer desc
+        LIMIT #{param2.start} , #{param2.pageSize}
+    </select>
+    <select id="getTotalItemsCountByOpenIdAndTaskStatus" parameterType="com.wxcms.domain.TaskLog" resultType="java.lang.Integer">
+        SELECT count(m.id) FROM t_wxcms_task_code m,t_wxcms_task_log n
+        WHERE m.id=n.taskId
+        <if test="openId!=null">
+            and n.openId = #{openId}
+        </if>
+        <if test="taskStatus!=-1">
+            and n.taskStatus = #{taskStatus}
+        </if>
+    </select>
+
+
+</mapper>
