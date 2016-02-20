@@ -1,8 +1,9 @@
 package com.core.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class BaseEntity {
+public class BaseEntity implements Serializable{
 
 	private Long id;
 	private Date createtime = new Date();//创建时间

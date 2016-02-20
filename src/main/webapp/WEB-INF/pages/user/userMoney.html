@@ -1,0 +1,56 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+    <title>商家会员中心</title>
+    <#include "head.html">
+</head>
+<body class=" theme-blue">
+
+<!-- Demo page code -->
+<#include "navigation.html">
+    <#include "sidebar-nav.html">
+        <div class="content">
+            <div class="header">
+                <h1 class="page-title">Dashboard</h1>
+                <ul class="breadcrumb">
+                    <li><a href="index.html">Home</a> </li>
+                    <li class="active">Dashboard</li>
+                </ul>
+
+            </div>
+            <div class="main-content">
+                <form id="queryPageForm" action="">
+                    <table class="table">
+                        <thead>
+                        <tr >
+                            <td style="width: 150px;">编号</td>
+                            <td>操作金额</td>
+                            <td>操作动作</td>
+                            <td>备注</td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <#list pagination.items as row>
+                            <#if row_index %2 == 0>
+                                <tr style="height:40px;">
+                                    <#else>
+                                        <tr style="height:40px;background-color:#f9f9f9;">
+                            </#if>
+                            <td>${row.id!}</td>
+                            <td>${row.userFlowMoney!}</td>
+                            <td>${row.flowTypeStr!}</td>
+                            <td>${row.userFlowLogText!}</td>
+                            </tr>
+                        </#list>
+                        </tbody>
+                    </table>
+                    <#include "../common/pagination.html">
+                </form>
+
+
+                <#include "footer.html">
+            </div>
+        </div>
+        <#include "js.html">
+</body></html>

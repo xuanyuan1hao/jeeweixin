@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>商家个人信息</title>
+    <#include "head.html">
+</head>
+<body class=" theme-blue">
+
+<!-- Demo page code -->
+<#include "navigation.html">
+    <#include "sidebar-nav.html">
+        <div class="content">
+            <div class="header">
+                <h1 class="page-title">Dashboard</h1>
+                <ul class="breadcrumb">
+                    <li><a href="index.html">Home</a> </li>
+                    <li class="active">Dashboard</li>
+                </ul>
+
+            </div>
+            <div class="main-content">
+                <div class="row">
+                    <div class="col-md-4">
+                        <br>
+                        <div id="myTabContent" class="tab-content">
+                            <div class="tab-pane active in" id="home">
+                                <form id="add_form">
+                                    <input id="userId" value="${userInfo.id?c}" name="userId" type="hidden"/>
+                                    <div class="form-group">
+                                        <label>账号</label>
+                                        <input id="wxCodeImgHref" value="${userInfo.userEmail!}" name="wxCodeImgHref" type="text" class="form-control"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>可用金额</label>
+                                        <input id="wxRemarkText" value="${userInfo.userMoney!}" class="form-control" name="wxRemarkText" type="text"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>冻结金额</label>
+                                        <input id="moneyPer" value="${userInfo.userForzenedMoney!}" name="moneyPer" class="form-control" type="text"/>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <#include "footer.html">
+            </div>
+        </div>
+        <#include "js.html">
+</body>
+
+</html>

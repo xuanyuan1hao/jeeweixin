@@ -255,10 +255,10 @@ public class MyServiceImpl implements MyService{
 					if(!hasCreateRecommendPic(headImg + ".text.jpg")||(null==accountFans.getRecommendImgCreateTime())
 							||(getIntervalDays(accountFans.getRecommendImgCreateTime(),new Date())>28)){
 						//已经生成了图片，就重新上传到微信即可，无需再重新上传
-						String headImgSavePath=webRootPath+"/res/upload/"+userOpenId+".jpg";
+						String headImgSavePath=webRootPath+"res\\upload\\"+userOpenId+".jpg";
 						if(!hasCreateRecommendPic(headImgSavePath)){
 							if (null==accountFans.getHeadImgBlob()){
-								UploadUtil.download(headImgUrl, userOpenId + ".jpg", webRootPath + "/res/upload/");
+								UploadUtil.download(headImgUrl, userOpenId + ".jpg", webRootPath + "res\\upload\\");
 							}else{
 								byte[] imageByte=accountFans.getHeadImgBlob();
 								ImageByteUtils.byte2image(imageByte,headImgSavePath);
@@ -274,7 +274,7 @@ public class MyServiceImpl implements MyService{
 						}
 						byte[] qrcode = WxApiClient.createQRCode(2592000,accountFans.getId().intValue(),mpAccount);
 						String url = webRootPath+UploadUtil.byteToImg(webRootPath, qrcode);
-						String baseRecommendImgPath=webRootPath+"/res/css/images/base_recommend.jpg";
+						String baseRecommendImgPath=webRootPath+"res\\css\\images\\base_recommend.jpg";
 						//生成带图片的二维码
 						ImageUtils.pressImage(headImg, url, url+".qrcode.jpg", 0, 0,true,50,50);
 						ImageUtils.pressImage(url + ".qrcode.jpg", baseRecommendImgPath, url + ".last.jpg", 165, 380, false, 220, 220);//贴二维码

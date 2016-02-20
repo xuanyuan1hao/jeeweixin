@@ -6,8 +6,10 @@ import com.core.util.ImageByteUtils;
 import com.core.util.Str2MD5;
 import com.core.util.UploadUtil;
 import com.wxcms.domain.TaskCode;
+import com.wxcms.domain.UserFlow;
 import com.wxcms.domain.UserInfo;
 import com.wxcms.service.TaskCodeService;
+import com.wxcms.service.UserFlowService;
 import com.wxcms.service.UserInfoService;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +36,8 @@ public class UserInfoCtrl {
     private UserInfoService userInfoService;
     @Autowired
     private TaskCodeService taskCodeService;
+    @Autowired
+    private UserFlowService userFlowService;
 
     @RequestMapping(value = "/reg")
     public ModelAndView reg(){
@@ -50,6 +54,34 @@ public class UserInfoCtrl {
         ModelAndView mv = new ModelAndView("user/user_index");
         return mv;
     }
+
+    @RequestMapping(value = "/userInfo")
+    public ModelAndView userInfo(ModelMap map,HttpSession httpSession){
+        ModelAndView mv = new ModelAndView("user/userInfo");
+        UserInfo sessionUserInfo=(UserInfo)httpSession.getAttribute("userInfo");
+        if(sessionUserInfo==null){
+            mv.addObject("msg", "请先登录!");
+        }else{
+            UserInfo userInfo= userInfoService.getById(sessionUserInfo.getId());
+            mv.addObject("userInfo", userInfo);
+        }
+        return mv;
+    }
+    @RequestMapping(value = "/userMoney")
+    public ModelAndView userMoney(ModelMap map,HttpSession httpSession,Pagination<UserFlow> pagination){
+        ModelAndView mv = new ModelAndView("user/userMoney");
+        UserInfo sessionUserInfo=(UserInfo)httpSession.getAttribute("userInfo");
+        if(sessionUserInfo==null){
+            mv.addObject("msg", "请先登录!");
+        }else{
+            UserFlow userFlow=new UserFlow();
+            userFlow.setUserId(sessionUserInfo.getId());
+            pagination=  userFlowService.paginationEntity(userFlow,pagination);
+            mv.addObject("pagination", pagination);
+        }
+        return mv;
+    }
+
     @RequestMapping(value = "/add_code_task")
     public ModelAndView addCodeTask(){
         ModelAndView mv = new ModelAndView("user/add_code_task");
