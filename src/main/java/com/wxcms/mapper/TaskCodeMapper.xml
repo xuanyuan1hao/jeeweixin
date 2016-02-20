@@ -46,6 +46,11 @@
     <select id="getById" resultType="com.wxcms.domain.TaskCode">
         SELECT * FROM t_wxcms_task_code WHERE ID = #{id}
     </select>
+
+    <delete id="delete" parameterType="com.wxcms.domain.MsgNews" >
+        DELETE FROM t_wxcms_task_code WHERE ID = #{id}
+    </delete>
+
     <select id="getByWxCode" resultType="com.wxcms.domain.TaskCode">
         SELECT * FROM t_wxcms_task_code WHERE wxCodeImgHref = #{wxCodeImgHref} limit 1
     </select>

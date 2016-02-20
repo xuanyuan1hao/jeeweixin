@@ -71,6 +71,46 @@ public class TaskCtrl {
         mv.addObject("taskProfit", taskProfit/100);
         return mv;
     }
+    //菜单栏任务大厅
+    @RequestMapping(value = "/my_task_list")
+    public ModelAndView myCenter(HttpServletRequest request) {
+        MpAccount mpAccount = WxMemoryCacheClient.getSingleMpAccount();//获取缓存中的唯一账号
+        if (mpAccount != null) {
+            ModelAndView mv = new ModelAndView("wxweb/list_code_task");
+            //拦截器已经处理了缓存,这里直接取
+            String openId = WxMemoryCacheClient.getOpenid(request.getSession().getId());
+            if(null!=openId){
+                TaskLog searchEntity=new TaskLog();
+                mv.addObject("openId", openId);
+                searchEntity.setOpenId(openId);
+                searchEntity.setTaskStatus(0);//待执行任务
+                Pagination<TaskLog> pagination=new Pagination<TaskLog>();
+                pagination=taskLogService.paginationEntityByOpenIdAndTaskStatus(searchEntity, pagination);
+                mv.addObject("pagination", pagination);
+                //待执行任务只取第一页10条即可
+                searchEntity.setTaskStatus(0);//待执行任务
+                Pagination<TaskLog> paginationTaskLog=new Pagination<TaskLog>();
+                paginationTaskLog=taskLogService.paginationEntityByOpenIdAndTaskStatus(searchEntity, paginationTaskLog);
+                mv.addObject("paginationTaskLog", paginationTaskLog);
+
+                searchEntity.setTaskStatus(1);//已经完成的任务
+                Pagination<TaskLog> paginationFinishedTaskLog=new Pagination<TaskLog>();
+                paginationFinishedTaskLog=taskLogService.paginationEntityByOpenIdAndTaskStatus(searchEntity, paginationFinishedTaskLog);
+                mv.addObject("paginationFinishedTaskLog", paginationFinishedTaskLog);
+                //获取URL
+                String webUrl = "http://" + request.getServerName().toString() + ((request.getLocalPort() == 80) ? "" : (":" + request.getLocalPort()));
+                mv.addObject("webUrl", webUrl);
+                //获取参数，分成比例
+                double taskProfit=mpAccount.getTaskProfit();
+                mv.addObject("taskProfit", taskProfit/100);
+                return mv;
+            }
+        }
+        ModelAndView mv = new ModelAndView("common/failureMobile");
+        mv.addObject("failureMsg", "OAuth获取openid失败");
+        return mv;
+    }
+
     @RequestMapping(value = "/my_list_code_task")
     public ModelAndView myListCodeTask(HttpServletRequest request,ModelMap map,TaskLog searchEntity,Pagination<TaskLog> pagination,
                                      String openId){
@@ -133,6 +173,7 @@ public class TaskCtrl {
                 //扣钱，加钱，修改状态
                 userInfoService.updateUserMoneyByTask(taskCode.getId(), userId, taskLog);
                 jsonObject.put("result", true);
+                jsonObject.put("openId",taskLog.getOpenId());
                 jsonObject.put("msg", "领取成功!");
             }else {
                 jsonObject.put("msg", "任务已经完成或福利码错了!");

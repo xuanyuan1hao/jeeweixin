@@ -23,4 +23,5 @@ public interface TaskCodeService {
 
     Pagination<TaskCode> paginationEntityNotGet(TaskLog searchEntity, Pagination<TaskCode> pagination);
 
+    public void delete(TaskCode taskCode);
 }

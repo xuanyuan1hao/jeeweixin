@@ -129,7 +129,23 @@ public class UserInfoCtrl {
         }
         return jsonObject.toString();
     }
+    @RequestMapping(value = "delete_code_task_json")
+    public @ResponseBody String deleteCodeTaskJson(HttpServletRequest request,
+                                                 ModelMap map,long id,HttpSession httpSession) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("result", false);
+        jsonObject.put("msg", "系统错误，修改失败");
+        try {
+            TaskCode taskCode=new TaskCode();
+            taskCode.setId(id);
+            taskCodeService.delete(taskCode);
+            jsonObject.put("result", true);
+            jsonObject.put("msg", "删除成功");
+        }catch (Exception ex){
 
+        }
+        return jsonObject.toString();
+    }
 
     @RequestMapping(value = "/manage_code_task")
     public ModelAndView manageCodeTask(HttpServletRequest request,ModelMap map,TaskCode searchEntity,Pagination<TaskCode> pagination,HttpSession httpSession){

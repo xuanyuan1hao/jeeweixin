@@ -21,4 +21,5 @@ public interface TaskCodeDao {
     public Integer getTotalItemsCountNotGet(TaskLog searchEntity);
 
 
+    public void delete(TaskCode taskCode);
 }

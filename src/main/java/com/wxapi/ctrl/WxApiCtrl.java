@@ -266,6 +266,9 @@ public class WxApiCtrl {
             ModelAndView mv = new ModelAndView("wxweb/my_center");
             //拦截器已经处理了缓存,这里直接取
             String openid = WxMemoryCacheClient.getOpenid(request.getSession().getId());
+            if(null==openid){
+                openid=request.getParameter("openId");
+            }
             AccountFans fans = accountFansService.getByOpenId(openid);//同时更新数据库
             if (null != fans) {
                 accountFansService.updateUserMoneyCheck(fans.getId());
@@ -333,7 +336,14 @@ public class WxApiCtrl {
     }
 
     @RequestMapping(value = "/referer_detail")
-    public ModelAndView refererDetail(HttpServletRequest request, @RequestParam("id") long id) {
+    public ModelAndView refererDetail(HttpServletRequest request, @RequestParam(value = "id",defaultValue = "0") long id,
+                                      @RequestParam("openId") String openId) {
+       if (id==0){
+           if (openId!=null){
+               AccountFans accountFans=accountFansService.getByOpenId(openId);
+               id=accountFans.getId();
+           }
+       }
         ModelAndView mv = new ModelAndView("wxweb/referer_detail");
         Flow flow = new Flow();
         flow.setFansId(id);

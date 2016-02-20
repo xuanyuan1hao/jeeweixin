@@ -14,7 +14,7 @@ import java.util.List;
  * Created by Administrator on 2016-02-07.
  */
 @Service
-public class TaskCodeServiceImpl implements TaskCodeService {
+public class TaskCodeServiceImpl implements TaskCodeService{
     @Autowired
     private TaskCodeDao baseDao;
 
@@ -64,5 +64,9 @@ public class TaskCodeServiceImpl implements TaskCodeService {
         pagination.setTotalItemsCount(totalItemsCount);
         pagination.setItems(items);
         return pagination;
+    }
+
+    public void delete(TaskCode taskCode) {
+        baseDao.delete(taskCode);
     }
 }
