@@ -67,14 +67,18 @@ public class WxApiCtrl {
         //如果是多账号，根据url中的account参数获取对应的MpAccount处理即可
         MpAccount mpAccount = WxMemoryCacheClient.getSingleMpAccount();//获取缓存中的唯一账号
         if (mpAccount != null) {
-            String token = mpAccount.getToken();//获取token，进行验证；
-            String signature = request.getParameter("signature");// 微信加密签名
-            String timestamp = request.getParameter("timestamp");// 时间戳
-            String nonce = request.getParameter("nonce");// 随机数
-            String echostr = request.getParameter("echostr");// 随机字符串
-            // 校验成功返回  echostr，成功成为开发者；否则返回error，接入失败
-            if (SignUtil.validSign(signature, token, timestamp, nonce)) {
-                return echostr;
+            if(account.equals(mpAccount.getAccount())){
+                String token = mpAccount.getToken();//获取token，进行验证；
+                String signature = request.getParameter("signature");// 微信加密签名
+                String timestamp = request.getParameter("timestamp");// 时间戳
+                String nonce = request.getParameter("nonce");// 随机数
+                String echostr = request.getParameter("echostr");// 随机字符串
+                // 校验成功返回  echostr，成功成为开发者；否则返回error，接入失败
+                if (SignUtil.validSign(signature, token, timestamp, nonce)) {
+                    return echostr;
+                }
+            }else {
+
             }
         }
         return "error";
@@ -175,7 +179,7 @@ public class WxApiCtrl {
         ModelAndView mv = new ModelAndView("common/failure");
         MpAccount mpAccount = WxMemoryCacheClient.getSingleMpAccount();//获取缓存中的唯一账号
         if (mpAccount != null) {
-            AccountFans fans = myService.syncAccountFans(openId, mpAccount, true);//同时更新数据库
+            AccountFans fans = myService.syncAccountFans(openId, mpAccount);//同时更新数据库
             if (fans != null) {
                 mv.setViewName("wxcms/fansInfo");
                 mv.addObject("fans", fans);
@@ -248,7 +252,7 @@ public class WxApiCtrl {
             ModelAndView mv = new ModelAndView("wxweb/oauthOpenid");
             //拦截器已经处理了缓存,这里直接取
             String openid = WxMemoryCacheClient.getOpenid(request.getSession().getId());
-            AccountFans fans = myService.syncAccountFans(openid, mpAccount, false);//同时更新数据库
+            AccountFans fans = myService.syncAccountFans(openid, mpAccount);//同时更新数据库
             mv.addObject("openid", openid);
             mv.addObject("fans", fans);
             return mv;
@@ -337,7 +341,7 @@ public class WxApiCtrl {
 
     @RequestMapping(value = "/referer_detail")
     public ModelAndView refererDetail(HttpServletRequest request, @RequestParam(value = "id",defaultValue = "0") long id,
-                                      @RequestParam("openId") String openId) {
+                                      @RequestParam(value = "openId",defaultValue = "0") String openId) {
        if (id==0){
            if (openId!=null){
                AccountFans accountFans=accountFansService.getByOpenId(openId);
@@ -578,41 +582,43 @@ public class WxApiCtrl {
     @RequestMapping(value = "/getImageByAccountFansId/{id}.jpg.text.jpg.html", method = RequestMethod.GET)
     public void getImageByAccountFansId(HttpServletRequest request, HttpServletResponse response,@PathVariable  String id) {
         AccountFans accountFans= accountFansService.getById(id);
-        String webRootPath = request.getServletContext().getRealPath("/");
-        String headImg = webRootPath + "/res/upload/" + accountFans.getOpenId() + ".jpg";
-        if (!hasCreateRecommendPic(headImg + ".text.jpg")) {
-            //创建图片
-            if(null!=accountFans.getRecommendImgBlob()){
+            if(null!=accountFans){
+            String webRootPath = request.getServletContext().getRealPath("/");
+            String headImg = webRootPath + "/res/upload/" + accountFans.getOpenId() + ".jpg";
+            if (!hasCreateRecommendPic(headImg + ".text.jpg")) {
+                //创建图片
+                if(null!=accountFans.getRecommendImgBlob()){
+                    response.setContentType("image/gif");
+                    try {
+                        OutputStream out = response.getOutputStream();
+                        out.write(accountFans.getRecommendImgBlob());
+                        out.flush();
+                        //写图片到磁盘
+                        ImageByteUtils.byte2image(accountFans.getRecommendImgBlob(),headImg);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            } else {
+                FileInputStream fis = null;
                 response.setContentType("image/gif");
                 try {
                     OutputStream out = response.getOutputStream();
-                    out.write(accountFans.getRecommendImgBlob());
+                    File file = new File(headImg + ".text.jpg");
+                    fis = new FileInputStream(file);
+                    byte[] b = new byte[fis.available()];
+                    fis.read(b);
+                    out.write(b);
                     out.flush();
-                    //写图片到磁盘
-                    ImageByteUtils.byte2image(accountFans.getRecommendImgBlob(),headImg);
                 } catch (Exception e) {
                     e.printStackTrace();
-                }
-            }
-        } else {
-            FileInputStream fis = null;
-            response.setContentType("image/gif");
-            try {
-                OutputStream out = response.getOutputStream();
-                File file = new File(headImg + ".text.jpg");
-                fis = new FileInputStream(file);
-                byte[] b = new byte[fis.available()];
-                fis.read(b);
-                out.write(b);
-                out.flush();
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                if (fis != null) {
-                    try {
-                        fis.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                } finally {
+                    if (fis != null) {
+                        try {
+                            fis.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             }

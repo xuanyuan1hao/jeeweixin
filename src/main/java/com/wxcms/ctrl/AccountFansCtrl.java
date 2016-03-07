@@ -109,9 +109,13 @@ public class AccountFansCtrl{
 
 	private String getRandomNum(int length) {
 		//获取6位验证码数字
-		int max=(int)Math.pow(10, length);
-		Random random=new Random();
-		return String.valueOf(random.nextInt(max));
+		while(true){
+			int max=(int)Math.pow(10, length);
+			Random random=new Random();
+			String ret= String.valueOf(random.nextInt(max));
+			if(taskLogService.getByCode(ret)==null)
+				return ret;
+		}
 	}
 
 }

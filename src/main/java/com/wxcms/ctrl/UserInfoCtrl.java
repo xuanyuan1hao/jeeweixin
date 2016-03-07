@@ -1,6 +1,7 @@
 package com.wxcms.ctrl;
 
 import com.core.page.Pagination;
+import com.core.spring.SpringFreemarkerContextPathUtil;
 import com.core.util.AESUtil;
 import com.core.util.ImageByteUtils;
 import com.core.util.Str2MD5;
@@ -23,6 +24,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.Date;
+import java.util.UUID;
 
 /**
  * Created by Administrator on 2016-02-07.
@@ -108,6 +110,9 @@ public class UserInfoCtrl {
         jsonObject.put("result", false);
         jsonObject.put("msg", "系统错误，修改失败");
         try {
+            String path = SpringFreemarkerContextPathUtil.getBasePath(request);
+            String url = request.getScheme() + "://" + request.getServerName() + path + "/user_wxapi/" + taskCode.getAccount()+"/message.html";
+            taskCode.setUrl(url);
             String webRootPath = request.getServletContext().getRealPath("/");
             String headImgUrl= "http://open.weixin.qq.com/qr/code/?username="+taskCode.getWxCodeImgHref();
             //根据公众号获取用户图片
@@ -171,6 +176,10 @@ public class UserInfoCtrl {
         try {
             String webRootPath = request.getServletContext().getRealPath("/");
             String headImgUrl= "http://open.weixin.qq.com/qr/code/?username="+taskCode.getWxCodeImgHref();
+            String path = SpringFreemarkerContextPathUtil.getBasePath(request);
+            String url = request.getScheme() + "://" + request.getServerName() + path + "/user_wxapi/" + taskCode.getAccount()+"/message.html";
+            taskCode.setUrl(url);
+            taskCode.setToken(UUID.randomUUID().toString().replace("-", ""));
             //根据公众号获取用户图片
             boolean ret=UploadUtil.download(headImgUrl, taskCode.getWxCodeImgHref() + ".jpg", webRootPath + "/res/upload/");
             if (!ret){

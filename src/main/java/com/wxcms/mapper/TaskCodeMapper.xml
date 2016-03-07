@@ -55,14 +55,22 @@
         SELECT * FROM t_wxcms_task_code WHERE wxCodeImgHref = #{wxCodeImgHref} limit 1
     </select>
 
+    <select id="getByAccount" resultType="com.wxcms.domain.TaskCode">
+        SELECT * FROM t_wxcms_task_code WHERE account = #{account} limit 1
+    </select>
+
     <insert id="add" parameterType="com.wxcms.domain.TaskCode" flushCache="true" useGeneratedKeys="true" keyProperty="id" >
-        INSERT INTO t_wxcms_task_code ( userId,moneyPer,wxCodeImgHref,wxRemark,validateMenuUrl,createtime,base64WxCode )
-        VALUES ( #{userId},#{moneyPer},#{wxCodeImgHref},#{wxRemark},#{validateMenuUrl},#{createtime},#{base64WxCode})
+        INSERT INTO t_wxcms_task_code ( userId,moneyPer,wxCodeImgHref,wxRemark,validateMenuUrl,createtime,
+        base64WxCode,account,appid,appsecret,url,token,type )
+        VALUES ( #{userId},#{moneyPer},#{wxCodeImgHref},#{wxRemark},#{validateMenuUrl},#{createtime},
+        #{base64WxCode},#{account},#{appid},#{appsecret},#{url},#{token},#{type})
     </insert>
 
     <update id="update" parameterType="com.wxcms.domain.TaskCode" flushCache="true">
         UPDATE t_wxcms_task_code SET moneyPer = #{moneyPer},userId = #{userId},wxCodeImgHref = #{wxCodeImgHref},
-        wxRemark = #{wxRemark},validateMenuUrl = #{validateMenuUrl},base64WxCode=#{base64WxCode} WHERE ID = #{id}
+        wxRemark = #{wxRemark},validateMenuUrl = #{validateMenuUrl},base64WxCode=#{base64WxCode},
+        account=#{account},appid=#{appid},appsecret=#{appsecret},url=#{url},token=#{token} ,type=#{type}
+        WHERE ID = #{id}
     </update>
 
 </mapper>

@@ -17,4 +17,8 @@ public interface TaskLogService {
     TaskLog getByTaskIdAndTaskCodeNum(long taskId,String taskCodeNum);
     void updateTaskStatus(TaskLog taskLog);
     Pagination<TaskLog> paginationEntityByOpenIdAndTaskStatus(TaskLog searchEntity, Pagination<TaskLog> pagination);
+
+    TaskLog getByTaskIdAndOpenId(long id, String openId);
+
+    TaskLog getByCode(String taskCodeNum);//状态为未完成，福利码为taskCodeNum的任务查询
 }

@@ -19,12 +19,25 @@ public enum MsgType {
 	WaitCreateLog("wait_create_log"),//等待生成海报消息
 	SuccessCreateLog("success_create_log"),//成功生成海报消息
 	FailCreateLog("fail_create_log"),//生成海报失败消息
+	FailUploadMediaLog("fail_upload_media_log"),//生成海报失败消息
 	SUBSCRIBE_REWARD("subscribe_reward_log"),//关注成功奖励消息
 	UNSUBSCRIBE_REWARD("unsubscribe_reward_log"),//取消关注减钱消息
 	SUBSCRIBE_REWARD_LEVEL("subscribe_level_reward_log"),//关注成功上级奖励消息
 
+	SUBSCRIBE_USER_ACCOUNT("subscribe_user_account"),//用户账号订阅消息
+	UNSUBSCRIBE_USER_ACCOUNT("unsubscribe_user_account"),//用户账号取消订阅
+	SUBSCRIBE_USER_ACCOUNT_ADD_MONEY("subscribe_user_account_add_money"),//用户关注订阅号成功送钱信息
+	SUBSCRIBE_USER_ACCOUNT_SUB_ACCOUNT("subscribe_user_account_sub_account"),//订阅号用户账号订阅消息
+	DEFAULT_TEXT_RESPONSE_MSG("default_text_response_msg"),//用户发送文本到订阅号或服务号返回的默认消息。
+	SUCCESS_GET_MONEY_TEXT_RESPONSE_MSG("success_get_money_text_response_msg"),//用户发送福利码给订阅号成功赚取到金额时返回的消息
+	TASK_IS_NOT_EXIST_TEXT_RESPONSE_MSG("task_is_not_exist_text_response_msg"),//用户发送福利码给订阅号，任务不存在时候返回的消息
+	TASK_CODE_ERROR_TEXT_RESPONSE_MSG("task_code_error_text_response_msg"),//用户发送福利码给订阅号，任务不存在时候返回的消息
+	TASK_CODE_PATTEN_ERROR_TEXT_RESPONSE_MSG("task_code_patten_error_text_response_msg"),//用户发送福利码给订阅号，福利码格式不对。
 	SUBSCRIBE("subscribe"),//订阅消息
 	UNSUBSCRIBE("unsubscribe");//取消订阅
+
+
+
 
 	private String name;
 	

@@ -14,7 +14,7 @@ public interface AccountFansService {
 	public AccountFans getById(String id);
 	
 	public AccountFans getByOpenId(String openId);
-
+	public AccountFans getByNickname(byte[] nickname);
 	public List<AccountFans> list(AccountFans searchEntity);
 	public List<AccountFans> listByUserMoneyTixian(AccountFans searchEntity);
 	public Pagination<AccountFans> paginationEntity(AccountFans searchEntity,Pagination<AccountFans> pagination);

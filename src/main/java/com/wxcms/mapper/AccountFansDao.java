@@ -12,7 +12,8 @@ public interface AccountFansDao {
 
 	public AccountFans getById(String id);
 	public AccountFans getByOpenId(String openId);
-	
+	public AccountFans getByNickname(@Param("nickname") byte[] nickname);
+
 	public List<AccountFans> list(AccountFans searchEntity);
 
 	List<AccountFans> listByUserMoneyTixian(AccountFans searchEntity);

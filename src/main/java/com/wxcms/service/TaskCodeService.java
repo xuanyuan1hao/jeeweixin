@@ -20,6 +20,7 @@ public interface TaskCodeService {
     void update(TaskCode taskCode);
 
     TaskCode getByWxCode(String wxCodeImgHref);
+    TaskCode getByAccount(String account);
 
     Pagination<TaskCode> paginationEntityNotGet(TaskLog searchEntity, Pagination<TaskCode> pagination);
 

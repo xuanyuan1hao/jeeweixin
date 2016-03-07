@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://10.20.91.130/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.wxcms.mapper.UserAccountFansDao">
+
+    <select id="getTotalItemsCount" parameterType="com.wxcms.domain.UserAccountFans" resultType="java.lang.Integer">
+        SELECT count(id) FROM t_wxcms_user_account_fans
+    </select>
+
+    <select id="paginationEntity" resultType="com.wxcms.domain.UserAccountFans">
+        SELECT * FROM t_wxcms_user_account_fans
+        ORDER BY ID
+        LIMIT #{param2.start} , #{param2.pageSize}
+    </select>
+
+    <select id="getLastOpenId" resultType="com.wxcms.domain.UserAccountFans">
+        SELECT * FROM t_wxcms_user_account_fans
+        ORDER BY ID DESC
+        LIMIT 0 , 1
+    </select>
+
+    <select id="getById" parameterType="java.lang.String" resultType="com.wxcms.domain.UserAccountFans">
+        SELECT * FROM t_wxcms_user_account_fans WHERE ID = #{id}
+    </select>
+
+    <update id="updateLastUpdateTime" parameterType="com.wxcms.domain.UserAccountFans" flushCache="true">
+        UPDATE t_wxcms_user_account_fans SET lastUpdateTime = #{lastUpdateTime} WHERE OPENID = #{openId}
+    </update>
+
+    <update id="updateAccountFansOldOpenId" parameterType="com.wxcms.domain.UserAccountFans" flushCache="true">
+        UPDATE t_wxcms_user_account_fans SET baseOpenId = #{baseOpenId} WHERE OPENID = #{openId}
+    </update>
+
+    <delete id="deleteByOpenId" parameterType="com.wxcms.domain.UserAccountFans" >
+        DELETE FROM t_wxcms_user_account_fans WHERE openId = #{openId}
+    </delete>
+
+    <update id="updateUserAccountFans" parameterType="com.wxcms.domain.UserAccountFans" flushCache="true">
+        UPDATE t_wxcms_user_account_fans SET
+        OPENID=#{openId},SUBSCRIBESTATUS=#{subscribeStatus},SUBSCRIBETIME=#{subscribeTime},
+        NICKNAME=#{nickname},GENDER=#{gender},LANGUAGE=#{language},
+        COUNTRY=#{country},PROVINCE=#{province},CITY=#{city},
+        HEADIMGURL=#{headimgurl},REMARK=#{remark},STATUS=#{status}
+        WHERE OPENID = #{openId}
+
+    </update>
+
+
+    <select id="getByOpenId" parameterType="java.lang.String" resultType="com.wxcms.domain.UserAccountFans">
+        SELECT * FROM t_wxcms_user_account_fans WHERE OPENID = #{openId}
+    </select>
+
+    <insert id="add" parameterType="com.wxcms.domain.UserAccountFans" flushCache="true"
+            useGeneratedKeys="true" keyProperty="id"  >
+        <![CDATA[
+		INSERT INTO t_wxcms_user_account_fans ( OPENID,SUBSCRIBESTATUS,SUBSCRIBETIME,NICKNAME,GENDER,LANGUAGE,COUNTRY,PROVINCE,CITY,
+		HEADIMGURL,REMARK,STATUS,WXID,CREATETIME, lastUpdateTime)
+		VALUES ( #{openId},#{subscribeStatus},#{subscribeTime},#{nickname},
+		#{gender},#{language},#{country},#{province},#{city},#{headimgurl},#{remark},#{status},#{wxid},#{createtime}
+		,#{lastUpdateTime} )
+		 ]]>
+    </insert>
+
+</mapper>

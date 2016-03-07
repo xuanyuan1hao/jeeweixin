@@ -23,7 +23,7 @@ public interface UserInfoService {
     public void update(UserInfo entity);//更新密码
 
     public void  updateUserMoney(UserInfo entity);//加钱或者减钱
-
+    public void updateUserMoney(UserInfo entity,String log,int type);
     public void updateUserForzenedMoney(UserInfo entity);//加冻结的钱或者减掉冻结的钱（主要用于提现）
 
     public void delete(UserInfo entity);

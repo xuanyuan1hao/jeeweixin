@@ -24,7 +24,7 @@ public interface MyService {
 	public boolean syncAccountFansList(MpAccount mpAccount);
 	
 	//获取单个用户信息
-	public AccountFans syncAccountFans(String openId, MpAccount mpAccount, boolean merge);
+	public AccountFans syncAccountFans(String openId, MpAccount mpAccount);
 	
 	//根据openid 获取粉丝，如果没有，同步粉丝
 	//public AccountFans getFansByOpenId(String openid,MpAccount mpAccount);

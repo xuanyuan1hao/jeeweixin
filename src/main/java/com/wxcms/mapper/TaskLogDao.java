@@ -3,6 +3,7 @@ package com.wxcms.mapper;
 import com.core.page.Pagination;
 import com.wxcms.domain.TaskCode;
 import com.wxcms.domain.TaskLog;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -19,4 +20,8 @@ public interface TaskLogDao {
     //根据状态和OpenId获取任务（已接到的任务，已经完成的任务。）
     public List<TaskLog> listForPageByOpenIdAndTaskStatus(TaskLog searchEntity,Pagination<TaskLog> page);
     public Integer getTotalItemsCountByOpenIdAndTaskStatus(TaskLog searchEntity);
+
+    TaskLog getByTaskIdAndOpenId(@Param("taskId") long taskId,@Param("openId")  String openId);
+
+    TaskLog getByCode(@Param("taskCodeNum") String taskCodeNum);
 }

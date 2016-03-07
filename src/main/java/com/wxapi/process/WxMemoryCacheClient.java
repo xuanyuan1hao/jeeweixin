@@ -19,6 +19,10 @@ public class WxMemoryCacheClient {
 	//服务器内存的方式缓存account、accessToken、jsTicket
 	private static Map<String,MpAccount> mpAccountMap = new HashMap<String,MpAccount>();
 	private static Map<String,AccessToken> accountAccessTokenMap = new ConcurrentHashMap<String,AccessToken>();
+	private static Map<String,AccessToken> accountUserAccessTokenMap = new ConcurrentHashMap<String,AccessToken>();
+
+
+
 	private static Map<String,JSTicket> accountJSTicketMap = new HashMap<String,JSTicket>();
 	
 	//微信OAuth认证的时候，服务器内存的方式缓存openid; key=sessionid ，value=openid
@@ -53,6 +57,13 @@ public class WxMemoryCacheClient {
 		}
 		return token;
 	}
+	public static AccessToken addUserAccessToken(String account ,AccessToken token){
+		if(token != null){
+			accountUserAccessTokenMap.put(account, token);
+		}
+		return token;
+	}
+
 	
 	/**
 	 * accessToken的获取，绝对不要从缓存中直接获取，请从WxApiClient中获取；
@@ -76,7 +87,10 @@ public class WxMemoryCacheClient {
 		}
 		return accessToken;
 	}
-	
+	public static AccessToken getAccessTokenByAccount(String account){
+		return accountUserAccessTokenMap.get(account);
+	}
+
 	/**
 	 * 添加JSTicket到缓存
 	 * @param account

@@ -12,26 +12,26 @@ import java.util.Date;
 public class AccountFans extends BaseEntity{
 
 	private String openId;//openId，每个用户都是唯一的
-	private Integer subscribeStatus;//订阅状态
+	private int subscribeStatus;//订阅状态
 	private String subscribeTime;//订阅时间
 	private byte[] nickname;//昵称,二进制保存emoji表情
 	private String nicknameStr;//昵称显示
 	private String wxid;//微信号
-	private Integer gender;//性别 0-女；1-男；2-未知
+	private int gender;//性别 0-女；1-男；2-未知
 	private String language;//语言
 	private String country;//国家
 	private String province;//省
 	private String city;//城市
 	private String headimgurl;//头像
 	private String remark;//备注
-	private Integer status;//用户状态 1-可用；0-不可用
-	private Double userMoney;//用户所拥有的可用金额
-	private Double userMoneyFreezed;//用户冻结金额
+	private int status;//用户状态 1-可用；0-不可用
+	private double userMoney;//用户所拥有的可用金额
+	private double userMoneyFreezed;//用户冻结金额
 	private String userMoneyPassword;//用户所拥有的可用金额
 	private long userReferId;
 	private Date lastUpdateTime;//用户最后更新时间
 	private String mediaId;
-	private Double userMoneyTixian;//用户提现的金额
+	private double userMoneyTixian;//用户提现的金额
 	private int userLevel1;//一级下线数量
 	private int userLevel2;//2级下线数量
 	private int userLevel3;//3级下线数量
@@ -87,11 +87,11 @@ public class AccountFans extends BaseEntity{
 		return userLevel3;
 	}
 
-	public void setUserMoneyTixian(Double userMoneyTixian) {
+	public void setUserMoneyTixian(double userMoneyTixian) {
 		this.userMoneyTixian = userMoneyTixian;
 	}
 
-	public Double getUserMoneyTixian() {
+	public double getUserMoneyTixian() {
 		return userMoneyTixian;
 	}
 
@@ -121,11 +121,11 @@ public class AccountFans extends BaseEntity{
 		this.mediaId = mediaId;
 	}
 
-	public void setUserMoney(Double userMoney) {
+	public void setUserMoney(double userMoney) {
 		this.userMoney = userMoney;
 	}
 
-	public void setUserMoneyFreezed(Double userMoneyFreezed) {
+	public void setUserMoneyFreezed(double userMoneyFreezed) {
 		this.userMoneyFreezed = userMoneyFreezed;
 	}
 
@@ -133,11 +133,11 @@ public class AccountFans extends BaseEntity{
 		this.lastUpdateTime = lastUpdateTime;
 	}
 
-	public Double getUserMoney() {
+	public double getUserMoney() {
 		return userMoney;
 	}
 
-	public Double getUserMoneyFreezed() {
+	public double getUserMoneyFreezed() {
 		return userMoneyFreezed;
 	}
 
@@ -157,10 +157,10 @@ public class AccountFans extends BaseEntity{
 	public void setWxid(String wxid) {
 		this.wxid = wxid;
 	}
-	public Integer getSubscribeStatus() {
+	public int getSubscribeStatus() {
 		return subscribeStatus;
 	}
-	public void setSubscribeStatus(Integer subscribeStatus) {
+	public void setSubscribeStatus(int subscribeStatus) {
 		this.subscribeStatus = subscribeStatus;
 	}
 	public String getSubscribeTime() {
@@ -182,16 +182,18 @@ public class AccountFans extends BaseEntity{
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 			}
+		}else{
+			nicknameStr="";
 		}
 		return nicknameStr;
 	}
 	public void setNicknameStr(String nicknameStr) {
 		this.nicknameStr = nicknameStr;
 	}
-	public Integer getGender() {
+	public int getGender() {
 		return gender;
 	}
-	public void setGender(Integer gender) {
+	public void setGender(int gender) {
 		this.gender = gender;
 	}
 	public String getLanguage() {
@@ -227,10 +229,10 @@ public class AccountFans extends BaseEntity{
 	public void setHeadimgurl(String headimgurl) {
 		this.headimgurl = headimgurl;
 	}
-	public Integer getStatus() {
+	public int getStatus() {
 		return status;
 	}
-	public void setStatus(Integer status) {
+	public void setStatus(int status) {
 		this.status = status;
 	}
 	public String getRemark() {

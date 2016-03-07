@@ -49,6 +49,17 @@ public class TaskLogServiceImpl implements TaskLogService {
         pagination.setItems(items);
         return pagination;
     }
+
+    @Override
+    public TaskLog getByTaskIdAndOpenId(long id, String openId) {
+       return baseDao.getByTaskIdAndOpenId(id,openId);
+    }
+
+    @Override
+    public TaskLog getByCode(String taskCodeNum) {
+        return baseDao.getByCode(taskCodeNum);
+    }
+
     public void updateTaskStatus(TaskLog taskLog) {
         baseDao.updateTaskStatus(taskLog);
     }

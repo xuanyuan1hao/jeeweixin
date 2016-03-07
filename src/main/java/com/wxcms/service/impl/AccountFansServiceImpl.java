@@ -14,7 +14,6 @@ import com.wxcms.mapper.MsgBaseDao;
 import com.wxcms.service.AccountFansService;
 import com.wxcms.service.FansTixianSrevice;
 import com.wxcms.service.FlowService;
-import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +23,7 @@ import java.util.List;
 import java.util.Random;
 
 
-@Service
+@Service("accountFansService")
 public class AccountFansServiceImpl implements AccountFansService{
 
 	@Autowired
@@ -42,7 +41,9 @@ public class AccountFansServiceImpl implements AccountFansService{
 	public AccountFans getByOpenId(String openId){
 		return entityDao.getByOpenId(openId);
 	}
-	
+	public AccountFans getByNickname(byte [] nickname){
+			return entityDao.getByNickname(nickname);
+	}
 	public List<AccountFans> list(AccountFans searchEntity){
 		return entityDao.list(searchEntity);
 	}
@@ -136,7 +137,7 @@ public class AccountFansServiceImpl implements AccountFansService{
 			}
 			String log="您的好友#{friendName}扫描了您的二维码，您获取到了#{money}元红包";
 			log=getContent(MsgType.SUBSCRIBE_REWARD_LEVEL.toString(),log);
-			log=log.replace("#{friendName}",fans.getNicknameStr()+logAdd).replace("#{money}",String.format("%.2f",referMoney));
+			log=log.replace("#{friendName}",fans.getNicknameStr()+logAdd).replace("#{money}",String.format("%.4f",referMoney));
 			Flow flow=new Flow();
 			flow.setCreatetime(new Date());
 			flow.setUserFlowMoney(referMoney);
@@ -155,7 +156,7 @@ public class AccountFansServiceImpl implements AccountFansService{
 			//int intervalHours= MyServiceImpl.getIntervalHours(referAccountFans.getLastUpdateTime(), new Date());
 			//if(intervalHours<48&&intervalHours>0)
 			{
-				JSONObject result = WxApiClient.sendCustomTextMessage(referAccountFans.getOpenId(), log, mpAccount);
+				 WxApiClient.sendCustomTextMessage(referAccountFans.getOpenId(), log, mpAccount);
 			}
 			//处理二级
 			AccountFans referFans=getById(referUserId + "");
@@ -198,7 +199,7 @@ public class AccountFansServiceImpl implements AccountFansService{
 			}
 			String log="您的好友#{friendName}取消了关注，您被扣除#{money}元红包";
 			log=getContent(MsgType.UNSUBSCRIBE_REWARD.toString(),log);
-			log=log.replace("#{friendName}",accountFans.getNicknameStr()+logAdd).replace("#{money}",money+"");
+			log=log.replace("#{friendName}",accountFans.getNicknameStr()+logAdd).replace("#{money}",String.format("%.4f",money));
 			Flow flow=new Flow();
 			flow.setCreatetime(new Date());
 			flow.setUserFlowMoney(0 - money);
@@ -215,7 +216,7 @@ public class AccountFansServiceImpl implements AccountFansService{
 			//int intervalHours=getIntervalHours(recommendAccountFans.getLastUpdateTime(),new Date());
 			//if(intervalHours<48&&intervalHours>0)
 			{
-				JSONObject result = WxApiClient.sendCustomTextMessage(recommendAccountFans.getOpenId(), log, mpAccount);
+				 WxApiClient.sendCustomTextMessage(recommendAccountFans.getOpenId(), log, mpAccount);
 			}
 			this.updateAddUserMoneyByUserId(0 - money, recommendAccountFans.getId());//上级扣钱
 			//获取推荐人

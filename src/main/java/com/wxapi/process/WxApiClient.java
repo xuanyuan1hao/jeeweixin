@@ -364,11 +364,16 @@ public class WxApiClient {
 	 * @param content 消息内容
 	 * @return
 	 */
-	public static JSONObject sendCustomTextMessage(String openid,String content,MpAccount mpAccount){
+	public static JSONObject sendCustomTextMessage(String openid, String content,MpAccount mpAccount){
 		if(!StringUtils.isBlank(openid) && !StringUtils.isBlank(content)){
-			String accessToken = getAccessToken(mpAccount);
-			content = WxMessageBuilder.prepareCustomText(openid, content);
-			return WxApi.httpsRequest(WxApi.getSendCustomMessageUrl(accessToken), HttpMethod.POST, content);
+			final String accessToken = getAccessToken(mpAccount);
+			final String content2 = WxMessageBuilder.prepareCustomText(openid, content);
+			new Thread(new Runnable(){
+				public void run(){
+					WxApi.httpsRequest(WxApi.getSendCustomMessageUrl(accessToken), HttpMethod.POST, content2);
+				}
+			}).start();
+			return null;
 		}
 		return null;
 	}

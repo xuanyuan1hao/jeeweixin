@@ -32,7 +32,14 @@
 						资金明细
 					</span>
             </div>
-
+            <#if accountFans??>
+            <div class="block-content-description">
+                <span class="title">用户情况</span>
+                <span>可用金额：${accountFans.userMoney!}元，冻结金额：${accountFans.userMoneyFreezed!}元</span>
+                <span>一级下线：${accountFans.userLevel1!}个，二级下线：${accountFans.userLevel2!}个，三级下线：${accountFans.userLevel3!}个</span>
+                <span>累计提现：${accountFans.userMoneyTixian!}元</span>
+            </div>
+                </#if>
             <div class="block-content-content">
                 <table class="fm-table">
                     <thead>

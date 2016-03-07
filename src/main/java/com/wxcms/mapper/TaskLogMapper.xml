@@ -24,9 +24,19 @@
     <select id="getById" resultType="com.wxcms.domain.TaskLog">
         SELECT * FROM t_wxcms_task_log WHERE ID = #{id}
     </select>
+
+    <select id="getByCode" resultType="com.wxcms.domain.TaskLog">
+        SELECT * FROM t_wxcms_task_log WHERE taskCodeNum = #{taskCodeNum} and taskStatus=0
+    </select>
+
     <select id="getByTaskIdAndTaskCodeNum" resultType="com.wxcms.domain.TaskLog">
         SELECT * FROM t_wxcms_task_log WHERE taskId = #{taskId} and taskCodeNum=#{taskCodeNum} and taskStatus=0  limit 1
     </select>
+
+    <select id="getByTaskIdAndOpenId" parameterType="com.wxcms.domain.TaskLog" resultType="com.wxcms.domain.TaskLog">
+        SELECT * FROM t_wxcms_task_log WHERE taskId = #{taskId} and openId=#{openId}  limit 1
+    </select>
+
 
     <insert id="add" parameterType="com.wxcms.domain.TaskLog" flushCache="true"  useGeneratedKeys="true" keyProperty="id" >
         INSERT INTO t_wxcms_task_log ( log,money,openId,createtime,taskId,taskCodeNum,taskStatus )

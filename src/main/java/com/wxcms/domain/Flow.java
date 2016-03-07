@@ -17,6 +17,7 @@ public class Flow extends BaseEntity {
     private byte[] userFlowLogBinary;//由于用户名字会出现非法字符，所以这里用二进制来存储
     private String userFlowLogText;
 
+
     public String getUserFlowLogText() {
         if(null==userFlowLog){
             if(this.getUserFlowLogBinary() != null){

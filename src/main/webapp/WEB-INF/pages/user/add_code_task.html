@@ -23,7 +23,7 @@
 
 
                 <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-md-8">
                         <br>
                         <div id="myTabContent" class="tab-content">
                             <div class="tab-pane active in" id="home">
@@ -34,12 +34,34 @@
                                         <input id="wxCodeImgHref" value="" name="wxCodeImgHref" type="text" class="form-control"/>
                                     </div>
                                     <div class="form-group">
-                                        <label>备注</label>
-                                        <input id="wxRemarkText" value="" class="form-control" name="wxRemarkText" type="text"/>
+                                        <label>公众号ID</label>
+                                        <input id="account" name="account" class="form-control" type="text"/>
+                                        <span style="color: red;">*(字母或者数字)</span>
                                     </div>
                                     <div class="form-group">
-                                        <label>单价</label>
-                                        <input id="moneyPer" value="0.1" name="moneyPer" class="form-control" type="text"/>
+                                        <label>AppId</label>
+                                        <input id="appid"  name="appid" class="form-control" type="text"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>AppSecret</label>
+                                        <input id="appsecret"  name="appsecret" class="form-control" type="text"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>发布时间</label>
+                                        <select id="pubTime" name="pubTime" class="form-control">
+                                            <#list 0..23 as t>
+                                                <option value ="${t}">${t}点</option>
+                                            </#list>
+                                        </select>
+                                    </div>
+                                    <div class="form-group"><label>关注单价:</label>
+                                        <input class="form-control" id="moneyPer" value="0.1"
+                                               name="moneyPer" type="text"/>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>备注</label>
+                                        <input id="wxRemarkText" value="" class="form-control" name="wxRemarkText" type="text"/>
                                     </div>
                                 </form>
                             </div>

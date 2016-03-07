@@ -101,14 +101,12 @@ public class UserInfoServiceImpl implements UserInfoService {
         double taskProfit=mpAccount.getTaskProfit();
         UserInfo userInfo=baseDao.getById(userId);
         userInfo.setUserMoney(0 - taskLog.getMoney());
-        String logConsum="用户"+userId+"执行完毕您的任务"+taskId+",消费"+taskLog.getMoney()+"元";
+        AccountFans accountFans=accountFansService.getByOpenId(taskLog.getOpenId());
+        String logConsum="用户"+accountFans.getNickname()+"执行完毕您的任务"+taskId+",消费"+String.format("%.4f",taskLog.getMoney())+"元";
         updateUserMoney(userInfo,logConsum,3);//减钱
-        //做任务的人
-        String openId=taskLog.getOpenId();
-        AccountFans accountFans= accountFansService.getByOpenId(openId);
         accountFansService.updateAddUserMoneyByUserId(taskLog.getMoney(),accountFans.getId());
         //加日志信息
-        String log="成功做完了关注任务"+taskId+"，获得"+taskLog.getMoney()*(1-taskProfit/100)+"奖励";
+        String log="成功做完了关注任务"+taskId+"，获得"+String.format("%.4f", taskLog.getMoney()*(1-taskProfit/100))+"奖励";
         Flow flow=new Flow();
         flow.setFromFansId(accountFans.getId());
         flow.setFansId(accountFans.getId());

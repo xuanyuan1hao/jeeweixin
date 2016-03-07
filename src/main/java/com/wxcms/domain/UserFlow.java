@@ -69,6 +69,8 @@ public class UserFlow extends BaseEntity {
                 return "关注任务被做扣除金额";
             case 4:
                 return "提现成功冻结";
+            case 5:
+                return "取消关注金额回退";
             default:
                 return "未知";
         }

@@ -1,14 +1,8 @@
 package com.wxcms.ctrl;
 
 import com.core.page.Pagination;
-import com.wxcms.domain.FansTixian;
-import com.wxcms.domain.Flow;
-import com.wxcms.domain.MsgBase;
-import com.wxcms.domain.MsgText;
-import com.wxcms.service.FansTixianSrevice;
-import com.wxcms.service.FlowService;
-import com.wxcms.service.MsgBaseService;
-import com.wxcms.service.MsgTextService;
+import com.wxcms.domain.*;
+import com.wxcms.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -35,6 +29,9 @@ public class MsgTextCtrl{
 	private FansTixianSrevice fansTixianSrevice;
 	@Autowired
 	private FlowService flowService;
+	@Autowired
+	private AccountFansService accountFansService;
+
 
 	@RequestMapping(value = "/getById")
 	public ModelAndView getById(String id){
@@ -70,6 +67,10 @@ public class MsgTextCtrl{
 	@RequestMapping(value = "/admin_flow_list")
 	public  ModelAndView flowList(@RequestParam("fansId") long fansId){
 		ModelAndView modelAndView = new ModelAndView("wxweb/admin_flow_list");
+		//获取粉丝情况
+		AccountFans accountFans=accountFansService.getById(fansId + "");
+		modelAndView.addObject("accountFans", accountFans);
+
 		Flow flow=new Flow();
 		flow.setFansId(fansId);
 		List<Flow> pageList=flowService.listForPage(flow);

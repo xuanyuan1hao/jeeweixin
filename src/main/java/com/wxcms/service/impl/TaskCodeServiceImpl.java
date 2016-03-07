@@ -50,6 +50,9 @@ public class TaskCodeServiceImpl implements TaskCodeService{
         return baseDao.getByWxCode(wxCodeImgHref);
     }
 
+    public TaskCode getByAccount(String account) {
+        return baseDao.getByAccount(account);
+    }
 
 
     /***
