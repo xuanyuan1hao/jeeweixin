@@ -30,7 +30,6 @@
                                 <td style="width: 150px;">编号</td>
                                 <td>微信号</td>
                                 <td>单价</td>
-                                <td>验证菜单</td>
                                 <td>二维码</td>
                                 <td>备注</td>
                                 <td>处理</td>
@@ -46,7 +45,6 @@
                                 <td>${row.id!}</td>
                                 <td>${row.wxCodeImgHref!}</td>
                                 <td>${row.moneyPer!}</td>
-                                <td>${webUrl!}/task/validate${row.validateMenuUrl!}.html</td>
                                 <td><#if row.base64WxCode??><img width="100px;" src="data:image/jpg;base64,${row.base64WxCode!}" /></#if></td>
                                 <td>${row.wxRemarkText!}</td>
                                 <td>
