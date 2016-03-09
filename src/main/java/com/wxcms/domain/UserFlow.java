@@ -10,7 +10,7 @@ import java.io.UnsupportedEncodingException;
 public class UserFlow extends BaseEntity {
     private long userId;
     private double userFlowMoney;
-    private int flowType;//流水类型1为推广红包，2为关注红包，3为取消关注扣除红包,4为提现记录情况,5为做关注任务获得奖励
+    private int flowType;//流水类型1为推广红包，2为关注红包，3为取消关注扣除红包,4为提现记录情况,5为做关注任务获得奖励，6为关注消费手续费，7关注花费的手续费回退
     private String flowTypeStr;//返回流水类型名字
     private byte[] userFlowLogBinary;//由于用户名字会出现非法字符，所以这里用二进制来存储
     private String userFlowLogText;
@@ -71,6 +71,10 @@ public class UserFlow extends BaseEntity {
                 return "提现成功冻结";
             case 5:
                 return "取消关注金额回退";
+            case 6:
+                return "关注花费的手续费";
+            case 7:
+                return "关注花费的手续费回退";
             default:
                 return "未知";
         }

@@ -77,26 +77,23 @@ public class UserFansServiceImpl implements UserFansService {
                 fans.setOpenId(openId);
                 userAccountFansService.add(fans);
             }
-            if (taskCode.getType() == 1) {
-                if (fans.getNickname() == null) {
-                    UserAccountFans fansThread = userAccountFansService.getByOpenId(openId);
-                    UserAccountFans userAccountFansWeb = UserWxApiClient.syncAccountFans(openId, taskCode);
-                    if (null != fansThread&&null!=userAccountFansWeb) {
-                        userAccountFansWeb.setId(fansThread.getId());
-                        userAccountFansService.updateUserAccountFans(userAccountFansWeb, taskCode,"");
-                        //发送客服消息
-                        String log = "您在易米网的账号已经获得福利金，请到易米网公众号查看详情！";
-                        log = getContent(MsgType.SUBSCRIBE_USER_ACCOUNT_ADD_MONEY.toString(), log);
-                        UserWxApiClient.sendCustomTextMessage(openId, log, taskCode);
-                    }
+            if (fans.getNickname() == null) {
+                UserAccountFans fansThread = userAccountFansService.getByOpenId(openId);
+                UserAccountFans userAccountFansWeb = UserWxApiClient.syncAccountFans(openId, taskCode);
+                if (null != fansThread&&null!=userAccountFansWeb) {
+                    userAccountFansWeb.setId(fansThread.getId());
+                    userAccountFansService.updateUserAccountFans(userAccountFansWeb, taskCode,"");
+                    //发送客服消息
+                    String log = "您在易米网的账号已经获得福利金，请到易米网公众号查看详情！";
+                    log = getContent(MsgType.SUBSCRIBE_USER_ACCOUNT_ADD_MONEY.toString(), log);
+                    UserWxApiClient.sendCustomTextMessage(openId, log, taskCode);
                 }
-            } else {
-                String log = "回复福利码即可获得福利。例如：1234567";
-                log = getContent(MsgType.SUBSCRIBE_USER_ACCOUNT_SUB_ACCOUNT.toString(), log);
-                MsgText msgResponseText = new MsgText();
-                msgResponseText.setContent(log);
-                return MsgXmlUtil.textToXml(WxMessageBuilder.getMsgResponseText(msgRequest, msgResponseText));
             }
+            String log = "回复福利码即可获得福利。例如：1234567";
+            log = getContent(MsgType.SUBSCRIBE_USER_ACCOUNT_SUB_ACCOUNT.toString(), log);
+            MsgText msgResponseText = new MsgText();
+            msgResponseText.setContent(log);
+            return MsgXmlUtil.textToXml(WxMessageBuilder.getMsgResponseText(msgRequest, msgResponseText));
         } else if (MsgType.UNSUBSCRIBE.toString().equals(msgRequest.getEvent())) {
             //取消订阅消息
             String openId = msgRequest.getFromUserName();//获取取消关注的用户openId

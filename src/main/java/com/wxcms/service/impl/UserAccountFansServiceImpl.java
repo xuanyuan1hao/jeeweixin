@@ -97,13 +97,19 @@ public class UserAccountFansServiceImpl implements UserAccountFansService {
         //更改任务状态为已完成
         taskLog.setTaskStatus(1);//设置为任务已经完成
         taskLogService.updateTaskStatus(taskLog);
+        //扣除花费的钱
+        userInfo.setUserMoney(0 - taskFinisedMoney);
+        AccountFans accountFans = accountFansService.getByOpenId(taskLog.getOpenId());
+        String logConsum = "用户" + accountFans.getNicknameStr() + "执行完毕您的任务" + taskCode.getId() + ",消费" + String.format("%.4f", taskFinisedMoney) + "元";
+        userInfoService.updateUserMoney(userInfo, logConsum, 3);//减钱
+        accountFansService.updateAddUserMoneyByUserId(taskFinisedMoney, accountFans.getId());
+        //扣除手续费
+        double taskProfitMoney=taskCode.getMoneyPer()*(taskProfit/100);
+        logConsum = "用户" + accountFans.getNicknameStr() + "执行完毕您的任务" + taskCode.getId() + ",消费" + String.format("%.4f", taskProfitMoney) + "元手续费";
+        userInfo.setUserMoney(0 - taskProfitMoney);
+        userInfoService.updateUserMoney(userInfo, logConsum, 6);//减手续费
         //获取关注用户的上级，上级的上级。
         if (accountFansOld.getUserReferId() != 0 && (taskLog != null)) {
-            userInfo.setUserMoney(0 - taskFinisedMoney);
-            AccountFans accountFans = accountFansService.getByOpenId(taskLog.getOpenId());
-            String logConsum = "用户" + accountFans.getNicknameStr() + "执行完毕您的任务" + taskCode.getId() + ",消费" + String.format("%.4f", taskFinisedMoney) + "元";
-            userInfoService.updateUserMoney(userInfo, logConsum, 3);//减钱
-            accountFansService.updateAddUserMoneyByUserId(taskFinisedMoney, accountFans.getId());
             AccountFans accountFansRefer = accountFansService.getById(accountFansOld.getUserReferId() + "");
             if (null != accountFansRefer) {
                 double referMoney = taskFinisedMoney * 0.5;
@@ -173,6 +179,10 @@ public class UserAccountFansServiceImpl implements UserAccountFansService {
             UserInfo userInfo = userInfoService.getById(taskCode.getUserId());
             userInfo.setUserMoney(taskFinisedMoney);
             userInfoService.updateUserMoney(userInfo, logConsum, 5);//回退
+            double taskProfitMoney=taskCode.getMoneyPer()*(taskProfit/100);
+            logConsum = "用户取消关注您的公众号,消费手续费回退" + String.format("%.4f", taskProfitMoney) + "元";
+            userInfo.setUserMoney(taskProfitMoney);
+            userInfoService.updateUserMoney(userInfo, logConsum, 7);//回退手续费
             accountFansService.updateAddUserMoneyByUserId(0 - taskFinisedMoney, accountFans.getId());//扣钱
             String log="您取消关注公众号任务：#{taskId},余额被扣除#{money}元,重新关注恢复余额";
             log=log.replace("#{taskId}",taskLog.getTaskId()+"");
