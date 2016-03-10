@@ -77,10 +77,10 @@
                     <div class="am-g am-margin-top">我的二级同盟${fans.userLevel2!}个</div>
                     <div class="am-g am-margin-top">我的三级同盟${fans.userLevel3!}个</div>
                     <div class="am-g am-margin-top">我的推广地址：
-                        <a class="am-btn am-btn-primary am-btn-xs" href="/wxapi/referer.html?id=${fans.id!}">点我推广</a>
+                        <a class="am-btn am-btn-primary am-btn-xs" href="/wxapi/referer.html?id=${fans.id?c}">点我推广</a>
                     </div>
                     <div class="am-g am-margin-top">我的推广明细：
-                        <a class="am-btn am-btn-primary am-btn-xs" href="/wxapi/referer_detail.html?id=${fans.id!}">推广明细</a>
+                        <a class="am-btn am-btn-primary am-btn-xs" href="/wxapi/referer_detail.html?id=${fans.id?c}">推广明细</a>
                     </div>
                 </div>
                 <#else>

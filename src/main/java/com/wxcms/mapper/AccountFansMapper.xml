@@ -39,7 +39,7 @@
 
 
 	<select id="getByOpenId" parameterType="java.lang.String" resultType="com.wxcms.domain.AccountFans">
-		SELECT * FROM t_wxcms_account_fans WHERE OPENID = #{openId}
+		SELECT * FROM t_wxcms_account_fans WHERE OPENID = #{openId} limit 1
 	</select>
 
 	<select id="getByNickname" parameterType="com.wxcms.domain.AccountFans" resultType="com.wxcms.domain.AccountFans">

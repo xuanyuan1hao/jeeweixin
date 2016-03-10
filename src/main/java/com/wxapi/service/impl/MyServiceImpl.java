@@ -185,8 +185,8 @@ public class MyServiceImpl implements MyService {
                         accountFansService.updateSubRecommendLevelMoney(money, accountFans, mpAccount, 0);
                     }
                 }
-                accountFansService.deleteByOpenId(openId);
             }
+            accountFansService.deleteByOpenId(openId);
             MsgText text = msgBaseDao.getMsgTextByInputCode(MsgType.UNSUBSCRIBE.toString());
             if (text != null) {
                 return MsgXmlUtil.textToXml(WxMessageBuilder.getMsgResponseText(msgRequest, text));
