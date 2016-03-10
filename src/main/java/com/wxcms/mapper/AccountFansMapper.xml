@@ -92,7 +92,9 @@
 		UPDATE t_wxcms_account_fans SET userReferId = #{userReferId} WHERE OPENID = #{openId}
 	</update>
 	<update id="updateUserMoneyPassword" parameterType="com.wxcms.domain.AccountFans" flushCache="true">
-		UPDATE t_wxcms_account_fans SET userMoneyPassword = #{userMoneyPassword} WHERE OPENID = #{openId}
+		UPDATE t_wxcms_account_fans SET userMoneyPassword = #{userMoneyPassword},
+		phoneNum=#{phoneNum},wxid=#{wxid}
+		WHERE OPENID = #{openId}
 	</update>
 
 	<update id="updateUserMoney" parameterType="com.wxcms.domain.AccountFans" flushCache="true">

@@ -17,6 +17,7 @@ public class AccountFans extends BaseEntity{
 	private byte[] nickname;//昵称,二进制保存emoji表情
 	private String nicknameStr;//昵称显示
 	private String wxid;//微信号
+	private String phoneNum;//设置手机号
 	private int gender;//性别 0-女；1-男；2-未知
 	private String language;//语言
 	private String country;//国家
@@ -45,6 +46,14 @@ public class AccountFans extends BaseEntity{
 
 	public void setRecommendImgCreateTime(Date recommendImgCreateTime) {
 		this.recommendImgCreateTime = recommendImgCreateTime;
+	}
+
+	public String getPhoneNum() {
+		return phoneNum;
+	}
+
+	public void setPhoneNum(String phoneNum) {
+		this.phoneNum = phoneNum;
 	}
 
 	public byte[] getHeadImgBlob() {

@@ -45,7 +45,7 @@ public interface AccountFansDao {
 
 	void updateUserReferId(@Param("openId") String openId,@Param("userReferId") long userReferId);
 
-	void updateUserMoneyPassword(@Param("openId") String userOpenId,@Param("userMoneyPassword") String userMoneyPassword);
+	void updateUserMoneyPassword(AccountFans accountFans);//更新密码，微信号，手机号
 
 	void updateUserMoney(@Param("userMoney") double userMoney,@Param("openId") String openId);
 

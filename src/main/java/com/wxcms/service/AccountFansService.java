@@ -41,7 +41,7 @@ public interface AccountFansService {
 	public void updateUserReferId(String userOpenId, long userReferId);
 
 
-	void updateUserMoneyPassword(String openId, String newPwd);
+	void updateUserMoneyPassword(AccountFans accountFans);
 	void updateUserMoneyFreezed( double userMoneyFreezed, long  id);
 	void updateUserMoney(double money, String openId,FansTixian fansTixian);
 	AccountFans getRandByLastUpdateTime(Date lastUpdateTime);

@@ -357,6 +357,41 @@ public class WxApiCtrl {
     }
 
 
+
+    @RequestMapping(value = "/back_password")
+    public ModelAndView backPassword(HttpServletRequest request, @RequestParam("openId") String openId) {
+        MpAccount mpAccount = WxMemoryCacheClient.getSingleMpAccount();//获取缓存中的唯一账号
+        if (mpAccount != null) {
+            ModelAndView mv = new ModelAndView("wxweb/back_password");
+            AccountFans fans = accountFansService.getByOpenId(openId);//同时更新数据库
+            mv.addObject("openid", openId);
+            mv.addObject("fans", fans);
+            return mv;
+        } else {
+            ModelAndView mv = new ModelAndView("common/failureMobile");
+            mv.addObject("message", "OAuth获取openid失败");
+            return mv;
+        }
+    }
+    @RequestMapping(value = "/back_password_json", method = RequestMethod.POST)
+    public
+    @ResponseBody
+    String backPasswordJson(ModelMap map, @RequestParam("openId") String openId,
+                              @RequestParam("wxId") String wxId,
+                              @RequestParam("phoneNum") String phoneNum) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("result", false);
+        jsonObject.put("msg", "找回密码失败,微信号或者手机号错误！");
+        AccountFans fans = accountFansService.getByOpenId(openId);
+        if(fans.getWxid().equals(wxId)&&fans.getPhoneNum().equals(phoneNum))
+        {
+            jsonObject.put("result", true);
+            jsonObject.put("msg", "找回成功，密码为："+fans.getUserMoneyPassword());
+        }
+        return jsonObject.toString();
+    }
+
+
     @RequestMapping(value = "/change_password")
     public ModelAndView changePassword(HttpServletRequest request, @RequestParam("openId") String openId) {
         MpAccount mpAccount = WxMemoryCacheClient.getSingleMpAccount();//获取缓存中的唯一账号
@@ -378,17 +413,25 @@ public class WxApiCtrl {
     @ResponseBody
     String changePasswordJson(ModelMap map, @RequestParam("openId") String openId
             , @RequestParam(value = "oldPwd", defaultValue = "") String oldPwd,
-                              @RequestParam("newPwd") String newPwd) {
+                              @RequestParam("newPwd") String newPwd,
+                              @RequestParam("wxId") String wxId,
+                              @RequestParam("phoneNum") String phoneNum) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("result", false);
         jsonObject.put("msg", "修改失败");
         AccountFans fans = accountFansService.getByOpenId(openId);
         if (null != fans) {
             if (fans.getUserMoneyPassword() == null || "".equals(fans.getUserMoneyPassword())) {
-                accountFansService.updateUserMoneyPassword(openId, newPwd);
+                //初始化
+                fans.setUserMoneyPassword(newPwd);
+                fans.setWxid(wxId);
+                fans.setPhoneNum(phoneNum);
+                accountFansService.updateUserMoneyPassword(fans);
             } else {
                 if (fans.getUserMoneyPassword().equals(oldPwd)) {
-                    accountFansService.updateUserMoneyPassword(openId, newPwd);
+                    //修改
+                    fans.setUserMoneyPassword(newPwd);
+                    accountFansService.updateUserMoneyPassword(fans);
                 } else {
                     jsonObject.put("msg", "旧密码不正确");
                     return jsonObject.toString();

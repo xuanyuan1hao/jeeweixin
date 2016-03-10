@@ -101,8 +101,8 @@ public class AccountFansServiceImpl implements AccountFansService{
 	public void updateUserReferId(String userOpenId, long userReferId) {
 		entityDao.updateUserReferId(userOpenId, userReferId);
 	}
-	public void updateUserMoneyPassword(String userOpenId, String userMoneyPassword) {
-		entityDao.updateUserMoneyPassword(userOpenId, userMoneyPassword);
+	public void updateUserMoneyPassword(AccountFans accountFans) {
+		entityDao.updateUserMoneyPassword(accountFans);
 	}
 	public void updateUserMoney(double money, String openId,FansTixian fansTixian){
 		//用户金额减少，用户冻结金额增加
