@@ -11,6 +11,7 @@ import com.wxapi.vo.MsgResponseText;
 import com.wxcms.domain.*;
 import com.wxcms.mapper.*;
 import com.wxcms.service.AccountFansService;
+import com.wxcms.service.CustomTextMessageService;
 import com.wxcms.service.FlowService;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -52,6 +53,8 @@ public class MyServiceImpl implements MyService {
     private AccountFansService accountFansService;
     @Autowired
     private FlowService flowService;
+    @Autowired
+    private CustomTextMessageService customTextMessageService;
 
     /**
      * 处理消息
@@ -310,7 +313,7 @@ public class MyServiceImpl implements MyService {
                         log = "生成海报成功，上传失败，点击个人中心-我的同盟-我要推广即可获取海报图片！";
                         log = getContent(MsgType.FailUploadMediaLog.toString(), log);
                     }
-                    WxApiClient.sendCustomTextMessage(userOpenId, log, mpAccount);
+                    customTextMessageService.addByMpAccount(userOpenId, log, mpAccount);
                     return;
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -319,7 +322,7 @@ public class MyServiceImpl implements MyService {
                 log = "生成图片失败，请再次点击我的海报生成推广图片！";
                 log = getContent(MsgType.FailCreateLog.toString(), log);
                 msgResponseText.setContent(log);
-                WxApiClient.sendCustomTextMessage(userOpenId, log, mpAccount);
+                customTextMessageService.addByMpAccount(userOpenId, log, mpAccount);
             }
         }).start();
     }

@@ -43,7 +43,7 @@ public class TaskCtrl {
     @RequestMapping(value = "/list_code_task")
     public ModelAndView listCodeTask(HttpServletRequest request,ModelMap map,TaskLog searchEntity,Pagination<TaskCode> pagination,
                                      String openId){
-        ModelAndView mv = new ModelAndView("wxweb/list_code_task");
+        ModelAndView mv = new ModelAndView("h5/list_code_task");
         if(null==searchEntity)searchEntity=new TaskLog();
         mv.addObject("openId", openId);
         //AccountFans accountFans= accountFansService.getByOpenId(openId);

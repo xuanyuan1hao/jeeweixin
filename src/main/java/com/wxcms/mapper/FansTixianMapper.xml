@@ -8,7 +8,7 @@
         from t_wxcms_fans_tixian m,t_wxcms_account_fans m2
         WHERE  m2.id=m.fansId
         <if test="param1.fansId!=0">
-            and  m.fansId = #{aram1.fansId}
+            and  m.fansId = #{param1.fansId}
         </if>
          order by m.id desc
         LIMIT #{param2.start} , #{param2.pageSize}

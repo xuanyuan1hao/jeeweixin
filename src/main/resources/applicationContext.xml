@@ -5,7 +5,8 @@
 		xmlns:tx="http://www.springframework.org/schema/tx"   
 		xmlns:util="http://www.springframework.org/schema/util" 
 		xmlns:aop="http://www.springframework.org/schema/aop"  
-		xmlns:mvc="http://www.springframework.org/schema/mvc"        
+		xmlns:mvc="http://www.springframework.org/schema/mvc"
+		xmlns:task="http://www.springframework.org/schema/task"
     	xsi:schemaLocation="http://www.springframework.org/schema/beans        
     						http://www.springframework.org/schema/beans/spring-beans-2.5.xsd        
     						http://www.springframework.org/schema/context        
@@ -15,13 +16,16 @@
      						http://www.springframework.org/schema/aop 
      						http://www.springframework.org/schema/aop/spring-aop-4.0.xsd 
    							http://www.springframework.org/schema/mvc  
-						    http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd"> 
+						    http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
+						    http://www.springframework.org/schema/task
+							http://www.springframework.org/schema/task/spring-task-4.0.xsd">
 		
 		
 		<!-- 默认的注解映射的支持 -->  
 		<context:component-scan base-package="com." />
     	<context:annotation-config />
-    	<!-- 针对 Responsebody 转码 -->
+		<task:annotation-driven/>
+		<!-- 针对 Responsebody 转码 -->
     	<mvc:annotation-driven>
 			<mvc:message-converters register-defaults="true">
 				<bean class="com.core.util.UTF8StringHttpMessageConverter" />
@@ -153,6 +157,5 @@
         <bean id="beanDefineConfigue" class="com.core.spring.SpringBeanDefineConfigue">
         	<property name="appService" ref="appServiceImpl"></property>
         </bean>
-        
 </beans>
 

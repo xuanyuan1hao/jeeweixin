@@ -121,4 +121,16 @@ public class UserWxApiClient {
         }
         return null;
     }
+    public static JSONObject sendCustomTextMessage(String openid, String content,String account,String appId,String appSecret){
+        TaskCode taskCodeThread=new TaskCode();
+        taskCodeThread.setAccount(account);
+        taskCodeThread.setAppid(appId);
+        taskCodeThread.setAppsecret(appSecret);
+        if(!StringUtils.isBlank(openid) && !StringUtils.isBlank(content)){
+            final String accessToken = getAccessToken(taskCodeThread);
+            final String content2 = WxMessageBuilder.prepareCustomText(openid, content);
+            return WxApi.httpsRequest(WxApi.getSendCustomMessageUrl(accessToken), HttpMethod.POST, content2);
+        }
+        return null;
+    }
 }

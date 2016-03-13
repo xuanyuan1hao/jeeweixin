@@ -377,7 +377,28 @@ public class WxApiClient {
 		}
 		return null;
 	}
-	
+
+	/**
+	 * 定时器来发送客服消息
+	 * @param openid
+	 * @param content
+	 * @param account
+	 * @param appId
+	 * @param appSecret
+	 * @return
+	 */
+	public static JSONObject sendCustomTextMessage(String openid, String content,String account,String appId,String appSecret){
+		MpAccount mpAccount=new MpAccount();
+		mpAccount.setAccount(account);
+		mpAccount.setAppid(appId);
+		mpAccount.setAppsecret(appSecret);
+		if(!StringUtils.isBlank(openid) && !StringUtils.isBlank(content)){
+			final String accessToken = getAccessToken(mpAccount);
+			final String content2 = WxMessageBuilder.prepareCustomText(openid, content);
+			return WxApi.httpsRequest(WxApi.getSendCustomMessageUrl(accessToken), HttpMethod.POST, content2);
+		}
+		return null;
+	}
 	/**
 	 * 发送模板消息
 	 * @param tplMsg

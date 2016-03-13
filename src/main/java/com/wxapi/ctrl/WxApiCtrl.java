@@ -262,12 +262,34 @@ public class WxApiCtrl {
             return mv;
         }
     }
-
+    @RequestMapping(value = "/my_unions")
+    public ModelAndView myUnions(HttpServletRequest request) {
+        MpAccount mpAccount = WxMemoryCacheClient.getSingleMpAccount();//获取缓存中的唯一账号
+        if (mpAccount != null) {
+            ModelAndView mv = new ModelAndView("h5/my_unions");
+            //拦截器已经处理了缓存,这里直接取
+            String openid = WxMemoryCacheClient.getOpenid(request.getSession().getId());
+            if(null==openid){
+                openid=request.getParameter("openId");
+            }
+            AccountFans fans = accountFansService.getByOpenId(openid);//同时更新数据库
+            if (null != fans) {
+                accountFansService.updateUserMoneyCheck(fans.getId());
+                mv.addObject("openid", openid);
+                mv.addObject("fans", fans);
+            }
+            return mv;
+        } else {
+            ModelAndView mv = new ModelAndView("common/failureMobile");
+            mv.addObject("message", "OAuth获取openid失败");
+            return mv;
+        }
+    }
     @RequestMapping(value = "/my_center")
     public ModelAndView myCenter(HttpServletRequest request) {
         MpAccount mpAccount = WxMemoryCacheClient.getSingleMpAccount();//获取缓存中的唯一账号
         if (mpAccount != null) {
-            ModelAndView mv = new ModelAndView("wxweb/my_center");
+            ModelAndView mv = new ModelAndView("h5/my_center");
             //拦截器已经处理了缓存,这里直接取
             String openid = WxMemoryCacheClient.getOpenid(request.getSession().getId());
             if(null==openid){
@@ -291,7 +313,7 @@ public class WxApiCtrl {
     public ModelAndView tixian(HttpServletRequest request, @RequestParam("openId") String openId) {
         MpAccount mpAccount = WxMemoryCacheClient.getSingleMpAccount();//获取缓存中的唯一账号
         if (mpAccount != null) {
-            ModelAndView mv = new ModelAndView("wxweb/tixian");
+            ModelAndView mv = new ModelAndView("h5/tixian");
             AccountFans fans = accountFansService.getByOpenId(openId);//同时更新数据库
             mv.addObject("openid", openId);
             mv.addObject("fans", fans);
@@ -306,7 +328,7 @@ public class WxApiCtrl {
 
     @RequestMapping(value = "/tixian_top")
     public ModelAndView tixianTop(HttpServletRequest request) {
-        ModelAndView mv = new ModelAndView("wxweb/top_tixian");
+        ModelAndView mv = new ModelAndView("h5/top_tixian");
         List<AccountFans> listAccountFans = accountFansService.listByUserMoneyTixian(null);
         mv.addObject("listAccountFans", listAccountFans);
         return mv;
@@ -314,7 +336,7 @@ public class WxApiCtrl {
 
     @RequestMapping(value = "/referer")
     public ModelAndView referer(HttpServletRequest request, @RequestParam("id") String id) {
-        ModelAndView mv = new ModelAndView("wxweb/referer");
+        ModelAndView mv = new ModelAndView("h5/referer");
         AccountFans accountFans = accountFansService.getById(id);
         String webRootPath = request.getServletContext().getRealPath("/");
         String headImg = webRootPath + "/res/upload/" + accountFans.getOpenId() + ".jpg";
@@ -348,7 +370,7 @@ public class WxApiCtrl {
                id=accountFans.getId();
            }
        }
-        ModelAndView mv = new ModelAndView("wxweb/referer_detail");
+        ModelAndView mv = new ModelAndView("h5/referer_detail");
         Flow flow = new Flow();
         flow.setFansId(id);
         List<Flow> list = flowService.listForPage(flow);
@@ -362,7 +384,7 @@ public class WxApiCtrl {
     public ModelAndView backPassword(HttpServletRequest request, @RequestParam("openId") String openId) {
         MpAccount mpAccount = WxMemoryCacheClient.getSingleMpAccount();//获取缓存中的唯一账号
         if (mpAccount != null) {
-            ModelAndView mv = new ModelAndView("wxweb/back_password");
+            ModelAndView mv = new ModelAndView("h5/back_password");
             AccountFans fans = accountFansService.getByOpenId(openId);//同时更新数据库
             mv.addObject("openid", openId);
             mv.addObject("fans", fans);
@@ -396,7 +418,7 @@ public class WxApiCtrl {
     public ModelAndView changePassword(HttpServletRequest request, @RequestParam("openId") String openId) {
         MpAccount mpAccount = WxMemoryCacheClient.getSingleMpAccount();//获取缓存中的唯一账号
         if (mpAccount != null) {
-            ModelAndView mv = new ModelAndView("wxweb/change_password");
+            ModelAndView mv = new ModelAndView("h5/change_password");
             AccountFans fans = accountFansService.getByOpenId(openId);//同时更新数据库
             mv.addObject("openid", openId);
             mv.addObject("fans", fans);

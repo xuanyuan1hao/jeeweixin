@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://10.20.91.130/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.wxcms.mapper.CustomTextMessageDao">
+
+    <select id="paginationEntity" resultType="com.wxcms.domain.CustomTextMessage">
+        SELECT m.*
+        from t_wxcms_custom_message m where 1=1
+        <if test="param1.type!=-1">
+            and  m.type = #{param1.type}
+        </if>
+        <if test="param1.sendResult!=0">
+            and  m.sendResult = #{param1.sendResult}
+        </if>
+        order by m.id desc
+        LIMIT #{param2.start} , #{param2.pageSize}
+    </select>
+    <select id="getTotalItemsCount" parameterType="com.wxcms.domain.CustomTextMessage" resultType="java.lang.Integer">
+        SELECT count(m.id) FROM t_wxcms_custom_message m  where 1=1
+        <if test="type!=-1">
+            and  m.type = #{type}
+        </if>
+        <if test="sendResult!=0">
+            and  m.sendResult = #{sendResult}
+        </if>
+    </select>
+
+    <select id="getById" parameterType="java.lang.String" resultType="com.wxcms.domain.CustomTextMessage">
+        SELECT * FROM t_wxcms_custom_message WHERE ID = #{id}
+    </select>
+
+    <insert id="add" parameterType="com.wxcms.domain.CustomTextMessage" flushCache="true">
+        INSERT INTO t_wxcms_custom_message ( openid,contentByte,account,appId,appSecret,createtime,type,sendTimes ,sendResult)
+        VALUES ( #{openid},#{contentByte},#{account},#{appId},#{appSecret},#{createtime},#{type},#{sendTimes},#{sendResult} )
+    </insert>
+
+    <update id="update" parameterType="com.wxcms.domain.CustomTextMessage" flushCache="true">
+        UPDATE t_wxcms_custom_message SET openid = #{openid},contentByte = #{contentByte},account = #{account},
+        appId = #{appId},appSecret = #{appSecret},createtime = #{createtime}, type=#{type},sendTimes=#{sendTimes},
+        sendResult=#{sendResult}
+        WHERE ID = #{id}
+    </update>
+
+    <update id="updateSendTimes" parameterType="com.wxcms.domain.CustomTextMessage" flushCache="true">
+        UPDATE t_wxcms_custom_message SET sendTimes = sendTimes+1
+        WHERE ID = #{id}
+    </update>
+
+
+    <delete id="delete" parameterType="com.wxcms.domain.CustomTextMessage" >
+        DELETE FROM t_wxcms_custom_message WHERE ID = #{id}
+    </delete>
+
+</mapper>
