@@ -3,6 +3,7 @@ package com.wxcms.service.impl;
 import com.core.page.Pagination;
 import com.wxapi.process.MpAccount;
 import com.wxcms.domain.CustomTextMessage;
+import com.wxcms.domain.TaskCode;
 import com.wxcms.mapper.CustomTextMessageDao;
 import com.wxcms.service.CustomTextMessageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,6 +69,23 @@ public class CustomTextMessageServiceImpl implements CustomTextMessageService {
         entity.setAppSecret(mpAccount.getAppsecret());
         entity.setCreatetime(new Date());
         entity.setType(0);
+        this.add(entity);
+    }
+
+    @Override
+    public void addByTaskCode(String openId, String log, TaskCode taskCode) {
+        CustomTextMessage entity=new CustomTextMessage();
+        try {
+            entity.setContentByte(log.getBytes("UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        entity.setOpenid(openId);
+        entity.setAccount(taskCode.getAccount());
+        entity.setAppId(taskCode.getAppid());
+        entity.setAppSecret(taskCode.getAppsecret());
+        entity.setCreatetime(new Date());
+        entity.setType(1);
         this.add(entity);
     }
 }

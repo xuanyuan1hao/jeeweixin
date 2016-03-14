@@ -4,7 +4,6 @@ import com.core.page.Pagination;
 import com.core.util.ImageByteUtils;
 import com.wxapi.process.MpAccount;
 import com.wxapi.process.MsgType;
-import com.wxapi.process.WxApiClient;
 import com.wxcms.domain.AccountFans;
 import com.wxcms.domain.FansTixian;
 import com.wxcms.domain.Flow;
@@ -12,6 +11,7 @@ import com.wxcms.domain.MsgText;
 import com.wxcms.mapper.AccountFansDao;
 import com.wxcms.mapper.MsgBaseDao;
 import com.wxcms.service.AccountFansService;
+import com.wxcms.service.CustomTextMessageService;
 import com.wxcms.service.FansTixianSrevice;
 import com.wxcms.service.FlowService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +34,10 @@ public class AccountFansServiceImpl implements AccountFansService{
 	private FansTixianSrevice fansTixianSrevice;
 	@Autowired
 	private FlowService flowService;
+	@Autowired
+	private CustomTextMessageService customTextMessageService;
+
+
 	public AccountFans getById(String id){
 		return entityDao.getById(id);
 	}
@@ -156,7 +160,8 @@ public class AccountFansServiceImpl implements AccountFansService{
 			//int intervalHours= MyServiceImpl.getIntervalHours(referAccountFans.getLastUpdateTime(), new Date());
 			//if(intervalHours<48&&intervalHours>0)
 			{
-				 WxApiClient.sendCustomTextMessage(referAccountFans.getOpenId(), log, mpAccount);
+				// WxApiClient.sendCustomTextMessage(referAccountFans.getOpenId(), log, mpAccount);
+				customTextMessageService.addByMpAccount(referAccountFans.getOpenId(), log, mpAccount);
 			}
 			//处理二级
 			AccountFans referFans=getById(referUserId + "");
@@ -216,7 +221,8 @@ public class AccountFansServiceImpl implements AccountFansService{
 			//int intervalHours=getIntervalHours(recommendAccountFans.getLastUpdateTime(),new Date());
 			//if(intervalHours<48&&intervalHours>0)
 			{
-				 WxApiClient.sendCustomTextMessage(recommendAccountFans.getOpenId(), log, mpAccount);
+				// WxApiClient.sendCustomTextMessage(recommendAccountFans.getOpenId(), log, mpAccount);
+				customTextMessageService.addByMpAccount(recommendAccountFans.getOpenId(), log, mpAccount);
 			}
 			this.updateAddUserMoneyByUserId(0 - money, recommendAccountFans.getId());//上级扣钱
 			//获取推荐人

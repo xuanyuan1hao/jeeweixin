@@ -3,6 +3,7 @@ package com.wxcms.service;
 import com.core.page.Pagination;
 import com.wxapi.process.MpAccount;
 import com.wxcms.domain.CustomTextMessage;
+import com.wxcms.domain.TaskCode;
 
 /**
  * Created by Administrator on 2016-03-14.
@@ -23,4 +24,5 @@ public interface CustomTextMessageService {
 
     public void addByMpAccount(String userOpenId,String log,MpAccount mpAccount);
 
+    void addByTaskCode(String openId, String log, TaskCode taskCode);
 }

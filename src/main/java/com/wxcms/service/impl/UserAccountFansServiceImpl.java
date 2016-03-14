@@ -3,7 +3,6 @@ package com.wxcms.service.impl;
 import com.core.page.Pagination;
 import com.wxapi.process.MpAccount;
 import com.wxapi.process.MsgType;
-import com.wxapi.process.WxApiClient;
 import com.wxapi.process.WxMemoryCacheClient;
 import com.wxcms.domain.*;
 import com.wxcms.mapper.MsgBaseDao;
@@ -33,6 +32,9 @@ public class UserAccountFansServiceImpl implements UserAccountFansService {
     private UserInfoService userInfoService;
     @Autowired
     private TaskLogService taskLogService;
+
+    @Autowired
+    private CustomTextMessageService customTextMessageService;
 
     public void updateLastUpdateTime(String openId, Date date) {
         baseDao.updateLastUpdateTime(openId, date);
@@ -91,7 +93,8 @@ public class UserAccountFansServiceImpl implements UserAccountFansService {
             e.printStackTrace();
         }
         flowService.add(flow);
-        WxApiClient.sendCustomTextMessage(accountFansOld.getOpenId(), log, WxMemoryCacheClient.getSingleMpAccount());
+        //WxApiClient.sendCustomTextMessage(accountFansOld.getOpenId(), log, WxMemoryCacheClient.getSingleMpAccount());
+        customTextMessageService.addByMpAccount(accountFansOld.getOpenId(),log,WxMemoryCacheClient.getSingleMpAccount());
         //修改任务执行状态
         TaskLog taskLog = taskLogService.getByTaskIdAndOpenId(taskCode.getId(), accountFansOld.getOpenId());
         //更改任务状态为已完成
@@ -117,7 +120,8 @@ public class UserAccountFansServiceImpl implements UserAccountFansService {
                 log = "您的好友#{friendName}做了关注任务" + taskCode.getId() + "，您获取到了#{money}元红包";
                 log = getContent(MsgType.SUBSCRIBE_REWARD_LEVEL.toString(), log);
                 log = log.replace("#{friendName}", accountFansRefer.getNicknameStr()).replace("#{money}", String.format("%.4f", referMoney));
-                 WxApiClient.sendCustomTextMessage(accountFansRefer.getOpenId(), log, WxMemoryCacheClient.getSingleMpAccount());
+                // WxApiClient.sendCustomTextMessage(accountFansRefer.getOpenId(), log, WxMemoryCacheClient.getSingleMpAccount());
+                customTextMessageService.addByMpAccount(accountFansRefer.getOpenId(), log, WxMemoryCacheClient.getSingleMpAccount());
                 flow = new Flow();
                 flow.setCreatetime(new Date());
                 flow.setUserFlowMoney(referMoney);
@@ -156,8 +160,8 @@ public class UserAccountFansServiceImpl implements UserAccountFansService {
                     userInfo.setUserMoney(0 - referMoney);
                     logConsum = "用户" + accountFans.getNicknameStr() + "执行完毕您的任务" + taskCode.getId() + "，上级的上级奖励,消费" + String.format("%.4f", referMoney) + "元";
                     userInfoService.updateUserMoney(userInfo, logConsum, 3);//减钱
-                    WxApiClient.sendCustomTextMessage(accountFansReferRefer.getOpenId(), log, WxMemoryCacheClient.getSingleMpAccount());
-
+                    //WxApiClient.sendCustomTextMessage(accountFansReferRefer.getOpenId(), log, WxMemoryCacheClient.getSingleMpAccount());
+                    customTextMessageService.addByMpAccount(accountFansReferRefer.getOpenId(), log, WxMemoryCacheClient.getSingleMpAccount());
                 }
             }
         }
@@ -200,7 +204,8 @@ public class UserAccountFansServiceImpl implements UserAccountFansService {
                 e.printStackTrace();
             }
             flowService.add(flow);
-            WxApiClient.sendCustomTextMessage(userAccountFans.getBaseOpenId(), log, WxMemoryCacheClient.getSingleMpAccount());
+           // WxApiClient.sendCustomTextMessage(userAccountFans.getBaseOpenId(), log, WxMemoryCacheClient.getSingleMpAccount());
+            customTextMessageService.addByMpAccount(userAccountFans.getBaseOpenId(), log, WxMemoryCacheClient.getSingleMpAccount());
             if (accountFans.getUserReferId() != 0) {
                 //获取上级扣钱。
                 AccountFans accountFansRefer = accountFansService.getById(accountFans.getUserReferId() + "");
@@ -222,7 +227,8 @@ public class UserAccountFansServiceImpl implements UserAccountFansService {
                         e.printStackTrace();
                     }
                     flowService.add(flow);
-                    WxApiClient.sendCustomTextMessage(accountFansRefer.getOpenId(), log, WxMemoryCacheClient.getSingleMpAccount());
+                   // WxApiClient.sendCustomTextMessage(accountFansRefer.getOpenId(), log, WxMemoryCacheClient.getSingleMpAccount());
+                    customTextMessageService.addByMpAccount(accountFansRefer.getOpenId(), log, WxMemoryCacheClient.getSingleMpAccount());
                     userInfo.setUserMoney(referMoney);
                     logConsum = "用户取消关注您的公众号" + taskCode.getId() + "，上级退回奖励" + String.format("%.4f", referMoney) + "元";
                     userInfoService.updateUserMoney(userInfo, logConsum, 5);//回退
@@ -249,8 +255,8 @@ public class UserAccountFansServiceImpl implements UserAccountFansService {
                         userInfo.setUserMoney(referMoney);
                         logConsum = "用户" + accountFans.getNicknameStr() + "取消关注您的公众号" + taskCode.getId() + "，上级的上级奖励回退消费" + String.format("%.4f", referMoney) + "元";
                         userInfoService.updateUserMoney(userInfo, logConsum, 5);//回退
-                        WxApiClient.sendCustomTextMessage(accountFansReferRefer.getOpenId(), log, WxMemoryCacheClient.getSingleMpAccount());
-
+                        //WxApiClient.sendCustomTextMessage(accountFansReferRefer.getOpenId(), log, WxMemoryCacheClient.getSingleMpAccount());
+                        customTextMessageService.addByMpAccount(accountFansReferRefer.getOpenId(), log, WxMemoryCacheClient.getSingleMpAccount());
                     }
                 }
             }

@@ -49,25 +49,23 @@
         <#include "top.html">
             <div id="page-content" class="page-content">
                 <#include "menu.html">
-                    <div class='mod-title t2 ' style='margin:   ;'><h2>提现排行榜</h2><i class='font-ico'></i></div>
-                    <div class="mod mod-layout2coloums mod-column mod-2column" style="text-align: center;">
-                        <table class="mod mod-layout3coloums  mod-column mod-3column">
-                            <tbody>
-                            <tr>
-                                <th class="mod-text-center">排行</th>
-                                <th>用户名</th>
-                                <th>提现额</th>
-                            </tr>
-                            <#list listAccountFans as row>
-                                <tr>
-                                    <td class="mod ">
-                                        <img width="40px" height="40px" src="<#if row.headimgurl??>${row.headimgurl}<#else>/res/css/images/head.jpg</#if>" alt=""></td>
-                                    <td>${row.nicknameStr}</td>
-                                    <td>${row.userMoneyTixian}元</td>
-                                </tr>
-                            </#list>
-                            </tbody>
-                        </table>
+                    <div class='mod-title t2 ' style='margin:   ;'>
+                        <h2 style="text-align: center;">提现排行榜</h2>
+                        <i class='font-ico'></i></div>
+                    <div class="mod mod-nav mod-nav-t3" style="text-align: center;height: auto;">
+                            <ul>
+                                <li style="width:30%;text-align: center;">排行</li>
+                                <li style="width:40%;text-align: center;">用户名</li>
+                                <li style="width:30%;text-align: center;">提现额</li>
+                            </ul>
+                    <#list listAccountFans as row>
+                            <ul>
+                            <li style="width:30%;text-align: center;" >
+                                <img width="40px" height="40px" src="<#if row.headimgurl??>${row.headimgurl}<#else>/res/css/images/head.jpg</#if>" alt=""></li>
+                            <li style="width:40%;text-align: center;">${row.nicknameStr}</li>
+                            <li style="width:30%;text-align: center;">${row.userMoneyTixian}元</li>
+                            </ul>
+                    </#list>
                     </div>
             </div>
     </div>

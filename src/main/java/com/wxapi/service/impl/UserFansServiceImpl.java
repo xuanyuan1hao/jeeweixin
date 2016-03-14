@@ -11,6 +11,7 @@ import com.wxcms.domain.TaskCode;
 import com.wxcms.domain.TaskLog;
 import com.wxcms.domain.UserAccountFans;
 import com.wxcms.mapper.MsgBaseDao;
+import com.wxcms.service.CustomTextMessageService;
 import com.wxcms.service.TaskCodeService;
 import com.wxcms.service.TaskLogService;
 import com.wxcms.service.UserAccountFansService;
@@ -35,6 +36,8 @@ public class UserFansServiceImpl implements UserFansService {
     @Autowired
     private MsgBaseDao msgBaseDao;
 
+    @Autowired
+    private CustomTextMessageService customTextMessageService;
     public String processMsg(MsgRequest msgRequest, TaskCode taskCode, String webRootPath, String webUrl) {
         String msgtype = msgRequest.getMsgType();//接收到的消息类型
         String respXml = null;//返回的内容；
@@ -86,7 +89,8 @@ public class UserFansServiceImpl implements UserFansService {
                     //发送客服消息
                     String log = "您在易米网的账号已经获得福利金，请到易米网公众号查看详情！";
                     log = getContent(MsgType.SUBSCRIBE_USER_ACCOUNT_ADD_MONEY.toString(), log);
-                    UserWxApiClient.sendCustomTextMessage(openId, log, taskCode);
+                    //UserWxApiClient.sendCustomTextMessage(openId, log, taskCode);
+                    customTextMessageService.addByTaskCode(openId, log, taskCode);
                 }
             }
             String log = "回复福利码即可获得福利。例如：1234567";
