@@ -25,6 +25,8 @@ public interface UserAccountFansService {
 
     public void add(UserAccountFans entity);
 
+    public List<UserAccountFans> getAllByLastUpdateTimePage(Date lastUpdateTime,long  id,String accountOld);
+
     void updateUserAccountFans(UserAccountFans userAccountFansWeb,TaskCode taskCode,String acceptTaskFansopenId);
     void updateSubUserAccountFans(UserAccountFans userAccountFans,TaskCode taskCode);
 

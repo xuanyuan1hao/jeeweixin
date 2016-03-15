@@ -64,6 +64,11 @@ public class UserAccountFansServiceImpl implements UserAccountFansService {
         baseDao.add(entity);
     }
 
+    @Override
+    public List<UserAccountFans> getAllByLastUpdateTimePage(Date lastUpdateTime, long id,String accountOld) {
+        return baseDao.getAllByLastUpdateTimePage(lastUpdateTime,id,accountOld);
+    }
+
     public void updateUserAccountFans(UserAccountFans userAccountFansWeb, TaskCode taskCode,String acceptTaskFansopenId) {
         baseDao.updateUserAccountFans(userAccountFansWeb);
         UserInfo userInfo = userInfoService.getById(taskCode.getUserId());

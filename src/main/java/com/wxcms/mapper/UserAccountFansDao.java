@@ -30,4 +30,7 @@ public interface UserAccountFansDao {
     void updateAccountFansOldOpenId(@Param("baseOpenId")String baseOpenId,@Param("openId") String openId);
 
     void deleteByOpenId(@Param("openId") String openId);
+
+    List<UserAccountFans> getAllByLastUpdateTimePage(@Param("lastUpdateTime") Date lastUpdateTime,
+                                                     @Param("id")   long id,@Param("accountOld") String accountOld);
 }

@@ -78,6 +78,7 @@ public class UserFansServiceImpl implements UserFansService {
             if (null == fans) {
                 fans = new UserAccountFans();
                 fans.setOpenId(openId);
+                fans.setAccountOld(taskCode.getAccount());
                 userAccountFansService.add(fans);
             }
             if (fans.getNickname() == null) {
@@ -128,6 +129,7 @@ public class UserFansServiceImpl implements UserFansService {
             if(null==userAccountFans){
                 userAccountFans=new UserAccountFans();
                 userAccountFans.setOpenId(openId);
+                userAccountFans.setAccountOld(taskCode.getAccount());
                 userAccountFansService.add(userAccountFans);
             }
             Pattern p= Pattern.compile("(\\d+)");

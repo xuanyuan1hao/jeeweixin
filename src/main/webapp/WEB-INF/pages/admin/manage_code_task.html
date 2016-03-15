@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <#include "../common/res.html">
+</head>
+
+<body class="bg">
+<#include "../common/top.html">
+
+    <div class="content">
+        <div class="block-nav">
+            <#include "../common/nav.html">
+        </div>
+
+        <div class="block-content" >
+
+            <div class="block-content-nav">
+                <span class="title">公众号管理</span>
+            </div>
+
+            <div class="block-content-description">
+					<span>
+						公众号管理
+					</span>
+            </div>
+            <form id="queryPageForm" action="">
+                <div class="block-content-content">
+                    <table class="fm-table">
+                        <thead>
+                        <tr >
+                            <td style="width: 150px;">编号</td>
+                            <td>微信号</td>
+                            <td>单价</td>
+                            <td>二维码</td>
+                            <td>备注</td>
+                            <td>处理</td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <#list pagination.items as row>
+                            <#if row_index %2 == 0>
+                                <tr style="height:40px;">
+                                    <#else>
+                                        <tr style="height:40px;background-color:#f9f9f9;">
+                            </#if>
+                            <td>${row.id!}</td>
+                            <td>${row.wxCodeImgHref!}</td>
+                            <td>${row.moneyPer!}</td>
+                            <td><#if row.base64WxCode??><img width="100px;" src="data:image/jpg;base64,${row.base64WxCode!}" /></#if></td>
+                            <td>${row.wxRemarkText!}</td>
+                            <td>
+                                <a href="${s.base}/admin/send_msg_code_task.html?id=${row.id}" >群发客服消息</a>
+                            </td>
+                            </tr>
+                        </#list>
+                        </tbody>
+                    </table>
+
+                    <#include "../common/pagination.html">
+                </div>
+            </form>
+        </div>
+        <div class="clearfloat"></div>
+    </div>
+
+    <#include "../common/footer.html">
+</body>
+
+</html>

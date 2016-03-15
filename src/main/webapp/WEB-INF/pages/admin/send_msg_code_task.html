@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <#include "../common/res.html">
+</head>
+
+<body class="bg">
+<#include "../common/top.html">
+
+    <div class="content">
+        <div class="block-nav">
+            <#include "../common/nav.html">
+        </div>
+        <div class="block-content" >
+
+            <div class="block-content-nav">
+                <span class="title">发送客服消息</span>
+            </div>
+
+            <div class="block-content-content">
+                <form action="${s.base}/admin/sendCustomTextMsgByTaskCodeJson.html" method="post">
+                    <input id="id" value="${taskCode.id?c}" name="id" type="hidden"/>
+                    <div class="form-group">
+                        <label>微信号：</label>
+                        <input class="form-control" id="wxCodeImgHref" value="${taskCode.wxCodeImgHref!}"
+                               name="wxCodeImgHref" type="text"/>
+                    </div>
+                    <div class="form-group">
+                        <label>公众号ID</label>
+                        <input id="account" name="account" class="form-control" type="text"
+                               value="${taskCode.account!}"/>
+                    </div>
+                    <div class="form-group">
+                        <div style="padding:10px;">
+                            <label> 消息内容：</label>
+                            <textarea name="content" rows="10" cols="30"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="发送" class="btn"/>
+                    </div>
+                </form>
+            </div>
+            <div class="clearfloat"></div>
+        </div>
+        <#include "../common/footer.html">
+</body>
+
+</html>

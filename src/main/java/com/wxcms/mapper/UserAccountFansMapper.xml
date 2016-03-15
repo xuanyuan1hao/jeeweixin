@@ -19,6 +19,14 @@
         LIMIT 0 , 1
     </select>
 
+    <select id="getAllByLastUpdateTimePage" parameterType="com.wxcms.domain.UserAccountFans"  resultType="com.wxcms.domain.UserAccountFans">
+        SELECT * FROM t_wxcms_user_account_fans WHERE lastUpdateTime>#{lastUpdateTime}
+        and accountOld=#{accountOld}
+        and NICKNAME is not null
+        and id>#{id} order by id asc limit 50;
+    </select>
+
+
     <select id="getById" parameterType="java.lang.String" resultType="com.wxcms.domain.UserAccountFans">
         SELECT * FROM t_wxcms_user_account_fans WHERE ID = #{id}
     </select>
@@ -53,9 +61,9 @@
     <insert id="add" parameterType="com.wxcms.domain.UserAccountFans" flushCache="true"
             useGeneratedKeys="true" keyProperty="id"  >
         <![CDATA[
-		INSERT INTO t_wxcms_user_account_fans ( OPENID,SUBSCRIBESTATUS,SUBSCRIBETIME,NICKNAME,GENDER,LANGUAGE,COUNTRY,PROVINCE,CITY,
+		INSERT INTO t_wxcms_user_account_fans (accountOld, OPENID,SUBSCRIBESTATUS,SUBSCRIBETIME,NICKNAME,GENDER,LANGUAGE,COUNTRY,PROVINCE,CITY,
 		HEADIMGURL,REMARK,STATUS,WXID,CREATETIME, lastUpdateTime)
-		VALUES ( #{openId},#{subscribeStatus},#{subscribeTime},#{nickname},
+		VALUES (#{accountOld}, #{openId},#{subscribeStatus},#{subscribeTime},#{nickname},
 		#{gender},#{language},#{country},#{province},#{city},#{headimgurl},#{remark},#{status},#{wxid},#{createtime}
 		,#{lastUpdateTime} )
 		 ]]>
