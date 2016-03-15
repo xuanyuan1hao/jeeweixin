@@ -36,7 +36,7 @@ public interface AccountFansDao {
 
 
 	public AccountFans getRandByLastUpdateTime(@Param("lastUpdateTime") Date lastUpdateTime);
-
+	List<AccountFans> getAllByLastUpdateTimePage(@Param("lastUpdateTime") Date lastUpdateTime,@Param("id") long id);
 	void updateRecommendMediaId(@Param("openId") String openId,@Param("mediaId") String mediaId,@Param("createtime") Date createTime);
 
 	void updateLastUpdateTime(@Param("openId") String openId,@Param("lastUpdateTime") Date date);

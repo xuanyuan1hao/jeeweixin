@@ -14,6 +14,7 @@ import com.wxcms.domain.FansTixian;
 import com.wxcms.domain.Flow;
 import com.wxcms.domain.MsgNews;
 import com.wxcms.service.AccountFansService;
+import com.wxcms.service.CustomTextMessageService;
 import com.wxcms.service.FlowService;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
@@ -48,6 +49,8 @@ public class WxApiCtrl {
     @Autowired
     private FlowService flowService;
 
+    @Autowired
+    private CustomTextMessageService customTextMessageService;
 
     @InitBinder("fansTixian")
     public void initBinderFansTixian(WebDataBinder binder) {
@@ -408,7 +411,7 @@ public class WxApiCtrl {
         if(fans.getWxid().equals(wxId)&&fans.getPhoneNum().equals(phoneNum))
         {
             jsonObject.put("result", true);
-            jsonObject.put("msg", "找回成功，密码为："+fans.getUserMoneyPassword());
+            jsonObject.put("msg", "找回成功，密码为：" + fans.getUserMoneyPassword());
         }
         return jsonObject.toString();
     }
@@ -566,19 +569,33 @@ public class WxApiCtrl {
      * @param response ： 消息内容
      * @return
      */
-    @RequestMapping(value = "/sendCustomTextMsg", method = RequestMethod.POST)
-    public void sendCustomTextMsg(HttpServletRequest request, HttpServletResponse response, String openid) {
+    @RequestMapping(value = "/sendCustomTextMsgJson", method = RequestMethod.POST)
+    public void sendCustomTextMsg(HttpServletRequest request, HttpServletResponse response,@RequestParam(value = "content",defaultValue = "官方测试客服消息") String content) {
         MpAccount mpAccount = WxMemoryCacheClient.getSingleMpAccount();//获取缓存中的唯一账号
-        String content = "微信派官方测试客服消息";
-        JSONObject result = WxApiClient.sendCustomTextMessage(openid, content, mpAccount);
-        try {
-            if (result.getInt("errcode") != 0) {
-                response.getWriter().write("send failure");
-            } else {
-                response.getWriter().write("send success");
+        if("".equals(content))
+            content = "官方测试客服消息";
+        long id=0;
+        Date nowTime=new Date();
+        Date endTime=new Date((nowTime.getTime() - 2 * 24 * 60 * 60 * 1000));
+        int count=0;
+        while (true){
+            List<AccountFans>  list= accountFansService.getAllByLastUpdateTimePage(endTime, id);
+            count+=list.size();
+            if (null!=list&&list.size()>0){
+                for (int i=0;i<list.size();i++){
+                    customTextMessageService.addByMpAccount(list.get(i).getOpenId(),content,mpAccount);
+                    id=list.get(i).getId();
+                }
+            }else
+            {
+                break;
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        }
+        try {
+            response.setContentType("text/html;charset=UTF-8");
+            response.getWriter().write("发送成功"+count+"条");
+        }catch (IOException e) {
+                e.printStackTrace();
         }
     }
 

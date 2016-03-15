@@ -135,7 +135,15 @@ public class WxCmsCtrl {
 		
 		return mv;
 	}
-	
+	@RequestMapping(value = "/sendCustomTextMsg")
+	public ModelAndView sendCustomTextMsg(HttpServletRequest request){
+		ModelAndView mv = new ModelAndView("admin/sendCustomTextMsg");
+		mv.addObject("cur_nav", "sendCustomTextMsg");
+		return mv;
+	}
+
+
+
 	//通过interceptor处理OAuth认证
 	@RequestMapping(value = "/oauthInterceptor")
 	public ModelAndView oauthInterceptor(HttpServletRequest request){

@@ -45,6 +45,7 @@ public interface AccountFansService {
 	void updateUserMoneyFreezed( double userMoneyFreezed, long  id);
 	void updateUserMoney(double money, String openId,FansTixian fansTixian);
 	AccountFans getRandByLastUpdateTime(Date lastUpdateTime);
+	public List<AccountFans> getAllByLastUpdateTimePage(Date lastUpdateTime,long  id);
 	void updateUserAddMoney(AccountFans fans, double money, long referUserId,MpAccount mpAccount,int times);
 	void updateSubRecommendLevelMoney( double money, AccountFans accountFans, MpAccount mpAccount,int times);
 	void updateAddUserMoneyByUserId(double money, long userId);

@@ -117,6 +117,12 @@ public class AccountFansServiceImpl implements AccountFansService{
 	public AccountFans getRandByLastUpdateTime(Date lastUpdateTime){
 		return entityDao.getRandByLastUpdateTime(lastUpdateTime);
 	}
+
+	@Override
+	public List<AccountFans> getAllByLastUpdateTimePage(Date lastUpdateTime, long id) {
+		return entityDao.getAllByLastUpdateTimePage(lastUpdateTime,id);
+	}
+
 	public void updateUserAddMoney(AccountFans fans, double money, long referUserId,MpAccount mpAccount,int times){
 		if(times==0)
 			entityDao.updateAddUserMoney(money, fans.getOpenId());//当前关注的用户获取的金额

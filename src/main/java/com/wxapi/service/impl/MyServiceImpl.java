@@ -281,10 +281,10 @@ public class MyServiceImpl implements MyService {
                         String baseRecommendImgPath = webRootPath + "res\\css\\images\\base_recommend.jpg";
                         //生成带图片的二维码
                         ImageUtils.pressImage(headImg, url, url + ".qrcode.jpg", 0, 0, true, 50, 50);
-                        ImageUtils.pressImage(url + ".qrcode.jpg", baseRecommendImgPath, url + ".last.jpg", 165, 380, false, 220, 220);//贴二维码
-                        ImageUtils.pressImage(headImg, url + ".last.jpg", url + ".last_head.jpg", 18, 10, false, 110, 110);//贴头像
+                        ImageUtils.pressImage(url + ".qrcode.jpg", baseRecommendImgPath, url + ".last.jpg", 185, 420, false, 200, 200);//贴二维码
+                        ImageUtils.pressImage(headImg, url + ".last.jpg", url + ".last_head.jpg", 88, 45, false, 100, 100);//贴头像
                         ImageUtils.pressText(accountFans.getNicknameStr(), url + ".last_head.jpg",//贴文字
-                                headImg + ".text.jpg", "宋体", Font.BOLD, 0, 30, 225, 60);
+                                headImg + ".text.jpg", "宋体", Font.BOLD, 0, 25, 265, 105);
                         accountFansService.updateRecommendImgBlob(headImg + ".text.jpg", accountFans.getId());
                         accountFansService.updateRecommendImgCreateTime(accountFans.getOpenId(), new Date());
                         //删除文件

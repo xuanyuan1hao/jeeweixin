@@ -36,7 +36,9 @@
 	<select id="getRandByLastUpdateTime" parameterType="com.wxcms.domain.AccountFans"  resultType="com.wxcms.domain.AccountFans">
 		SELECT * FROM t_wxcms_account_fans WHERE lastUpdateTime>#{lastUpdateTime} order by rand() limit 1
 	</select>
-
+	<select id="getAllByLastUpdateTimePage" parameterType="com.wxcms.domain.AccountFans"  resultType="com.wxcms.domain.AccountFans">
+		SELECT * FROM t_wxcms_account_fans WHERE lastUpdateTime>#{lastUpdateTime} and id>#{id} order by id asc limit 50;
+	</select>
 
 	<select id="getByOpenId" parameterType="java.lang.String" resultType="com.wxcms.domain.AccountFans">
 		SELECT * FROM t_wxcms_account_fans WHERE OPENID = #{openId} limit 1
