@@ -310,8 +310,9 @@ public class MyServiceImpl implements MyService {
                         log = getContent(MsgType.SuccessCreateLog.toString(), log);
                         WxApiClient.sendCustomImageMessage(userOpenId, mediaId, mpAccount);//图片以客服消息形式发送
                     } else {
-                        log = "生成海报成功，上传失败，点击个人中心-我的同盟-我要推广即可获取海报图片！";
+                        log = "生成海报成功，上传失败，点击以下链接获取海报图片！#{webUrl}";
                         log = getContent(MsgType.FailUploadMediaLog.toString(), log);
+                        log=log.replace("#{webUrl}",webUrl+"/wxapi/referer.html?id="+accountFans.getId());
                     }
                     customTextMessageService.addByMpAccount(userOpenId, log, mpAccount);
                     return;
