@@ -149,7 +149,10 @@
 		UPDATE t_wxcms_account_fans SET recommendImgBlob =(#{recommendImgBlob})
 		WHERE id = #{id}
 	</update>
-
+	<update id="updateRemark" parameterType="com.wxcms.domain.AccountFans" flushCache="true">
+		UPDATE t_wxcms_account_fans SET remark =(#{remark})
+		WHERE id = #{id}
+	</update>
 
 	<delete id="delete" parameterType="com.wxcms.domain.AccountFans" >
 		DELETE FROM t_wxcms_account_fans WHERE ID = #{id}

@@ -192,6 +192,11 @@ public class AccountFansServiceImpl implements AccountFansService{
 	public void updateUserLevel2( int userLevel2,long id){entityDao.updateUserLevel2(userLevel2, id);}
 	public void updateUserLevel3(int userLevel3, long id){entityDao.updateUserLevel3(userLevel3, id);}
 
+	@Override
+	public void updateRemark(String remark, long id) {
+		entityDao.updateRemark(remark,id);
+	}
+
 	public void updateUserMoneyFreezed(double userMoneyFreezedAdd, long  id){
 		entityDao.updateUserMoneyFreezed(userMoneyFreezedAdd, id);
 	}

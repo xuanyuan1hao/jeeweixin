@@ -22,7 +22,7 @@
 
             <div class="block-content-description">
 					<span>
-						提现处理，处理拒绝或者成功的不能再处理。
+						提现处理，处理拒绝或者成功的不能再处理。<label style="color:red;">${accountFans.remark!}</label>
 					</span>
             </div>
 
@@ -46,6 +46,10 @@
                             <label>提现情况</label>
                             <input type="radio" name="tixianStatus" value="1" checked /> 提现成功
                             <input type="radio" name="tixianStatus" value="-1" /> 提现拒绝
+                        </li>
+                        <li>
+                            <label>提现备注</label>
+                            <input name="remark" type="text" value="${accountFans.remark!}"/>
                         </li>
                     </ul>
 

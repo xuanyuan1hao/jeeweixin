@@ -57,6 +57,8 @@ public interface AccountFansDao {
 	void updateUserLevel1(@Param("userLevel1") int userLevel1,@Param("id") long id);
 	void updateUserLevel2(@Param("userLevel2") int userLevel2,@Param("id") long id);
 	void updateUserLevel3(@Param("userLevel3") int userLevel3,@Param("id") long id);
+	void updateRemark(@Param("remark") String remark,@Param("id") long id);
+
 	void updateUserMoneyCheck(@Param("id") long id);
 
 	void updateHeadImgBlob(@Param("headImgBlob") byte[] headImgBlob,@Param("id") long id);

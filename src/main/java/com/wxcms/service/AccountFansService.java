@@ -52,6 +52,7 @@ public interface AccountFansService {
 	void updateUserLevel1( int userLevel1, long id);
 	void updateUserLevel2( int userLevel2,long id);
 	void updateUserLevel3(int userLevel3, long id);
+	void updateRemark( String remark, long id);
 	void updateUserMoneyCheck(long id);
 
 	void updateHeadImgBlobToDb(String headImgSavePath,long id);

@@ -15,7 +15,7 @@ public class MyTask {
     @Autowired
     private CustomTextMessageService customTextMessageService;
 
-    @Scheduled(cron = "0/5 * * * * ? ") //间隔5秒执行
+    @Scheduled(cron = "0/1 * * * * ? ") //间隔5秒执行
     public void taskCycle() {
         CustomTextMessage searchEntity=new CustomTextMessage();
         searchEntity.setSendResult(-1);

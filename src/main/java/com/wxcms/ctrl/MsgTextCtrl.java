@@ -84,15 +84,18 @@ public class MsgTextCtrl{
 		ModelAndView mv = new ModelAndView("wxcms/admin_edit_tixian");
 		mv.addObject("cur_nav", "tixian_list");
 		FansTixian fansTixian=fansTixianSrevice.getById(id);
+		AccountFans accountFans=accountFansService.getById(fansTixian.getFansId()+"");
 		if(fansTixian != null){
 			mv.addObject("entity",fansTixian);
+			mv.addObject("accountFans",accountFans);
 		}
 		return mv;
 	}
 	@RequestMapping(value = "/admin_edit_tixian_merge")
-	public ModelAndView adminEditTixianToMerge(FansTixian entity){
+	public ModelAndView adminEditTixianToMerge(FansTixian entity,String remark){
 		if(entity.getId() != null){
 			FansTixian entityOld=fansTixianSrevice.getById(entity.getId()+"");
+			accountFansService.updateRemark(remark,entityOld.getFansId());
 			entityOld.setTixianStatus(entity.getTixianStatus());
 			fansTixianSrevice.update(entityOld);
 		}
