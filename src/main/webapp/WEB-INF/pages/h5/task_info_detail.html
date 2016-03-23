@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>${accountInfo.name!}</title>
+    <title>${accountInfo.name!}-帮我做下任务，谢谢啦！</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="MobileOptimized" content="320">
     <meta name="viewport"
@@ -9,7 +9,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="format-detection" content="telephone=no, email=no">
-    <meta name="Description" content="${accountInfo.name!}">
+    <meta name="Description" content="${accountInfo.name!}帮我做下任务，谢谢啦！">
     <script>
         var SOHUZ = {
             page: {
@@ -49,7 +49,7 @@
         <#include "top.html">
             <div id="page-content" class="page-content">
                 <#include "menu.html">
-                    <div class='mod-title t2 ' style='margin:   ;'><h2>点击右上角分享给好友可获取更多佣金☝</h2><i class='font-ico'></i></div>
+                    <div class='mod-title t2 ' style='margin:   ;'><h2>分享好友帮做任务您一样可获取佣金☝</h2><i class='font-ico'></i></div>
                     <div class="mod mod-layout2coloums mod-column mod-2column" style="text-align: center;">
                         <#if taskCode??>
                             <img width="100%;" src="http://open.weixin.qq.com/qr/code/?username=${taskCode.wxCodeImgHref}" style="max-width:100%;"/>
@@ -58,7 +58,7 @@
                         <div style="text-align: center;" >
                             长按二维码关注后回复福利口令：
                             <label style="color: red;text-align: center;"> ${taskLog.taskCodeNum!} </label>
-                            即可得到福利。推荐给好友关注了回复福利口令一样可得到福利。
+                            即可得到福利。好友做任务回复此口令您一样可得到福利。
                         </div>
                     </div>
             </div>

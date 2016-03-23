@@ -53,21 +53,13 @@
                     <div>
                     <form id="queryPageForm" action="">
                         <input type="hidden" id="openId" name="openId" value="${openId!}">
-                    <div class="mod mod-nav mod-nav-t3" style="height: auto;">
-                        <#list pagination.items as row>
-                            <div>
-                                <div><#if row.base64WxCode??><img width="100%;" src="http://open.weixin.qq.com/qr/code/?username=${row.wxCodeImgHref!}" /></#if></div>
-                                <div style="text-align: center;">
-                                    奖金:<#if row.moneyPer??>${row.moneyPer*taskProfit}</#if>元
-                                    <input id="button_${row.id!}" type="button" value="任务认领" onclick="acceptTask(${row.id!});" />
-                                </div>
-                            </div>
-                        </#list>
+                    <div class="mod mod-nav mod-nav-t3" style="text-align:center;height: auto;">
+                        <input type="button" value="任务一键认领" onclick="acceptTask();" />
                     </div>
                     <#include "../common/pagination.html">
                     </form>
                     </div>
-                    <div class='mod-title t2 ' style='margin:   ;'><h2 style="text-align: center;">待执行任务</h2><i class='font-ico'></i></div>
+                    <div class='mod-title t2 ' style='margin:   ;'><h2 style="text-align: center;">执行的任务</h2><i class='font-ico'></i></div>
                     <div>
                         <div class="mod mod-nav mod-nav-t3" style="height: auto;">
                             <#list paginationTaskLog.items as row>
@@ -76,25 +68,11 @@
                                         <img width="100%;" src="http://open.weixin.qq.com/qr/code/?username=${row.wxCodeImgHref!}" />
                                     </#if>
                                 </div>
-                                <div style="text-align: center;">奖金<#if row.money??>${row.money*taskProfit}</#if>元</div>
+                                <div style="text-align: center;">奖金<#if row.money??>${row.money*taskProfit}</#if>元【已执行${row.taskStatus!}次】</div>
                                 <div style="text-align: center;" >
-                                    长按二维码关注后回复福利码：
+                                    长按二维码关注后回复福利口令：
                                     <label style="color: red;text-align: center;"> ${row.taskCodeNum!} </label>
-                                    即可得到福利。
-                                </div>
-                            </#list>
-                        </div>
-                    </div>
-                    <div class='mod-title t2 ' style='margin:   ;'><h2 style="text-align: center;">已完成任务</h2><i class='font-ico'></i></div>
-                    <div >
-                        <div class="mod mod-nav mod-nav-t3" style="height: auto;">
-                            <#list paginationFinishedTaskLog.items as row>
-                                <div style="text-align: center;">奖金<#if row.money??>${row.money*taskProfit}</#if>元
-                                </div>
-                                <div style="text-align: center;">
-                                    <#if row.wxCodeImgHref??>
-                                        <img width="100%;" src="http://open.weixin.qq.com/qr/code/?username=${row.wxCodeImgHref!}" />
-                                    </#if>
+                                    即可得到福利。转发给好友，好友关注回复福利口令一样获取福利。
                                 </div>
                             </#list>
                         </div>
@@ -141,12 +119,12 @@
     })(window.SOHUZ);
 </script>
 <script>
-    function acceptTask(taskId){
+    function acceptTask(){
         var openId=$("#openId").val();
         $.ajax({
             type: "GET",
             url:"/accountfans/accept_task_json.html",
-            data:"taskId="+taskId+"&openId="+openId,// 要提交的表单
+            data:"openId="+openId,// 要提交的表单
             success: function(ret)
             {
                 var returnJson=JSON.parse(ret);

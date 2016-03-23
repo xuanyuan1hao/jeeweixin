@@ -76,33 +76,42 @@ public class AccountFansCtrl{
 	}
 
 	@RequestMapping(value = "/accept_task_json", method = RequestMethod.GET)
-	public @ResponseBody String acceptTaskJson(ModelMap map, @RequestParam("openId") String openId
-			, @RequestParam(value = "taskId", defaultValue = "0") long taskId) {
+	public @ResponseBody String acceptTaskJson(ModelMap map, @RequestParam("openId") String openId) {
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("result", false);
 		jsonObject.put("msg", "接任务失败");
 		AccountFans fans = entityService.getByOpenId(openId);
 		if (null != fans) {
-			TaskCode taskCode=taskCodeService.getById(taskId);
-			if(null!=taskCode){
-				TaskLog taskLog=new TaskLog();
-				taskLog.setOpenId(openId);
-				taskLog.setCreatetime(new Date());
-				taskLog.setMoney(taskCode.getMoneyPer());
-				taskLog.setTaskId(taskId);
-				taskLog.setTaskStatus(0);//接收任务成功，等待处理
-				taskLog.setTaskCodeNum(getRandomNum(8));
-				String log="接收任务成功";
-				try {
-					taskLog.setLog(log.getBytes("UTF-8"));
-				} catch (UnsupportedEncodingException e) {
-					e.printStackTrace();
+			TaskLog searchEntity=new TaskLog();
+			searchEntity.setOpenId(openId);
+			Pagination<TaskCode> pagination=new Pagination<TaskCode>() ;
+			Pagination<TaskCode> taskCodes=taskCodeService.paginationEntityNotGet(searchEntity, pagination);
+			if(null!=taskCodes&&taskCodes.getItems()!=null&&taskCodes.getItems().size()>0){
+				for (int i=0;i<taskCodes.getItems().size();i++){
+					TaskCode taskCode=taskCodes.getItems().get(i);
+					if(null!=taskCode){
+						TaskLog taskLog=new TaskLog();
+						taskLog.setOpenId(openId);
+						taskLog.setCreatetime(new Date());
+						taskLog.setMoney(taskCode.getMoneyPer());
+						taskLog.setTaskId(taskCode.getId());
+						taskLog.setTaskStatus(0);//接收任务成功，等待处理
+						taskLog.setTaskCodeNum(getRandomNum(8));
+						String log="接收任务成功";
+						try {
+							taskLog.setLog(log.getBytes("UTF-8"));
+						} catch (UnsupportedEncodingException e) {
+							e.printStackTrace();
+						}
+						taskLogService.add(taskLog);
+					}
 				}
-				taskLogService.add(taskLog);
-				jsonObject.put("taskLogId", taskLog.getId());
 				jsonObject.put("result", true);
 				jsonObject.put("msg", "接任务成功");
 			}
+		}else{
+			jsonObject.put("result", false);
+			jsonObject.put("msg", "没有任务可接了，请执行已接任务！");
 		}
 		return jsonObject.toString();
 	}

@@ -53,14 +53,10 @@ public class TaskCtrl {
 
         //待执行任务只取第一页10条即可
         searchEntity.setTaskStatus(0);//待执行任务
+        searchEntity.setOpenId(openId);
         Pagination<TaskLog> paginationTaskLog=new Pagination<TaskLog>();
         paginationTaskLog=taskLogService.paginationEntityByOpenIdAndTaskStatus(searchEntity, paginationTaskLog);
         mv.addObject("paginationTaskLog", paginationTaskLog);
-
-        searchEntity.setTaskStatus(1);//已经完成的任务
-        Pagination<TaskLog> paginationFinishedTaskLog=new Pagination<TaskLog>();
-        paginationFinishedTaskLog=taskLogService.paginationEntityByOpenIdAndTaskStatus(searchEntity, paginationFinishedTaskLog);
-        mv.addObject("paginationFinishedTaskLog", paginationFinishedTaskLog);
 
         //获取URL
         String webUrl = "http://" + request.getServerName().toString() + ((request.getLocalPort() == 80) ? "" : (":" + request.getLocalPort()));

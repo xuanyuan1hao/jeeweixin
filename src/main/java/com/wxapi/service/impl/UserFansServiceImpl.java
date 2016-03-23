@@ -153,19 +153,20 @@ public class UserFansServiceImpl implements UserFansService {
                             log=log.replace("#{wxName}", WxMemoryCacheClient.getSingleAccount().getWxName());
                         }
                     }else{
-                        log="任务已经下架，请到关注易米网公众号执行其他任务。";
+                        log="任务已经下架，请到关注#{webName}【公众号：#{wxName}】执行其他任务。";
                         log=getContent(MsgType.TASK_IS_NOT_EXIST_TEXT_RESPONSE_MSG.toString(), log);
                         log=log.replace("#{webName}", WxMemoryCacheClient.getSingleAccount().getName());
+                        log=log.replace("#{wxName}", WxMemoryCacheClient.getSingleAccount().getWxName());
                     }
                 }else{
                     //福利码错误或者是已经领取完了福利
-                    log = "福利码错误或者是已经领取完了福利，请检查福利码";
+                    log = "福利口令错误或者是已经领取完了福利，请检查福利口令";
                     log=getContent(MsgType.TASK_CODE_ERROR_TEXT_RESPONSE_MSG.toString(), log);
                     log=log.replace("#{webName}", WxMemoryCacheClient.getSingleAccount().getName());
                 }
             }else{
                 //输入的福利码格式不对。福利码为数字，请到易米网查看。
-                log = "输入的福利码格式不对，请输入正确福利码。例如：1234567";
+                log = "输入的福利口令格式不对，请输入正确福利口令。例如：1234567";
                 log=getContent(MsgType.TASK_CODE_PATTEN_ERROR_TEXT_RESPONSE_MSG.toString(), log);
             }
             msgResponseText.setContent(log);

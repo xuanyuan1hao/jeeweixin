@@ -55,8 +55,11 @@
         <if test="param1.openId!=null">
             and n.openId = #{param1.openId}
         </if>
-        <if test="param1.taskStatus!=-1">
+        <if test="param1.taskStatus==-1">
             and n.taskStatus = #{param1.taskStatus}
+        </if>
+        <if test="param1.taskStatus!=-1">
+            and n.taskStatus >= #{param1.taskStatus}
         </if>
         order by m.moneyPer desc
         LIMIT #{param2.start} , #{param2.pageSize}
@@ -68,8 +71,11 @@
         <if test="openId!=null">
             and n.openId = #{openId}
         </if>
+        <if test="taskStatus==-1">
+            and n.taskStatus = #{param1.taskStatus}
+        </if>
         <if test="taskStatus!=-1">
-            and n.taskStatus = #{taskStatus}
+            and n.taskStatus >= #{taskStatus}
         </if>
     </select>
 
