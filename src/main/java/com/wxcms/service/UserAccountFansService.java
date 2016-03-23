@@ -2,6 +2,7 @@ package com.wxcms.service;
 
 import com.core.page.Pagination;
 import com.wxcms.domain.TaskCode;
+import com.wxcms.domain.TaskLog;
 import com.wxcms.domain.UserAccountFans;
 
 import java.util.Date;
@@ -27,7 +28,7 @@ public interface UserAccountFansService {
 
     public List<UserAccountFans> getAllByLastUpdateTimePage(Date lastUpdateTime,long  id,String accountOld);
 
-    void updateUserAccountFans(UserAccountFans userAccountFansWeb,TaskCode taskCode,String acceptTaskFansopenId);
+    void updateUserAccountFans(UserAccountFans userAccountFansWeb,TaskCode taskCode,TaskLog acceptTaskFansopenId);
     void updateSubUserAccountFans(UserAccountFans userAccountFans,TaskCode taskCode);
 
     void deleteByOpenId(String openId);

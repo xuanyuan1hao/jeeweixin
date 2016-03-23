@@ -9,9 +9,18 @@ import java.util.Date;
  */
 public class Account extends MpAccount{
 
-	private String name;//名称
+	private String name;//网站名称
 	private Long id;
 	private Date createtime = new Date();//创建时间
+	private String wxName;//微信名称
+
+	public String getWxName() {
+		return wxName;
+	}
+
+	public void setWxName(String wxName) {
+		this.wxName = wxName;
+	}
 
 	public String getName() {
 		return name;

@@ -32,7 +32,8 @@ public class UserAccountFansServiceImpl implements UserAccountFansService {
     private UserInfoService userInfoService;
     @Autowired
     private TaskLogService taskLogService;
-
+    @Autowired
+    private TaskRecordService taskRecordService;
     @Autowired
     private CustomTextMessageService customTextMessageService;
 
@@ -69,18 +70,17 @@ public class UserAccountFansServiceImpl implements UserAccountFansService {
         return baseDao.getAllByLastUpdateTimePage(lastUpdateTime,id,accountOld);
     }
 
-    public void updateUserAccountFans(UserAccountFans userAccountFansWeb, TaskCode taskCode,String acceptTaskFansopenId) {
+    public void updateUserAccountFans(UserAccountFans userAccountFansWeb, TaskCode taskCode,TaskLog taskLog) {
         baseDao.updateUserAccountFans(userAccountFansWeb);
         UserInfo userInfo = userInfoService.getById(taskCode.getUserId());
         //给服务号的主账号加钱
         AccountFans accountFansOld = accountFansService.getByNickname(userAccountFansWeb.getNickname());
         if (null == accountFansOld)
-            accountFansOld=accountFansService.getByOpenId(acceptTaskFansopenId);
+            accountFansOld=accountFansService.getByOpenId(taskLog.getOpenId());
         baseDao.updateAccountFansOldOpenId(accountFansOld.getOpenId(), userAccountFansWeb.getOpenId());//更新主账号open到信息里面
         MpAccount mpAccount = WxMemoryCacheClient.getSingleMpAccount();//获取缓存中的唯一账号
         double taskProfit=mpAccount.getTaskProfit();
         double taskFinisedMoney=taskCode.getMoneyPer()*(1-taskProfit/100);
-
         accountFansService.updateAddUserMoneyByUserId(taskFinisedMoney, accountFansOld.getId());//给关注用户加钱
         String log ="谢谢您完成公众号关注任务#{taskId}，已经获得#{money}元，请查看详情";
         log=log.replace("#{taskId}",taskCode.getId().toString());
@@ -98,12 +98,25 @@ public class UserAccountFansServiceImpl implements UserAccountFansService {
             e.printStackTrace();
         }
         flowService.add(flow);
+        taskLog = taskLogService.getByTaskIdAndOpenId(taskCode.getId(), accountFansOld.getOpenId());
+        // 记录当前用户关注的信息在案，以后再次关注或者取消关注后需要进行扣费操作。
+        TaskRecord taskRecord=new TaskRecord();
+        taskRecord.setCreatetime(new Date());
+        try {
+            taskRecord.setLog(log.getBytes("UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        taskRecord.setTaskCodeNum(taskLog.getTaskCodeNum());
+        taskRecord.setMoney(taskFinisedMoney);
+        taskRecord.setTaskId(taskCode.getId());
+        taskRecord.setOpenId(userAccountFansWeb.getOpenId());
+        taskRecordService.add(taskRecord);
         //WxApiClient.sendCustomTextMessage(accountFansOld.getOpenId(), log, WxMemoryCacheClient.getSingleMpAccount());
         customTextMessageService.addByMpAccount(accountFansOld.getOpenId(),log,WxMemoryCacheClient.getSingleMpAccount());
         //修改任务执行状态
-        TaskLog taskLog = taskLogService.getByTaskIdAndOpenId(taskCode.getId(), accountFansOld.getOpenId());
         //更改任务状态为已完成
-        taskLog.setTaskStatus(1);//设置为任务已经完成
+        taskLog.setTaskStatus(taskLog.getTaskStatus()+1);//设置为任务已经完成
         taskLogService.updateTaskStatus(taskLog);
         //扣除花费的钱
         userInfo.setUserMoney(0 - taskFinisedMoney);
@@ -265,8 +278,13 @@ public class UserAccountFansServiceImpl implements UserAccountFansService {
                     }
                 }
             }
-            taskLog.setTaskStatus(0);//设置为任务为未完成
+            taskLog.setTaskStatus(taskLog.getTaskStatus()-1);//设置为任务完成数减一
             taskLogService.updateTaskStatus(taskLog);
+            //删除关注记录
+            TaskRecord taskRecord=taskRecordService.getByTaskIdAndOpenId(taskLog.getTaskId(),userAccountFans.getOpenId());
+            if(null!=taskRecord){
+                taskRecordService.delete(taskRecord);
+            }
         }
     }
 

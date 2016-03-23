@@ -1,5 +1,6 @@
 package com.wxapi.process;
 
+import com.wxcms.domain.Account;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.HashMap;
@@ -18,6 +19,7 @@ public class WxMemoryCacheClient {
 
 	//服务器内存的方式缓存account、accessToken、jsTicket
 	private static Map<String,MpAccount> mpAccountMap = new HashMap<String,MpAccount>();
+	private static Map<String,Account> accountMap = new HashMap<String,Account>();
 	private static Map<String,AccessToken> accountAccessTokenMap = new ConcurrentHashMap<String,AccessToken>();
 	private static Map<String,AccessToken> accountUserAccessTokenMap = new ConcurrentHashMap<String,AccessToken>();
 
@@ -30,10 +32,11 @@ public class WxMemoryCacheClient {
 	private static Map<String,OAuthAccessToken> accountOAuthTokenMap = new HashMap<String,OAuthAccessToken>();
 	
 	
-	public static void addMpAccount(MpAccount account){
+	public static void addMpAccount(Account account){
 		//if(account != null && !mpAccountMap.containsKey(account.getAccount()))
 		if(account != null){
 			mpAccountMap.put(account.getAccount(), account);
+			accountMap.put(account.getAccount(), account);
 		}
 	}
 	
@@ -50,7 +53,15 @@ public class WxMemoryCacheClient {
 		}
 		return sigleAccount;
 	}
-	
+	public static Account getSingleAccount(){
+		Account sigleAccount = null;
+		for(String key : accountMap.keySet()){
+			sigleAccount = accountMap.get(key);
+			break;
+		}
+		return sigleAccount;
+	}
+
 	public static AccessToken addAccessToken(String account ,AccessToken token){
 		if(token != null){
 			accountAccessTokenMap.put(account, token);

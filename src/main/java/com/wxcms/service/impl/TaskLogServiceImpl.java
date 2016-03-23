@@ -14,8 +14,9 @@ import java.util.List;
 public class TaskLogServiceImpl implements TaskLogService {
     @Autowired
     private TaskLogDao baseDao;
+
     public List<TaskLog> listForPage(TaskCode searchEntity, Pagination<TaskLog> page) {
-        return baseDao.listForPage(searchEntity,page);
+        return baseDao.listForPage(searchEntity, page);
     }
 
     public Integer getTotalItemsCount(TaskCode searchEntity) {
@@ -31,13 +32,15 @@ public class TaskLogServiceImpl implements TaskLogService {
     }
 
     public TaskLog getByTaskIdAndTaskCodeNum(long taskId, String taskCodeNum) {
-        TaskLog taskLog=new TaskLog();
+        TaskLog taskLog = new TaskLog();
         taskLog.setTaskId(taskId);
         taskLog.setTaskCodeNum(taskCodeNum);
         return baseDao.getByTaskIdAndTaskCodeNum(taskLog);
     }
-    /***
+
+    /**
      * 获取接了的任务，完成，未完成的。
+     *
      * @param searchEntity
      * @param pagination
      * @return
@@ -50,9 +53,13 @@ public class TaskLogServiceImpl implements TaskLogService {
         return pagination;
     }
 
+    public   List<TaskLog> listForPageByOpenId(TaskLog searchEntity, Pagination<TaskLog> pagination) {
+        return baseDao.listForPageByOpenId(searchEntity, pagination);
+    }
+
     @Override
     public TaskLog getByTaskIdAndOpenId(long id, String openId) {
-       return baseDao.getByTaskIdAndOpenId(id,openId);
+        return baseDao.getByTaskIdAndOpenId(id, openId);
     }
 
     @Override

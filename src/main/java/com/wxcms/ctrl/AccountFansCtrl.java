@@ -91,7 +91,7 @@ public class AccountFansCtrl{
 				taskLog.setMoney(taskCode.getMoneyPer());
 				taskLog.setTaskId(taskId);
 				taskLog.setTaskStatus(0);//接收任务成功，等待处理
-				taskLog.setTaskCodeNum(getRandomNum(7));
+				taskLog.setTaskCodeNum(getRandomNum(8));
 				String log="接收任务成功";
 				try {
 					taskLog.setLog(log.getBytes("UTF-8"));

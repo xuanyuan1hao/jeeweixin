@@ -115,7 +115,23 @@ public class TaskCtrl {
         mv.addObject("content", content);
         return mv;
     }
-
+    @RequestMapping(value = "/task_info_detail/{taskLogId}")
+    public ModelAndView taskInfoDetail(HttpServletRequest request,
+                                       @PathVariable("taskLogId") long taskLogId){
+        ModelAndView mv = new ModelAndView("h5/task_info_detail");
+        mv.addObject("taskLogId", taskLogId);
+        //获取人员信息
+        TaskLog taskLog=taskLogService.getById(taskLogId);
+        if(null!=taskLog){
+            TaskCode taskCode=taskCodeService.getById(taskLog.getTaskId());
+            mv.addObject("taskCode", taskCode);
+        }
+        mv.addObject("taskLog", taskLog);
+        MpAccount mpAccount = WxMemoryCacheClient.getSingleMpAccount();//获取缓存中的唯一账号
+        double taskProfit=mpAccount.getTaskProfit();
+        mv.addObject("taskProfit",(1- taskProfit/100));
+        return mv;
+    }
     /***
      *
      * @param request

@@ -10,5 +10,4 @@ public interface UserFlowService {
     Pagination<UserFlow> paginationEntity(UserFlow searchEntity, Pagination<UserFlow> pagination);
     public void add(UserFlow entity);
 
-
 }

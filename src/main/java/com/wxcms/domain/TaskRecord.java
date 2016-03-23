@@ -7,24 +7,14 @@ import java.io.UnsupportedEncodingException;
 /**
  * Created by Administrator on 2016-02-17.
  */
-public class TaskLog extends BaseEntity{
+public class TaskRecord extends BaseEntity{
     private byte[] log;
     private String logStr;
     private double money;
     private String openId;
     private long taskId;
+
     private String taskCodeNum;
-    private int taskStatus;//这个字段修改用于存储任务完成数量
-    private String  base64WxCode;
-    private String wxCodeImgHref;//公众号账号原始号
-
-    public String getWxCodeImgHref() {
-        return wxCodeImgHref;
-    }
-
-    public void setWxCodeImgHref(String wxCodeImgHref) {
-        this.wxCodeImgHref = wxCodeImgHref;
-    }
 
     public String getTaskCodeNum() {
         return taskCodeNum;
@@ -32,22 +22,6 @@ public class TaskLog extends BaseEntity{
 
     public void setTaskCodeNum(String taskCodeNum) {
         this.taskCodeNum = taskCodeNum;
-    }
-
-    public String getBase64WxCode() {
-        return base64WxCode;
-    }
-
-    public void setBase64WxCode(String base64WxCode) {
-        this.base64WxCode = base64WxCode;
-    }
-
-    public int getTaskStatus() {
-        return taskStatus;
-    }
-
-    public void setTaskStatus(int taskStatus) {
-        this.taskStatus = taskStatus;
     }
 
     public byte[] getLog() {

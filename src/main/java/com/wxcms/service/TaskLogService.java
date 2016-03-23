@@ -17,6 +17,7 @@ public interface TaskLogService {
     TaskLog getByTaskIdAndTaskCodeNum(long taskId,String taskCodeNum);
     void updateTaskStatus(TaskLog taskLog);
     Pagination<TaskLog> paginationEntityByOpenIdAndTaskStatus(TaskLog searchEntity, Pagination<TaskLog> pagination);
+    List<TaskLog> listForPageByOpenId(TaskLog searchEntity, Pagination<TaskLog> pagination);
 
     TaskLog getByTaskIdAndOpenId(long id, String openId);
 

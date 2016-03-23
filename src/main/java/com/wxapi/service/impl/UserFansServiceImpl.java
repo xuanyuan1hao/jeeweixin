@@ -1,20 +1,11 @@
 package com.wxapi.service.impl;
 
-import com.wxapi.process.MsgType;
-import com.wxapi.process.MsgXmlUtil;
-import com.wxapi.process.UserWxApiClient;
-import com.wxapi.process.WxMessageBuilder;
+import com.wxapi.process.*;
 import com.wxapi.service.UserFansService;
 import com.wxapi.vo.MsgRequest;
-import com.wxcms.domain.MsgText;
-import com.wxcms.domain.TaskCode;
-import com.wxcms.domain.TaskLog;
-import com.wxcms.domain.UserAccountFans;
+import com.wxcms.domain.*;
 import com.wxcms.mapper.MsgBaseDao;
-import com.wxcms.service.CustomTextMessageService;
-import com.wxcms.service.TaskCodeService;
-import com.wxcms.service.TaskLogService;
-import com.wxcms.service.UserAccountFansService;
+import com.wxcms.service.*;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,7 +26,8 @@ public class UserFansServiceImpl implements UserFansService {
     private  TaskCodeService taskCodeService;
     @Autowired
     private MsgBaseDao msgBaseDao;
-
+    @Autowired
+    private TaskRecordService taskRecordService;
     @Autowired
     private CustomTextMessageService customTextMessageService;
     public String processMsg(MsgRequest msgRequest, TaskCode taskCode, String webRootPath, String webUrl) {
@@ -86,10 +78,11 @@ public class UserFansServiceImpl implements UserFansService {
                 UserAccountFans userAccountFansWeb = UserWxApiClient.syncAccountFans(openId, taskCode);
                 if (null != fansThread&&null!=userAccountFansWeb) {
                     userAccountFansWeb.setId(fansThread.getId());
-                    userAccountFansService.updateUserAccountFans(userAccountFansWeb, taskCode,"");
+                    userAccountFansService.updateUserAccountFans(userAccountFansWeb, taskCode,null);
                     //发送客服消息
-                    String log = "您在易米网的账号已经获得福利金，请到易米网公众号查看详情！";
+                    String log = "您在#{webName}的账号已经获得福利金，请到#{webName}公众号查看详情！";
                     log = getContent(MsgType.SUBSCRIBE_USER_ACCOUNT_ADD_MONEY.toString(), log);
+                    log=log.replace("#{webName}", WxMemoryCacheClient.getSingleAccount().getName());
                     //UserWxApiClient.sendCustomTextMessage(openId, log, taskCode);
                     customTextMessageService.addByTaskCode(openId, log, taskCode);
                 }
@@ -134,8 +127,10 @@ public class UserFansServiceImpl implements UserFansService {
             }
             Pattern p= Pattern.compile("(\\d+)");
             Matcher m = p.matcher(tmpContent);
-            String log="欢迎关注，想要做任务赚点零花钱请关注易米网公众号了解详情。";
+            String log="欢迎关注，想要做任务赚点零花钱请关注#{webName}【公众号：#{wxName}】了解详情。";
             log=getContent(MsgType.DEFAULT_TEXT_RESPONSE_MSG.toString(), log);
+            log=log.replace("#{webName}", WxMemoryCacheClient.getSingleAccount().getName());
+            log=log.replace("#{wxName}", WxMemoryCacheClient.getSingleAccount().getWxName());
             if(m.find()){
                 String taskCodeNum=m.group(1);
                 System.out.println(m.group(1));
@@ -144,17 +139,29 @@ public class UserFansServiceImpl implements UserFansService {
                     //福利码正确，查找任务接任务的原始粉丝
                     taskCode= taskCodeService.getById(taskLog.getTaskId());
                     if(null!=taskCode){
-                        userAccountFansService.updateUserAccountFans(userAccountFans, taskCode,taskLog.getOpenId());
-                        log="您在易米网的账号已经获得福利金，请到易米网公众号查看详情！";
-                        log=getContent(MsgType.SUCCESS_GET_MONEY_TEXT_RESPONSE_MSG.toString(), log);
+                        TaskRecord taskRecord= taskRecordService.getByTaskIdAndOpenId(taskLog.getTaskId(), openId);
+                        if(null==taskRecord){
+                            userAccountFansService.updateUserAccountFans(userAccountFans, taskCode,taskLog);
+                            log="您在易米网的账号已经获得福利金，请到#{webName}【公众号：#{wxName}】查看详情！";
+                            log=getContent(MsgType.SUCCESS_GET_MONEY_TEXT_RESPONSE_MSG.toString(), log);
+                            log=log.replace("#{webName}", WxMemoryCacheClient.getSingleAccount().getName());
+                            log=log.replace("#{wxName}", WxMemoryCacheClient.getSingleAccount().getWxName());
+                        }else{
+                            log = "您已经领取完了福利，请关注#{webName}【公众号：#{wxName}】执行其它任务赚钱";
+                            log=getContent(MsgType.TASK_HAS_FINISHED_TEXT_RESPONSE_MSG.toString(), log);
+                            log=log.replace("#{webName}", WxMemoryCacheClient.getSingleAccount().getName());
+                            log=log.replace("#{wxName}", WxMemoryCacheClient.getSingleAccount().getWxName());
+                        }
                     }else{
                         log="任务已经下架，请到关注易米网公众号执行其他任务。";
                         log=getContent(MsgType.TASK_IS_NOT_EXIST_TEXT_RESPONSE_MSG.toString(), log);
+                        log=log.replace("#{webName}", WxMemoryCacheClient.getSingleAccount().getName());
                     }
                 }else{
                     //福利码错误或者是已经领取完了福利
                     log = "福利码错误或者是已经领取完了福利，请检查福利码";
                     log=getContent(MsgType.TASK_CODE_ERROR_TEXT_RESPONSE_MSG.toString(), log);
+                    log=log.replace("#{webName}", WxMemoryCacheClient.getSingleAccount().getName());
                 }
             }else{
                 //输入的福利码格式不对。福利码为数字，请到易米网查看。

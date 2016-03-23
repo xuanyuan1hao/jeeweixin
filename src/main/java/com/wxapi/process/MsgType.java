@@ -33,6 +33,7 @@ public enum MsgType {
 	TASK_IS_NOT_EXIST_TEXT_RESPONSE_MSG("task_is_not_exist_text_response_msg"),//用户发送福利码给订阅号，任务不存在时候返回的消息
 	TASK_CODE_ERROR_TEXT_RESPONSE_MSG("task_code_error_text_response_msg"),//用户发送福利码给订阅号，任务不存在时候返回的消息
 	TASK_CODE_PATTEN_ERROR_TEXT_RESPONSE_MSG("task_code_patten_error_text_response_msg"),//用户发送福利码给订阅号，福利码格式不对。
+	TASK_HAS_FINISHED_TEXT_RESPONSE_MSG("task_has_finished_text_response_msg"),//用户发送福利码给订阅号，任务不存在时候返回的消息
 	SUBSCRIBE("subscribe"),//订阅消息
 	UNSUBSCRIBE("unsubscribe");//取消订阅
 

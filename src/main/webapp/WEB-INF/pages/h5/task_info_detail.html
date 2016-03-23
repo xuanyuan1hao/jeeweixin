@@ -49,37 +49,18 @@
         <#include "top.html">
             <div id="page-content" class="page-content">
                 <#include "menu.html">
-                    <div class='mod-title t2 ' style='margin:   ;'><h2>提现</h2><i class='font-ico'></i></div>
-                    <#if fans??>
-                        <form id="tixian_form" name="form">
-                            <input id="openId" name="openId" value="${fans.openId!}" type="hidden">
+                    <div class='mod-title t2 ' style='margin:   ;'><h2>点击右上角分享给好友可获取更多佣金☝</h2><i class='font-ico'></i></div>
                     <div class="mod mod-layout2coloums mod-column mod-2column" style="text-align: center;">
-                        <div class="mod mod-text">
-                            可用： <label class="am-input-sm">${fans.userMoney!}元</label>
-                        </div>
-                        <div class="mod mod-text">
-                            提现金额： <input type="radio" name="money" value="${account.tixianMinMoney}" checked /> ${account.tixianMinMoney}元
-                            <input type="radio" name="money" value="${account.tixianMinMoney*2}" /> ${account.tixianMinMoney*2}元
-                            <input type="radio" name="money" value="${account.tixianMinMoney*4}" /> ${account.tixianMinMoney*4}元
-                            <input type="radio" name="money" value="${account.tixianMinMoney*8}" /> ${account.tixianMinMoney*8}元
-                        </div>
-                        <div class="mod mod-text">
-                            提现密码：  <input type="password" class="am-input-sm" id="userMoneyPassword" name="userMoneyPassword" value=""/>
-                        </div>
-                        <div class="mod mod-text">
-                            收款人：
-                            <input type="text" id="alipayName" class="am-input-sm" name="fansTixian.alipayName" value=""/>
-                        </div>
-                        <div class="mod mod-text">
-                            收款支付宝： <input type="text" id="alipayEmail" class="am-input-sm" name="fansTixian.alipayEmail" value=""/>
-                        </div>
-                        <div class="mod mod-text">
-                            <input class="mod-button"  id="tixian_btn" type="button" value="确认提现" />
-                            <input class="mod-button" onclick="javascript:history.back(-1);"  type="button" value="返回" />
+                        <#if taskCode??>
+                            <img width="100%;" src="http://open.weixin.qq.com/qr/code/?username=${taskCode.wxCodeImgHref}" style="max-width:100%;"/>
+                        </#if>
+                        <div style="text-align: center;">奖金<#if taskLog.money??>${taskLog.money*taskProfit}</#if>元</div>
+                        <div style="text-align: center;" >
+                            长按二维码关注后回复福利口令：
+                            <label style="color: red;text-align: center;"> ${taskLog.taskCodeNum!} </label>
+                            即可得到福利。推荐给好友关注了回复福利口令一样可得到福利。
                         </div>
                     </div>
-                        </form>
-                    </#if>
             </div>
     </div>
 </div>
@@ -120,47 +101,6 @@
         kaq('send', 'timing', 5);
         z.kaq = kaq;
     })(window.SOHUZ);
-</script>
-<script>
-    $("#tixian_btn").click(function(){
-        var canTixianMoney=$("#canTixianMoney").val();
-        var money=$("#money").val();
-        if(money<10){
-            alert("提现金额必须大于10");
-            return;
-        }
-        if(eval(canTixianMoney)<eval(money)){
-            alert("提现金额必须小于等于可提现金额");
-            return;
-        }
-        var userMoneyPassword=$("#userMoneyPassword").val();
-        var alipayName=$("#alipayName").val();
-        var alipayEmail=$("#alipayEmail").val();
-        if(userMoneyPassword==""){
-            alert("提现密码不能为空");
-            return;
-        }
-        if(alipayName==""){
-            alert("收款人不能为空");
-            return;
-        }
-        if(alipayEmail==""){
-            alert("收款支付宝不能为空");
-            return;
-        }
-        $.ajax({
-            type: "POST",
-            url:"/wxapi/tixian_json.html",
-            data:$('#tixian_form').serialize(),// 要提交的表单
-            success: function(ret)
-            {
-                var returnJson=JSON.parse(ret);
-                alert(returnJson.msg);
-                window.location.reload();
-            },
-            error: function(error){alert(error);}
-        });
-    });
 </script>
 </body>
 </html>

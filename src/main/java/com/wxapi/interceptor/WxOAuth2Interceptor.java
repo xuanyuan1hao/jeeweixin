@@ -1,17 +1,14 @@
 package com.wxapi.interceptor;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.core.util.HttpUtil;
+import com.wxapi.process.*;
+import com.wxcms.domain.Account;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-import com.core.util.HttpUtil;
-import com.wxapi.process.MpAccount;
-import com.wxapi.process.OAuthScope;
-import com.wxapi.process.WxApi;
-import com.wxapi.process.WxApiClient;
-import com.wxapi.process.WxMemoryCacheClient;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  * 微信客户端用户请求验证拦截器
@@ -29,7 +26,15 @@ public class WxOAuth2Interceptor extends HandlerInterceptorAdapter {
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 		String uri = request.getRequestURI();
-		
+		//这里会对所有的链接进行拦截，为方便起见，获取内存中的网站名称等信息保存到session中全局引用
+		HttpSession session=request.getSession();
+		if(null!=session){
+			Account account=(Account)session.getAttribute("accountInfo");
+			if(null==account){
+				account=WxMemoryCacheClient.getSingleAccount();
+				session.setAttribute("accountInfo",account);
+			}
+		}
 		boolean oauthFlag = false;//为方便展示的参数，开发者自行处理
 		for(String s : includes){
 			if(uri.contains(s)){//如果包含，就拦截

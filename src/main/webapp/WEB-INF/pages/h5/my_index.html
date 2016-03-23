@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>易米网</title>
+    <title>${accountInfo.name!}</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="MobileOptimized" content="320">
     <meta name="viewport"
@@ -9,23 +9,18 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="format-detection" content="telephone=no, email=no">
-    <meta name="Description" content="易米网">
+    <meta name="Description" content="${accountInfo.name!}">
     <script>
         var SOHUZ = {
             page: {
                 site_id: "8534891861",
-                site_name: "易米网",
+                site_name: "${accountInfo.name!}",
                 site_url: "http://muban111.kuaizhan.com",
                 page_id: "5482998637",
                 page_title: "首页",
                 page_type: "0",
                 index_url: "/",
                 is_index_page: true
-            },
-            share: {
-                title: "首页——易米网",
-                desc: "易米网",
-                pic: "http://pic.kuaizhan.com/g1/M01/41/CA/wKjmqVYt1SeACnhOAAAFXY1kuFk1617412/imageView/v1/thumbnail/700x700"
             }
         };
     </script>
@@ -58,7 +53,7 @@
                         data-imgid="0" fit=""></a></div>
             </div>
             <div class='cell site-title' style='width:auto; '>
-                <div class="mod mod-text " style="margin:   ;background:"><p>易米网</p></div>
+                <div class="mod mod-text " style="margin:   ;background:"><p>${accountInfo.name!}</p></div>
             </div>
             <div class='cell login' style='width:auto; '>
                 <div class="mod mod-pic mod-picone" style="margin:   ;"><a href="/auth/me"><img
@@ -73,7 +68,7 @@
         </div>
         <div id="page-content" class="page-content">
             <#include "men.html">
-            <div class='mod-title t2 ' style='margin:   ;'><h2>易米网</h2><i class='font-ico'></i></div>
+            <div class='mod-title t2 ' style='margin:   ;'><h2>${accountInfo.name!}</h2><i class='font-ico'></i></div>
             <div class="mod mod-space" style="margin:   ;">
                 <div class="space" style="height:21px"></div>
             </div>

@@ -23,16 +23,19 @@ subscribe_level_reward_log=您的好友#{friendName}扫描了您的二维码，�
 unsubscribe_reward_log=您的好友#{friendName}取消了关注，您被扣除#{money}元红包
 
 #默认文本回复消息内容
-default_text_response_msg=欢迎关注，想要做任务赚点零花钱请关注易米网公众号了解详情。
+default_text_response_msg=欢迎关注，想要做任务赚点零花钱请关注#{webName}公众号了解详情。
 
 #发送福利码成功获取金额后返回的消息
-success_get_money_text_response_msg=您在易米网的账号已经获得福利金，请到易米网公众号查看详情！
+success_get_money_text_response_msg=您在#{webName}的账号已经获得福利金，请到#{webName}公众号查看详情！
 
 #用户发送福利码给订阅号，任务不存在时候返回的消息
-task_is_not_exist_text_response_msg=任务已经下架，请到关注易米网公众号执行其他任务。
+task_is_not_exist_text_response_msg=任务已经下架，请到关注#{webName}公众号执行其他任务。
 
 #福利码错误或者是已经领取完了福利，请检查福利码
 task_code_error_text_response_msg=福利码错误或者是已经领取完了福利，请检查福利码
+
+#您已经领取完了福利，请执行其它任务赚钱
+task_has_finished_text_response_msg=您已经领取完了福利，请到#{webName}【微信：#{wxName}】执行其它任务赚钱
 
 #用户发送福利码给订阅号，福利码格式不对。
 task_code_patten_error_text_response_msg=输入的福利码格式不对，请输入正确福利码。例如：1234567

@@ -26,7 +26,7 @@
     </select>
 
     <select id="getByCode" resultType="com.wxcms.domain.TaskLog">
-        SELECT * FROM t_wxcms_task_log WHERE taskCodeNum = #{taskCodeNum} and taskStatus=0
+        SELECT * FROM t_wxcms_task_log WHERE taskCodeNum = #{taskCodeNum}
     </select>
 
     <select id="getByTaskIdAndTaskCodeNum" resultType="com.wxcms.domain.TaskLog">
@@ -49,7 +49,7 @@
 
 
     <select id="listForPageByOpenIdAndTaskStatus" resultType="com.wxcms.domain.TaskLog">
-        SELECT n.*,m.base64WxCode as base64WxCode
+        SELECT n.*,m.base64WxCode as base64WxCode,m.wxCodeImgHref as wxCodeImgHref
         from t_wxcms_task_code m,t_wxcms_task_log n
         WHERE m.id=n.taskId
         <if test="param1.openId!=null">
@@ -61,6 +61,7 @@
         order by m.moneyPer desc
         LIMIT #{param2.start} , #{param2.pageSize}
     </select>
+
     <select id="getTotalItemsCountByOpenIdAndTaskStatus" parameterType="com.wxcms.domain.TaskLog" resultType="java.lang.Integer">
         SELECT count(m.id) FROM t_wxcms_task_code m,t_wxcms_task_log n
         WHERE m.id=n.taskId
@@ -72,5 +73,15 @@
         </if>
     </select>
 
+    <select id="listForPageByOpenId" resultType="com.wxcms.domain.TaskLog">
+        SELECT n.*,m.base64WxCode as base64WxCode,m.wxCodeImgHref as wxCodeImgHref
+        from t_wxcms_task_code m,t_wxcms_task_log n
+        WHERE m.id=n.taskId
+        <if test="param1.openId!=null">
+            and n.openId = #{param1.openId}
+        </if>
+        order by RAND()
+        LIMIT #{param2.start} , #{param2.pageSize}
+    </select>
 
 </mapper>

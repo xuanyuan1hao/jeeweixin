@@ -1,5 +1,6 @@
 package com.wxapi.service.impl;
 
+import com.core.page.Pagination;
 import com.core.util.ImageByteUtils;
 import com.core.util.ImageUtils;
 import com.core.util.UploadUtil;
@@ -10,9 +11,7 @@ import com.wxapi.vo.MsgRequest;
 import com.wxapi.vo.MsgResponseText;
 import com.wxcms.domain.*;
 import com.wxcms.mapper.*;
-import com.wxcms.service.AccountFansService;
-import com.wxcms.service.CustomTextMessageService;
-import com.wxcms.service.FlowService;
+import com.wxcms.service.*;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.commons.collections.CollectionUtils;
@@ -55,7 +54,10 @@ public class MyServiceImpl implements MyService {
     private FlowService flowService;
     @Autowired
     private CustomTextMessageService customTextMessageService;
-
+    @Autowired
+    private TaskCodeService taskCodeService;
+    @Autowired
+    private TaskLogService taskLogService;
     /**
      * 处理消息
      * 开发者可以根据用户发送的消息和自己的业务，自行返回合适的消息；
@@ -194,7 +196,7 @@ public class MyServiceImpl implements MyService {
             if (text != null) {
                 return MsgXmlUtil.textToXml(WxMessageBuilder.getMsgResponseText(msgRequest, text));
             }
-        } else {//点击事件消息
+        }else {//点击事件消息
             if (!StringUtils.isEmpty(key)) {
                 /**
                  * 固定消息
@@ -226,7 +228,8 @@ public class MyServiceImpl implements MyService {
                             }
                         }
                     }
-                } else if (key.indexOf("my_refer") >= 0) {
+                }
+                else if (key.indexOf("my_refer") >= 0) {
                     //生成推广的图片
                     String userOpenId = msgRequest.getFromUserName();
                     AccountFans accountFans = accountFansService.getByOpenId(userOpenId);
@@ -239,12 +242,68 @@ public class MyServiceImpl implements MyService {
                         msgResponseText.setContent(log);
                         return MsgXmlUtil.textToXml(WxMessageBuilder.getMsgResponseText(msgRequest, msgResponseText));
                     }
+                } else if(key.indexOf("my_task_list") >= 0){
+                    //返回随机任务列表信息
+                    String userOpenId = msgRequest.getFromUserName();
+                    AccountFans accountFans = accountFansService.getByOpenId(userOpenId);
+                    if (null != accountFans) {
+                        TaskLog searchEntity=new TaskLog();
+                        searchEntity.setOpenId(userOpenId);
+                        Pagination<TaskCode> pagination=new Pagination<TaskCode>();
+                        Pagination<TaskCode> pageNot= taskCodeService.paginationEntityNotGet(searchEntity,pagination);
+                        //没有接的任务自动接受
+                        if (null!=pageNot&&pageNot.getItems()!=null&&pageNot.getItems().size()>0){
+                            for (int i=0;i<pageNot.getItems().size();i++){
+                                //自动接任务
+                                TaskLog taskLog=new TaskLog();
+                                taskLog.setOpenId(userOpenId);
+                                taskLog.setCreatetime(new Date());
+                                taskLog.setMoney(pageNot.getItems().get(i).getMoneyPer());
+                                taskLog.setTaskId(pageNot.getItems().get(i).getId());
+                                taskLog.setTaskStatus(0);//接收任务成功，等待处理
+                                taskLog.setTaskCodeNum(getRandomNum(7));
+                                String log="接收任务"+pageNot.getItems().get(i).getId()+"成功";
+                                try {
+                                    taskLog.setLog(log.getBytes("UTF-8"));
+                                } catch (UnsupportedEncodingException e) {
+                                    e.printStackTrace();
+                                }
+                                taskLogService.add(taskLog);
+                            }
+                        }
+                        //获取已经接收的任务列表。组合成返回的消息。
+                        TaskLog taskLog=new TaskLog();
+                        taskLog.setOpenId(userOpenId);
+                        Pagination<TaskLog> paginationTaskLog=new Pagination<TaskLog>();
+                        paginationTaskLog.setPageSize(5);
+                        List<TaskLog> listRandom=  taskLogService.listForPageByOpenId(taskLog, paginationTaskLog);
+                        String retMsg="完成以下任务赚取更多佣金\n";
+                        for (int i=0;i<listRandom.size();i++){
+                            long taskLogId= listRandom.get(i).getId();
+                            String taskUrl= webUrl+"/task/task_info_detail/"+taskLogId+".html";
+                            retMsg+="<a href='"+taskUrl+"'>任务"+taskLogId+",福利口令："+ listRandom.get(i).getTaskCodeNum()+"</a>\n";
+                        }
+                        retMsg+="点击菜单【我要赚钱】获取更多任务";
+                        MsgText msgResponseText = new MsgText();
+                        msgResponseText.setContent(retMsg);
+                        return MsgXmlUtil.textToXml(WxMessageBuilder.getMsgResponseText(msgRequest, msgResponseText));
+                    }
+
                 }
             }
         }
         return null;
     }
-
+    private String getRandomNum(int length) {
+        //获取6位验证码数字
+        while(true){
+            int max=(int)Math.pow(10, length);
+            Random random=new Random();
+            String ret= String.valueOf(random.nextInt(max));
+            if(taskLogService.getByCode(ret)==null)
+                return ret;
+        }
+    }
     private void createQRCode(final AccountFans accountFans, final String webRootPath, final String webUrl,
                               final MpAccount mpAccount, final String userOpenId, final String headImg) {
         new Thread(new Runnable() {

@@ -28,6 +28,7 @@ public class MpAccount implements Serializable{
 
 	private double taskProfit;//任务完成盈利比例
 
+
 	public double getTaskProfit() {
 		return taskProfit;
 	}

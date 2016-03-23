@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>易米网</title>
+    <title>${accountInfo.name!}</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="MobileOptimized" content="320">
     <meta name="viewport"
@@ -9,23 +9,18 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="format-detection" content="telephone=no, email=no">
-    <meta name="Description" content="易米网">
+    <meta name="Description" content="${accountInfo.name!}">
     <script>
         var SOHUZ = {
             page: {
                 site_id: "8534891861",
-                site_name: "易米网",
+                site_name: "${accountInfo.name!}",
                 site_url: "http://muban111.kuaizhan.com",
                 page_id: "5482998637",
                 page_title: "首页",
                 page_type: "0",
                 index_url: "/",
                 is_index_page: true
-            },
-            share: {
-                title: "首页——易米网",
-                desc: "易米网",
-                pic: "http://pic.kuaizhan.com/g1/M01/41/CA/wKjmqVYt1SeACnhOAAAFXY1kuFk1617412/imageView/v1/thumbnail/700x700"
             }
         };
     </script>
@@ -62,7 +57,6 @@
                         <div class="mod mod-text">可用：${fans.userMoney!}元</div>
                         <div class="mod mod-text">处理中：${fans.userMoneyFreezed!}元</div>
                         <div class="mod mod-text">可用：${fans.userMoney!}元</div>
-                        <div class="mod mod-text" style="color: red;">备注：${fans.remark!}</div>
                     </div>
 
                     <div class="mod mod-layout2coloums mod-column mod-2column" style="text-align: center;">

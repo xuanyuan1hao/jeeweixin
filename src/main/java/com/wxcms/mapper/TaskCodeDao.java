@@ -24,4 +24,5 @@ public interface TaskCodeDao {
     public void delete(TaskCode taskCode);
 
     TaskCode getByAccount(String account);
+
 }

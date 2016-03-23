@@ -33,7 +33,7 @@
 		,referMoneyMin = #{referMoneyMin},referMoneyMax = #{referMoneyMax}
 		,initSendMoneyMax = #{initSendMoneyMax},tixianMinMoney = #{tixianMinMoney},
 		initSendMoneyMin=#{initSendMoneyMin},serverAppid=#{serverAppid},serverAppsecret=#{serverAppsecret},
-		taskProfit=#{taskProfit}
+		taskProfit=#{taskProfit},wxName= #{wxName}
 		WHERE ID = #{id}
 	</update>
 

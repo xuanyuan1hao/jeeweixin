@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>易米网</title>
+    <title>${accountInfo.name!}</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="MobileOptimized" content="320">
     <meta name="viewport"
@@ -9,12 +9,12 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="format-detection" content="telephone=no, email=no">
-    <meta name="Description" content="易米网">
+    <meta name="Description" content="${accountInfo.name!}">
     <script>
         var SOHUZ = {
             page: {
                 site_id: "8534891861",
-                site_name: "易米网",
+                site_name: "${accountInfo.name!}",
                 site_url: "http://muban111.kuaizhan.com",
                 page_id: "5482998637",
                 page_title: "首页",
@@ -54,21 +54,14 @@
                     <form id="queryPageForm" action="">
                         <input type="hidden" id="openId" name="openId" value="${openId!}">
                     <div class="mod mod-nav mod-nav-t3" style="height: auto;">
-                        <ul>
-                            <li style="width:30%;text-align: center;">奖金</li>
-                            <li style="width:70%;text-align: center;">二维码</li>
-                        </ul>
                         <#list pagination.items as row>
-                            <#if row_index %2 == 0>
-                                <ul style="height:auto;">
-                                    <#else>
-                                        <ul style="height:auto;background-color:#f9f9f9;">
-                            </#if>
-                            <li style="width:30%;text-align: center;"><#if row.moneyPer??>${row.moneyPer*taskProfit}</#if>元
-                                <input id="button_${row.id!}" type="button" value="任务认领" onclick="acceptTask(${row.id!});" />
-                            </li>
-                            <li><#if row.base64WxCode??><img width="150px;" src="data:image/jpg;base64,${row.base64WxCode!}" /></#if></li>
-                            </ul>
+                            <div>
+                                <div><#if row.base64WxCode??><img width="100%;" src="http://open.weixin.qq.com/qr/code/?username=${row.wxCodeImgHref!}" /></#if></div>
+                                <div style="text-align: center;">
+                                    奖金:<#if row.moneyPer??>${row.moneyPer*taskProfit}</#if>元
+                                    <input id="button_${row.id!}" type="button" value="任务认领" onclick="acceptTask(${row.id!});" />
+                                </div>
+                            </div>
                         </#list>
                     </div>
                     <#include "../common/pagination.html">
@@ -77,47 +70,36 @@
                     <div class='mod-title t2 ' style='margin:   ;'><h2 style="text-align: center;">待执行任务</h2><i class='font-ico'></i></div>
                     <div>
                         <div class="mod mod-nav mod-nav-t3" style="height: auto;">
-                            <ul>
-                                <li style="width:20%;text-align: center;">奖金</li>
-                                <li style="width:40%;text-align: center;">二维码</li>
-                                <li style="width:40%;text-align: center;">福利码</li>
-                            </ul>
                             <#list paginationTaskLog.items as row>
-                                <#if row_index %2 == 0>
-                                    <ul style="height:auto;">
-                                        <#else>
-                                            <ul style="height:auto;background-color:#f9f9f9;">
-                                </#if>
-                                <li style="width:20%;text-align: center;"><#if row.money??>${row.money*taskProfit}</#if>元
-                                </li>
-                                <li style="width:40%;text-align: center;"><#if row.base64WxCode??><img width="150px;" src="data:image/jpg;base64,${row.base64WxCode!}" /></#if></li>
-                                <li style="color: red;width:40%;text-align: center;"><div><label> ${row.taskCodeNum!} </label></div>
-                                </li>
-                                </ul>
+                                <div style="text-align: center;">
+                                    <#if row.wxCodeImgHref??>
+                                        <img width="100%;" src="http://open.weixin.qq.com/qr/code/?username=${row.wxCodeImgHref!}" />
+                                    </#if>
+                                </div>
+                                <div style="text-align: center;">奖金<#if row.money??>${row.money*taskProfit}</#if>元</div>
+                                <div style="text-align: center;" >
+                                    长按二维码关注后回复福利码：
+                                    <label style="color: red;text-align: center;"> ${row.taskCodeNum!} </label>
+                                    即可得到福利。
+                                </div>
                             </#list>
                         </div>
                     </div>
                     <div class='mod-title t2 ' style='margin:   ;'><h2 style="text-align: center;">已完成任务</h2><i class='font-ico'></i></div>
                     <div >
                         <div class="mod mod-nav mod-nav-t3" style="height: auto;">
-                            <ul>
-                                <li style="width:20%;text-align: center;">奖金</li>
-                                <li style="width:80%;text-align: center;">二维码</li>
-                            </ul>
                             <#list paginationFinishedTaskLog.items as row>
-                                <#if row_index %2 == 0>
-                                    <ul style="height:auto;">
-                                        <#else>
-                                            <ul style="height:auto;background-color:#f9f9f9;">
-                                </#if>
-                                <li style="width:20%;text-align: center;"><#if row.money??>${row.money*taskProfit}</#if>元
-                                </li>
-                                <li style="width:80%;text-align: center;"><#if row.base64WxCode??><img width="150px;" src="data:image/jpg;base64,${row.base64WxCode!}" /></#if></li>
-                                </ul>
+                                <div style="text-align: center;">奖金<#if row.money??>${row.money*taskProfit}</#if>元
+                                </div>
+                                <div style="text-align: center;">
+                                    <#if row.wxCodeImgHref??>
+                                        <img width="100%;" src="http://open.weixin.qq.com/qr/code/?username=${row.wxCodeImgHref!}" />
+                                    </#if>
+                                </div>
                             </#list>
                         </div>
                     </div>
-                    </div>
+            </div>
     </div>
 </div>
 <script src="http://kzcdn.itc.cn/res/skin/js/mobile.js?v=4.7"></script>

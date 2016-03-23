@@ -79,6 +79,8 @@ public class WxCmsCtrl {
 			tmpAccount.setServerAppid(account.getServerAppid());
 			tmpAccount.setServerAppsecret(account.getServerAppsecret());
 			tmpAccount.setTaskProfit(account.getTaskProfit());
+			tmpAccount.setName(account.getName());
+			tmpAccount.setWxName(account.getWxName());
 			accountDao.update(tmpAccount);
 		}
 		WxMemoryCacheClient.addMpAccount(account);
