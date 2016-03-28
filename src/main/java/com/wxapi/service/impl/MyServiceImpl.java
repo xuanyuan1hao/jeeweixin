@@ -499,16 +499,18 @@ public class MyServiceImpl implements MyService {
         } else {
             if (null == fans.getNickname()) {
                 AccountFans fansTemp = WxApiClient.syncAccountFans(openId, mpAccount);
-                fans.setNickname(fansTemp.getNickname());
-                fans.setCity(fansTemp.getCity());
-                fans.setGender(fansTemp.getGender());
-                fans.setProvince(fansTemp.getProvince());
-                fans.setLanguage(fansTemp.getLanguage());
-                fans.setCountry(fansTemp.getCountry());
-                fans.setStatus(fansTemp.getStatus());
-                fans.setHeadimgurl(fansTemp.getHeadimgurl());
-                fans.setSubscribeStatus(fansTemp.getSubscribeStatus());
-                fans.setSubscribeTime(fansTemp.getSubscribeTime());
+                if(null!=fansTemp){
+                    fans.setNickname(fansTemp.getNickname());
+                    fans.setCity(fansTemp.getCity());
+                    fans.setGender(fansTemp.getGender());
+                    fans.setProvince(fansTemp.getProvince());
+                    fans.setLanguage(fansTemp.getLanguage());
+                    fans.setCountry(fansTemp.getCountry());
+                    fans.setStatus(fansTemp.getStatus());
+                    fans.setHeadimgurl(fansTemp.getHeadimgurl());
+                    fans.setSubscribeStatus(fansTemp.getSubscribeStatus());
+                    fans.setSubscribeTime(fansTemp.getSubscribeTime());
+                }
             }
             accountFansService.update(fans);
         }

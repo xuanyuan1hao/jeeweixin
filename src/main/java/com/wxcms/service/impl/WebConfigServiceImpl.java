@@ -36,7 +36,8 @@ public class WebConfigServiceImpl implements WebConfigService {
     @Override
     public void delete(WebConfig entity) {
         baseDao.delete(entity);
-        webConfigMap.remove(entity.getKeyStr());
+        if(null!=entity.getKeyStr())
+            webConfigMap.remove(entity.getKeyStr());
     }
 
     @Override

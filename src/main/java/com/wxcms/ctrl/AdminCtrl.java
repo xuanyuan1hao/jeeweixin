@@ -93,6 +93,20 @@ public class AdminCtrl {
         videoTaskService.update(videoTask);
         return new ModelAndView("redirect:/admin/list_video_task.html?save=true");
     }
+    @RequestMapping(value = "/delete_user_video_task")
+    public ModelAndView deleteVideoTask(long id){
+        VideoTask videoTask=new VideoTask();
+        videoTask.setId(id);
+        videoTaskService.delete(videoTask);
+        return new ModelAndView("redirect:/admin/list_video_task.html");
+    }
+    @RequestMapping(value = "/delete_webconfig")
+    public ModelAndView deleteWebconfig(long id){
+        WebConfig webConfig=new WebConfig();
+        webConfig.setId(id);
+        webConfigService.delete(webConfig);
+        return new ModelAndView("redirect:/admin/list_webconfig.html");
+    }
 
     @RequestMapping(value = "/list_video_task")
     public ModelAndView listVideoTask(VideoTask videoTask, Pagination<VideoTask> pagination, String save) {
