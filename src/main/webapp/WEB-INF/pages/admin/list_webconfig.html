@@ -1,0 +1,74 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <#include "../common/res.html">
+</head>
+
+<body class="bg">
+<#include "../common/top.html">
+
+    <div class="content">
+        <div class="block-nav">
+            <#include "../common/nav.html">
+        </div>
+
+        <div class="block-content" >
+
+            <div class="block-content-nav">
+                <span class="title">网站配置管理</span>
+
+            </div>
+
+            <div class="block-content-description">
+					<span>
+						网站配置管理
+					</span>
+                <input onclick="window.location.href='${s.base}/admin/add_webconfig.html'" class="btn" type="button" value="添 加"/>
+            </div>
+            <form id="queryPageForm" action="">
+                <div class="block-content-content">
+                    <#if successflag??>
+                        <span style="margin-left:10px;color:#44b549;">已添加成功</span>
+                    </#if>
+                    <table class="fm-table">
+                        <thead>
+                        <tr >
+                            <td style="width: 150px;">编号</td>
+                            <td>关键词</td>
+                            <td>创建时间</td>
+                            <td>处理</td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <#if pagination??>
+                        <#list pagination.items as row>
+                            <#if row_index %2 == 0>
+                                <tr style="height:40px;">
+                                    <#else>
+                                        <tr style="height:40px;background-color:#f9f9f9;">
+                            </#if>
+                            <td>${row.id!}</td>
+                            <td>${row.keyStr!}</td>
+                            <td>${row.createtime?string("yyyy-MM-dd HH:mm:ss")}</td>
+                            <td>
+                                <a href="${s.base}/admin/edit_webconfig.html?id=${row.id}" >编辑</a>
+                                <a href="${s.base}/admin/delete_webconfig.html?id=${row.id}" >删除</a>
+                            </td>
+                            </tr>
+                        </#list>
+                            </#if>
+                        </tbody>
+                    </table>
+
+                    <#include "../common/pagination.html">
+                </div>
+            </form>
+        </div>
+        <div class="clearfloat"></div>
+    </div>
+
+    <#include "../common/footer.html">
+</body>
+
+</html>

@@ -1,5 +1,16 @@
+20160328
+1.新增表web_config_t用于存储网站配置信息，包括广告
+2.广告固定为：
+top_ads 顶部广告
+wx_ads 微信广告
+mid_ads 文章中间广告
+bottom_ads 文章底部广告
+
+
 20160324
 1.修改t_wxcms_task_log表taskStatus字段长度为20
+2.新增t_wxcms_video_task表，用于存储从快手采集来的视频内容。
+
 
 20160322
 1.新增my_task_list菜单事件（接受的任务列表）

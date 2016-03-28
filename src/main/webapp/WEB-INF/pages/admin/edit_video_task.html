@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <#include "../common/res.html">
+        <script type="text/javascript">
+            function dosubmit(){
+                var thumbnailUrl = $('#thumbnailUrl').val();
+                if(thumbnailUrl == ''){
+                    alert('请填写预览图片地址');
+                    return false;
+                }
+                var captionStr = $('#captionStr').val();
+                if(captionStr == ''){
+                    alert('请填写标题');
+                    return false;
+                }
+            }
+        </script>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <#include "../common/res.html">
+        <script type="text/javascript" >
+            var editor = simpleKindeditor("contentStr");
+        </script>
+</head>
+
+<body class="bg">
+<#include "../common/top.html">
+
+    <div class="content">
+        <div class="block-nav">
+            <#include "../common/nav.html">
+        </div>
+
+        <div class="block-content" >
+
+            <div class="block-content-nav">
+                <span class="title">新增视频</span>
+            </div>
+
+            <div class="block-content-description">
+					<span>
+						新增视频
+					</span>
+            </div>
+            <form id="inputMoneyForm" action="/admin/edit_video_task_post.html" method="post" onsubmit="return dosubmit();">
+                <input id="id" name="id" type="hidden" value="${videoTask.id!}"/>
+                <div class="block-content-content">
+                    <ul>
+                        <li>
+                            <label>视频图片 </label>
+                            <input id="thumbnailUrl" name="thumbnailUrl" type="text" value="${videoTask.thumbnailUrl!}"/>
+                        </li>
+                        <li>
+                            <label>视频地址 </label>
+                            <input id="mp4Url" name="mp4Url" type="text" value="${videoTask.mp4Url!}"/>
+                        </li>
+                        <li>
+                            <label>标题 </label>
+                            <input id="captionStr" name="captionStr" type="text" value="${videoTask.captionStr!}"/>
+                        </li>
+                        <li>
+                            <label>内容 </label>
+                            <textarea name="contentStr" style="width:452px;height:300px;visibility:hidden;">${videoTask.contentStr!}</textarea>
+                        </li>
+                    </ul>
+
+                    <div style="margin-left:75px;margin-top: 20px;">
+                        <input class="btn" type="submit" value="确定"/>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+        <div class="clearfloat"></div>
+    </div>
+
+    <#include "../common/footer.html">
+</body>
+
+</html>

@@ -74,6 +74,15 @@
     ><a href="${s.base}/admin/list_user_info.html">
     <span>商户管理</span>
 </a></li>
+    <li
+    <#if cur_nav?? && cur_nav == 'list_video_task' > class="cur-nav"</#if>
+    ><a href="${s.base}/admin/list_video_task.html">
+    <span>文章管理</span>
+</a></li>
+    <li<#if cur_nav?? && cur_nav == 'list_webconfig' > class="cur-nav"</#if>>
+    <a href="${s.base}/admin/list_webconfig.html">
+    <span>网站配置管理</span>
+</a></li>
 </ul>
 
 

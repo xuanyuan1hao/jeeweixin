@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://10.20.91.130/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.wxcms.mapper.WebConfigDao">
+
+    <select id="paginationEntity" resultType="com.wxcms.domain.WebConfig">
+        SELECT m.*
+        from web_config_t m
+        order by m.id desc
+        LIMIT #{param2.start} , #{param2.pageSize}
+    </select>
+
+    <select id="getTotalItemsCount" parameterType="com.wxcms.domain.WebConfig" resultType="java.lang.Integer">
+        SELECT count(m.id) FROM web_config_t m
+    </select>
+
+
+    <select id="listForPage" parameterType="com.wxcms.domain.WebConfig" resultType="com.wxcms.domain.WebConfig">
+        SELECT * FROM web_config_t t  ORDER BY t.ID DESC
+    </select>
+
+    <select id="getById" resultType="com.wxcms.domain.WebConfig">
+        SELECT * FROM web_config_t WHERE ID = #{id}
+    </select>
+
+    <select id="getByKeyStr" resultType="com.wxcms.domain.WebConfig">
+        SELECT * FROM web_config_t WHERE keyStr = #{keyStr}
+    </select>
+
+    <insert id="add" parameterType="com.wxcms.domain.WebConfig" flushCache="true">
+        INSERT INTO web_config_t ( createtime,keyStr,valStr)
+        VALUES ( #{createtime},#{keyStr},#{valStr})
+    </insert>
+
+    <update id="update" parameterType="com.wxcms.domain.WebConfig" flushCache="true">
+        UPDATE web_config_t SET keyStr = #{keyStr},valStr=#{valStr}
+        WHERE ID = #{id}
+    </update>
+
+    <delete id="delete" parameterType="com.wxcms.domain.WebConfig" >
+        DELETE FROM web_config_t WHERE ID = #{id}
+    </delete>
+
+</mapper>

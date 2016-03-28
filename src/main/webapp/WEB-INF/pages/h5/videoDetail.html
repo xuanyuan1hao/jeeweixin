@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"/>
+    <title>${videoTask.captionStr!}</title>
+    <link href="http://img.alsana.cn/css/bottom_1.css?v311" rel="stylesheet"/>
+    <script src="http://img.alsana.cn/js/jquery-1.8.2.js?v14"></script>
+    <script src="http://img.alsana.cn/js/bottom.js?v12"></script>
+    <script src="http://static.yximgs.com/s1/js/lib/ckplayer/ckplayer.js"></script>
+    <!-- 2016.2.29新增 -->
+    <style>
+        .contDl {
+            border-bottom: 1px solid #dedede;
+            overflow: hidden;
+            padding: 10px 0;
+            margin: 0px;
+        }
+
+        .contDl a {
+            font-size: 16px;
+            color: #444;
+            height: 100px;
+            text-decoration: none;
+        }
+        .contDl a img {
+            float: left;
+            margin-right: 5px;
+            max-width: 100%;
+
+        }
+
+        .contDl a dd {
+            font-size: 12px;
+            color: #9a9a9a;
+            line-height: 18px;
+            margin-top: 5px;
+        }
+    </style>
+    <!-- 2016.2.29新增 -->
+
+</head>
+<body>
+${top_ads!}
+<!-- 头部 -->
+<div class="bottom_title">
+    <!--<div class="title">情感<i><img src="http://img.alsana.cn/images/down2.png?v2"/></i></div>-->
+</div>
+
+<ul class="tit_con" style="display: none;">
+    <!--<li><a href='list.php?cid=1&rh=Sqi1YR7zIRmRcolg'>推荐</a></li>-->
+</ul>
+
+<!-- 文章结束 以前的部分 -->
+<div class="wrap adbgbox">
+    <div class="article">
+        <h2 class="rich_title">${videoTask.captionStr!}</h2>
+
+        <div class="rich_note">
+            <span class="articleTime">${videoTask.createtime?string("yyyy-MM-dd")}</span>
+            ${wx_ads!}
+            <div class="finger"></div>
+        </div>
+        <!----------- 2015.10.10修改部分 ------------->
+        <div class="articleDiv">
+            <#if videoTask.mp4Url??>
+            <video width="80%" poster="${videoTask.thumbnailUrl!}"
+                   src="${videoTask.mp4Url!}"
+                   controls="controls" autoplay="true" preload="auto" loop="loop">您的浏览器不支持 video 标签。
+            </video>
+            </#if>
+            <p>${videoTask.contentStr!}</p>
+        </div>
+        <!----------- 2015.10.10修改部分 ------------->
+
+    </div>
+
+    <div class="from_wrap">
+        <div class="from">
+            <div class="from_left">来源：<span>网络</span></div>
+        </div>
+    </div>
+
+    <div class="ad">
+        ${mid_ads!}
+    </div>
+
+</div>
+
+<!-- 相关阅读 -->
+<div class="ad releted" id="recomm">
+    <h3><a href="#">相关阅读</a></h3>
+    <ul>
+        <#list pagination.items as row>
+        <li class="tuwen item"><a href="/video/detail/${userId}/${row.id!}.html">
+            <dd><img src="${row.thumbnailUrl!}"></dd>
+                ${row.captionStr!}
+            <dt>
+            <div class="ab1"><span class="shijian">${row.captionStr!}</div>
+            </dt></a></li>
+        </#list>
+    </ul>
+</div>
+${bottom_ads!}
+
+</body>
+</html>

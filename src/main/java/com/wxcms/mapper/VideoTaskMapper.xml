@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://10.20.91.130/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.wxcms.mapper.VideoTaskDao">
+
+    <select id="paginationEntity" resultType="com.wxcms.domain.VideoTask">
+        SELECT m.*
+        from t_wxcms_video_task m
+        order by m.id desc
+        LIMIT #{param2.start} , #{param2.pageSize}
+    </select>
+
+    <select id="getTotalItemsCount" parameterType="com.wxcms.domain.VideoTask" resultType="java.lang.Integer">
+        SELECT count(m.id) FROM t_wxcms_video_task m
+    </select>
+
+
+    <select id="listForPage" parameterType="com.wxcms.domain.VideoTask" resultType="com.wxcms.domain.VideoTask">
+        SELECT * FROM t_wxcms_video_task t  ORDER BY t.ID DESC
+    </select>
+
+    <select id="getById" resultType="com.wxcms.domain.VideoTask">
+        SELECT * FROM t_wxcms_video_task WHERE ID = #{id}
+    </select>
+
+
+    <insert id="add" parameterType="com.wxcms.domain.VideoTask" flushCache="true">
+        INSERT INTO t_wxcms_video_task ( createtime,thumbnailUrl,caption,mp4Url,shareTimes,content)
+        VALUES ( #{createtime},#{thumbnailUrl},#{caption},#{mp4Url},#{shareTimes},#{content} )
+    </insert>
+
+    <update id="update" parameterType="com.wxcms.domain.VideoTask" flushCache="true">
+        UPDATE t_wxcms_video_task SET content = #{content},caption=#{caption} ,
+        thumbnailUrl=#{thumbnailUrl},mp4Url=#{mp4Url}
+        WHERE ID = #{id}
+    </update>
+
+    <update id="updateShareTimes" parameterType="com.wxcms.domain.VideoTask" flushCache="true">
+        UPDATE t_wxcms_video_task SET shareTimes =(shareTimes+ 1)) WHERE ID = #{id}
+    </update>
+
+    <delete id="delete" parameterType="com.wxcms.domain.VideoTask" >
+        DELETE FROM t_wxcms_video_task WHERE ID = #{id}
+    </delete>
+
+</mapper>

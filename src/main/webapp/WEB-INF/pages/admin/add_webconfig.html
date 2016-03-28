@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <#include "../common/res.html">
+        <script type="text/javascript">
+            function dosubmit(){
+                var keyStr = $('#keyStr').val();
+                if(keyStr == ''){
+                    alert('请填写配置key');
+                    return false;
+                }else{
+                    return true;
+                }
+            }
+        </script>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <#include "../common/res.html">
+            <script type="text/javascript" >
+                var editor = simpleKindeditor("valStr");
+            </script>
+</head>
+
+<body class="bg">
+<#include "../common/top.html">
+
+    <div class="content">
+        <div class="block-nav">
+            <#include "../common/nav.html">
+        </div>
+
+        <div class="block-content" >
+
+            <div class="block-content-nav">
+                <span class="title">新增配置</span>
+            </div>
+
+            <div class="block-content-description">
+					<span>
+						新增配置
+					</span>
+            </div>
+            <form id="inputMoneyForm" action="/admin/add_webconfig_post.html" method="post" onsubmit="return dosubmit();">
+                <div class="block-content-content">
+                    <ul>
+                        <li>
+                            <label>配置key </label>
+                            <input id="keyStr" name="keyStr" type="text" value=""/>
+                        </li>
+
+                        <li>
+                            <label>配置内容 </label>
+                            <textarea name="valStr" style="width:452px;height:300px;visibility:hidden;"></textarea>
+                        </li>
+                    </ul>
+
+                    <div style="margin-left:75px;margin-top: 20px;">
+                        <input class="btn" type="submit" value="确定"/>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+        <div class="clearfloat"></div>
+    </div>
+
+    <#include "../common/footer.html">
+</body>
+
+</html>

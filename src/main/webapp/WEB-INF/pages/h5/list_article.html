@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"/>
+    <title>阅览</title>
+    <link href="http://img.alsana.cn/css/list.css?v23" rel="stylesheet"/>
+    <script src="http://img.alsana.cn/js/jquery-1.8.2.js?v2"></script>
+    <script src="http://img.alsana.cn/js/list.js?v2"></script>
+    <script src="http://img.alsana.cn/js/Sortable.js"></script>
+    <script>
+        //延时加载
+        var page = 1;
+        var cid = 3;
+        var uid = 244968;
+        function insertcode() {
+            var $body = $("#ulContext");
+            $.get('/video/list_json/${userId}.html', {page: page + 1, cid: cid, uid: uid}, function (data) {
+                $body.append(data);
+                page += 1;
+            });
+            $("#page_tag_load").hide();
+            loadCompleted = true;
+        }
+        function simulationLoad() {
+            ///延时 两秒  模拟后台加载数据
+            window.setTimeout("insertcode();", 1000);
+        }
+        var loadCompleted = true;
+        $(document).ready(function () {
+            $(window).scroll(function () {
+                var $body = $("body");
+                if (($(window).height() + $(window).scrollTop()) >= $body.height() - 500
+                        && loadCompleted) {
+                    $(".ab3").fadeOut("5000");
+                    $("#page_tag_load").show();
+                    loadCompleted = false;
+                    //simulationLoad();
+                    insertcode();
+                }
+            });
+        });
+
+    </script>
+</head>
+<body>
+<!-- 头部导航 -->
+<div class="topnavwrap" style="position: fixed; width: 100%;">
+    <div class="topnav">
+        <div class="topnav_left" style="display: block;">
+            <ul id="tit_con">
+               <!-- <li><a href='list.php?cid=1&rh=t6zvjB1R0NfR7W6I'>推荐</a></li>-->
+            </ul>
+        </div>
+
+        <div class="topnav_right">
+            <i class="add">
+                <img src="http://img.alsana.cn/images/111.png?v0"/></i>
+        </div>
+    </div>
+</div>
+<!-- 新闻列表 -->
+<div class="newslist">
+    <div class="case">
+        <ul id="ulContext">
+                <#list pagination.items as row>
+                    <li><a href='/video/detail/${userId}/${row.id!}.html'>
+                        <dd><img width='100' height='100'
+                                 src='${row.thumbnailUrl!}'/></dd>
+                            ${row.captionStr!}
+                        <dt>
+                        <div class='ab1'><span>${row.createtime?string("yyyy-MM-dd")}</span>&nbsp;&nbsp;<span>阅读 ${row.shareTimes!}</span></div>
+                        </dt></a>
+                    </li>
+                </#list>
+        </ul>
+
+    </div>
+    <!-- 2016.1.26新增（换一批） -->
+    <div id="change">
+	<span id="changeicon">
+		<b class="morere"><img id="schange" src="http://img.alsana.cn/images/chang.png?v1" style="width:100%;"
+                               onclick="test();"/></b>
+	</span>
+    </div>
+    <script>
+        function test() {
+            fancode();
+        }
+        function fancode() {
+            var $body = $("#ulContext");
+            $.get('/video/list_json/${userId}.html', {page: page + 1, cid: cid, uid: uid}, function (data) {
+                $("#ulContext li").remove();
+                $body.append(data);
+                page += 1;
+            });
+        }
+    </script>
+
+</div>
+
+<div id="tankuangall">
+    <!-- 遮罩层 -->
+    <div id="zhezhaoceng"
+         style="width: 100%; background: #999; z-index: 2000; position: absolute; top: 0px; left: 0px; opacity: 0.8; margin: 0px; padding: 0px;">
+    </div>
+</body>
+</body>
+</html>
