@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://10.20.91.130/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.wxcms.mapper.ArticleClassifyDao">
+
+    <select id="paginationEntity" resultType="com.wxcms.domain.ArticleClassify">
+        SELECT m.*
+        from t_wxcms_article_classify m
+        <if test="param1.classifyMd5!=null and param1.classifyMd5!=''">
+            and  m.classifyMd5 = #{param1.classifyMd5}
+        </if>
+        order by m.id desc
+        LIMIT #{param2.start} , #{param2.pageSize}
+    </select>
+    <select id="getTotalItemsCount" parameterType="com.wxcms.domain.ArticleClassify" resultType="java.lang.Integer">
+        SELECT count(m.id) FROM t_wxcms_article_classify m
+    </select>
+
+    <select id="getById" parameterType="java.lang.String" resultType="com.wxcms.domain.ArticleClassify">
+        SELECT * FROM t_wxcms_article_classify WHERE ID = #{id}
+    </select>
+
+    <select id="getByMd5" parameterType="java.lang.String" resultType="com.wxcms.domain.ArticleClassify">
+        SELECT * FROM t_wxcms_article_classify WHERE classifyMd5 = #{classifyMd5} limit 1;
+    </select>
+
+
+    <insert id="add" parameterType="com.wxcms.domain.ArticleClassify" flushCache="true">
+        INSERT INTO t_wxcms_article_classify (classifyMd5 ,classifyName,createtime)
+        VALUES ( #{classifyMd5},#{classifyName},#{createtime} )
+        <selectKey resultType="long" keyProperty="id" >
+            SELECT LAST_INSERT_ID() ;
+        </selectKey>
+    </insert>
+
+    <update id="update" parameterType="com.wxcms.domain.ArticleClassify" flushCache="true">
+        UPDATE t_wxcms_article_classify SET classifyMd5 = #{classifyMd5},classifyName = #{classifyName}
+        WHERE ID = #{id}
+    </update>
+
+
+    <delete id="delete" parameterType="com.wxcms.domain.ArticleClassify" >
+        DELETE FROM t_wxcms_article_classify WHERE ID = #{id}
+    </delete>
+
+</mapper>

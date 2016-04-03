@@ -9,6 +9,9 @@ import com.wxcms.mapper.MsgBaseDao;
 import com.wxcms.mapper.UserAccountFansDao;
 import com.wxcms.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
@@ -41,10 +44,12 @@ public class UserAccountFansServiceImpl implements UserAccountFansService {
         baseDao.updateLastUpdateTime(openId, date);
     }
 
+    @Cacheable(value="UserAccountFansCache", key="#id")
     public UserAccountFans getById(String id) {
         return baseDao.getById(id);
     }
 
+    @Cacheable(value="UserAccountFansCache", key="#openId")
     public UserAccountFans getByOpenId(String openId) {
         return baseDao.getByOpenId(openId);
     }
@@ -56,20 +61,21 @@ public class UserAccountFansServiceImpl implements UserAccountFansService {
     public List<UserAccountFans> paginationEntity(UserAccountFans searchEntity, Pagination<UserAccountFans> pagination) {
         return baseDao.paginationEntity(searchEntity, pagination);
     }
-
     public UserAccountFans getLastOpenId() {
         return baseDao.getLastOpenId();
     }
+    @CachePut(value="UserAccountFansCache",key="#entity.getOpenId()")
+    public UserAccountFans add(UserAccountFans entity) {
 
-    public void add(UserAccountFans entity) {
         baseDao.add(entity);
+        return entity;
     }
 
     @Override
     public List<UserAccountFans> getAllByLastUpdateTimePage(Date lastUpdateTime, long id,String accountOld) {
         return baseDao.getAllByLastUpdateTimePage(lastUpdateTime,id,accountOld);
     }
-
+    @CacheEvict(value="UserAccountFansCache",key="#userAccountFansWeb.getOpenId()")
     public void updateUserAccountFans(UserAccountFans userAccountFansWeb, TaskCode taskCode,TaskLog taskLog) {
         baseDao.updateUserAccountFans(userAccountFansWeb);
         UserInfo userInfo = userInfoService.getById(taskCode.getUserId());
@@ -137,7 +143,7 @@ public class UserAccountFansServiceImpl implements UserAccountFansService {
                 accountFansService.updateAddUserMoneyByUserId(referMoney, accountFansRefer.getId());//给关注用户上级加钱
                 log = "您的好友#{friendName}做了关注任务" + taskCode.getId() + "，您获取到了#{money}元红包";
                 log = getContent(MsgType.SUBSCRIBE_REWARD_LEVEL.toString(), log);
-                log = log.replace("#{friendName}", accountFansRefer.getNicknameStr()).replace("#{money}", String.format("%.4f", referMoney));
+                log = log.replace("#{friendName}", accountFansOld.getNicknameStr()).replace("#{money}", String.format("%.4f", referMoney));
                 // WxApiClient.sendCustomTextMessage(accountFansRefer.getOpenId(), log, WxMemoryCacheClient.getSingleMpAccount());
                 customTextMessageService.addByMpAccount(accountFansRefer.getOpenId(), log, WxMemoryCacheClient.getSingleMpAccount());
                 flow = new Flow();
@@ -162,7 +168,7 @@ public class UserAccountFansServiceImpl implements UserAccountFansService {
                     accountFansService.updateAddUserMoneyByUserId(referMoney, accountFansReferRefer.getId());//给关注用户上级加钱
                     log = "您的好友#{friendName}的好友做了关注任务" + taskCode.getId() + "，您获取到了#{money}元红包";
                     log = getContent(MsgType.SUBSCRIBE_REWARD_LEVEL.toString(), log);
-                    log = log.replace("#{friendName}", accountFansReferRefer.getNicknameStr()).replace("#{money}", String.format("%.4f", referMoney));
+                    log = log.replace("#{friendName}", accountFansRefer.getNicknameStr()).replace("#{money}", String.format("%.4f", referMoney));
                     flow = new Flow();
                     flow.setCreatetime(new Date());
                     flow.setUserFlowMoney(referMoney);
@@ -189,6 +195,7 @@ public class UserAccountFansServiceImpl implements UserAccountFansService {
 
     //取消订阅，进行扣钱等操作。
     @Override
+    @CacheEvict(value="UserAccountFansCache",key="#userAccountFans.getOpenId()")
     public void updateSubUserAccountFans(UserAccountFans userAccountFans, TaskCode taskCode) {
         AccountFans accountFans = accountFansService.getByOpenId(userAccountFans.getBaseOpenId());
         TaskLog taskLog = taskLogService.getByTaskIdAndOpenId(taskCode.getId(), userAccountFans.getBaseOpenId());
@@ -289,6 +296,7 @@ public class UserAccountFansServiceImpl implements UserAccountFansService {
     }
 
     @Override
+    @CacheEvict(value="UserAccountFansCache",key="#openId")
     public void deleteByOpenId(String openId) {
         baseDao.deleteByOpenId(openId);
     }

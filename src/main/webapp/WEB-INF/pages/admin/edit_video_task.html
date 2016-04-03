@@ -50,6 +50,7 @@
                         <li>
                             <label>视频图片 </label>
                             <input id="thumbnailUrl" name="thumbnailUrl" type="text" value="${videoTask.thumbnailUrl!}"/>
+                            <#if videoTask.thumbnailUrl??><img src="${videoTask.thumbnailUrl!}" width="200px;"/></#if>
                         </li>
                         <li>
                             <label>视频地址 </label>

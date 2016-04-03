@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://10.20.91.130/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.wxcms.mapper.ArticleDao">
+
+    <select id="paginationEntity" resultType="com.wxcms.domain.Article">
+        SELECT m.*
+        from t_wxcms_article_collect m
+        <if test="param1.md5!=null and param1.md5!=''">
+            and  m.md5 = #{param1.md5}
+        </if>
+        order by m.id desc
+        LIMIT #{param2.start} , #{param2.pageSize}
+    </select>
+    <select id="getTotalItemsCount" parameterType="com.wxcms.domain.Article" resultType="java.lang.Integer">
+        SELECT count(m.id) FROM t_wxcms_article_collect m
+    </select>
+
+    <select id="getById" parameterType="java.lang.String" resultType="com.wxcms.domain.Article">
+        SELECT * FROM t_wxcms_article_collect WHERE ID = #{id}
+    </select>
+
+    <select id="getByMd5" parameterType="java.lang.String" resultType="java.lang.Integer">
+        SELECT count(*) FROM t_wxcms_article_collect WHERE md5 = #{md5}
+    </select>
+
+
+    <insert id="add" parameterType="com.wxcms.domain.Article" flushCache="true">
+        INSERT INTO t_wxcms_article_collect (md5 ,articleTitle,articleContent,hasCollected,articleNote,articleUrl,
+        thumb,createtime ,readTimes,classfyId)
+        VALUES ( #{md5},#{articleTitle},#{articleContent},#{hasCollected},#{articleNote},#{articleUrl},
+        #{thumb},#{createtime},#{readTimes} ,#{classfyId})
+        <selectKey resultType="long" keyProperty="id" >
+            SELECT LAST_INSERT_ID() ;
+        </selectKey>
+    </insert>
+
+    <update id="update" parameterType="com.wxcms.domain.Article" flushCache="true">
+        UPDATE t_wxcms_article_collect SET md5 = #{md5},articleTitle = #{articleTitle},articleContent = #{articleContent},
+        hasCollected = #{hasCollected},articleNote = #{articleNote},articleUrl = #{articleUrl},thumb = #{thumb},
+        createtime = #{createtime},readTimes=#{readTimes},classfyId=#{classfyId}
+        WHERE ID = #{id}
+    </update>
+
+
+    <delete id="delete" parameterType="com.wxcms.domain.Article" >
+        DELETE FROM t_wxcms_article_collect WHERE ID = #{id}
+    </delete>
+
+</mapper>

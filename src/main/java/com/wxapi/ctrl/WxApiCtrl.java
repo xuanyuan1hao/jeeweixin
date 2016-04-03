@@ -376,7 +376,7 @@ public class WxApiCtrl {
         ModelAndView mv = new ModelAndView("h5/referer_detail");
         Flow flow = new Flow();
         flow.setFansId(id);
-        List<Flow> list = flowService.listForPage(flow);
+        List<Flow> list = flowService.listForPageTop100(flow);
         mv.addObject("listFlow", list);
         return mv;
     }

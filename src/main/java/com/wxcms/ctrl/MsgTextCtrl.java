@@ -6,8 +6,8 @@ import com.wxcms.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
@@ -64,9 +64,29 @@ public class MsgTextCtrl{
 		mv.addObject("cur_nav","tixian_list");
 		return mv;
 	}
-	@RequestMapping(value = "/admin_flow_list")
+
+	@RequestMapping(value = "/admin_flow_list/{fansId}")
+	public  ModelAndView flowPage(@PathVariable(value = "fansId") long fansId ,
+								  Flow flow,
+								  Pagination<Flow> pagination){
+		ModelAndView modelAndView = new ModelAndView("admin/admin_flow_list");
+		//获取粉丝情况
+		AccountFans accountFans=accountFansService.getById(fansId + "");
+		modelAndView.addObject("accountFans", accountFans);
+		if(null==flow)
+			flow=new Flow();
+		flow.setFansId(fansId);
+		if(null==pagination)
+			pagination=new  Pagination<Flow>();
+		pagination=flowService.paginationEntity(flow,pagination);
+		modelAndView.addObject("pagination", pagination);
+		modelAndView.addObject("cur_nav", "tixian_list");
+		return modelAndView;
+	}
+
+	/*@RequestMapping(value = "/admin_flow_list")
 	public  ModelAndView flowList(@RequestParam("fansId") long fansId){
-		ModelAndView modelAndView = new ModelAndView("wxweb/admin_flow_list");
+		ModelAndView modelAndView = new ModelAndView("admin/admin_flow_list");
 		//获取粉丝情况
 		AccountFans accountFans=accountFansService.getById(fansId + "");
 		modelAndView.addObject("accountFans", accountFans);
@@ -77,7 +97,7 @@ public class MsgTextCtrl{
 		modelAndView.addObject("pageList", pageList);
 		modelAndView.addObject("cur_nav", "tixian_list");
 		return modelAndView;
-	}
+	}*/
 
 	@RequestMapping(value = "/admin_edit_tixian")
 	public ModelAndView adminEditTixian(String id){

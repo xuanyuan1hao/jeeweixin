@@ -3,9 +3,7 @@ package com.wxcms.ctrl;
 import com.core.page.Pagination;
 import com.core.spring.SpringFreemarkerContextPathUtil;
 import com.core.util.AESUtil;
-import com.core.util.ImageByteUtils;
 import com.core.util.Str2MD5;
-import com.core.util.UploadUtil;
 import com.wxcms.domain.TaskCode;
 import com.wxcms.domain.UserFlow;
 import com.wxcms.domain.UserInfo;
@@ -113,16 +111,6 @@ public class UserInfoCtrl {
             String path = SpringFreemarkerContextPathUtil.getBasePath(request);
             String url = request.getScheme() + "://" + request.getServerName() + path + "/user_wxapi/" + taskCode.getAccount()+"/message.html";
             taskCode.setUrl(url);
-            String webRootPath = request.getServletContext().getRealPath("/");
-            String headImgUrl= "http://open.weixin.qq.com/qr/code/?username="+taskCode.getWxCodeImgHref();
-            //根据公众号获取用户图片
-            boolean ret=UploadUtil.download(headImgUrl, taskCode.getWxCodeImgHref() + ".jpg", webRootPath + "/res/upload/");
-            if (!ret){
-                jsonObject.put("msg", "微信号错误，下载二维码失败");
-                return jsonObject.toString();
-            }
-            String base64WxCode= ImageByteUtils.GetImageStr(webRootPath + "/res/upload/"+taskCode.getWxCodeImgHref() + ".jpg");
-            taskCode.setBase64WxCode(base64WxCode);
             if(null!=taskCode.getWxRemarkText())
                 taskCode.setWxRemark(taskCode.getWxRemarkText().getBytes("UTF-8"));
             taskCode.setValidateMenuUrl(getValidateMenuUrl(taskCode.getWxCodeImgHref(),taskCode.getUserId()));
@@ -180,18 +168,11 @@ public class UserInfoCtrl {
             String url = request.getScheme() + "://" + request.getServerName() + path + "/user_wxapi/" + taskCode.getAccount()+"/message.html";
             taskCode.setUrl(url);
             taskCode.setToken(UUID.randomUUID().toString().replace("-", ""));
-            //根据公众号获取用户图片
-            boolean ret=UploadUtil.download(headImgUrl, taskCode.getWxCodeImgHref() + ".jpg", webRootPath + "/res/upload/");
-            if (!ret){
-                jsonObject.put("msg", "微信号错误，下载二维码失败");
-                return jsonObject.toString();
-            }
+
             UserInfo userInfo=(UserInfo)httpSession.getAttribute("userInfo");
             if(null!=userInfo){
                 taskCode.setUserId(userInfo.getId());
             }
-            String base64WxCode= ImageByteUtils.GetImageStr(webRootPath + "/res/upload/"+taskCode.getWxCodeImgHref() + ".jpg");
-            taskCode.setBase64WxCode(base64WxCode);
             taskCode.setCreatetime(new Date());
             if(null!=taskCode.getWxRemarkText())
                 taskCode.setWxRemark(taskCode.getWxRemarkText().getBytes("UTF-8"));

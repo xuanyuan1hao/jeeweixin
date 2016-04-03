@@ -56,7 +56,7 @@
                         </#if>
                         <div style="text-align: center;">奖金<#if taskLog.money??>${taskLog.money*taskProfit}</#if>元</div>
                         <div style="text-align: center;" >
-                            长按二维码关注后回复福利口令：
+                            长按二维码关注<#if taskCode.wxAttentionUrl??><a style="color: red;" href="${taskCode.wxAttentionUrl!}">(或点击这里关注)</a></#if>后回复福利口令：
                             <label style="color: red;text-align: center;"> ${taskLog.taskCodeNum!} </label>
                             即可得到福利。好友做任务回复此口令您一样可得到福利。
                         </div>

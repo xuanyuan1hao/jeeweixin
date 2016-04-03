@@ -9,7 +9,7 @@ import java.util.List;
  * Created by Administrator on 2016-03-24.
  */
 public interface VideoTaskService {
-    public void add(VideoTask entity);
+    public VideoTask add(VideoTask entity);
 
     public VideoTask getById(long id);
 

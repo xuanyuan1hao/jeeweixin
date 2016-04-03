@@ -12,7 +12,7 @@ import java.util.List;
 public interface TaskCodeService {
     public List<TaskCode> listForPage(TaskCode searchEntity,Pagination<TaskCode> page);
     public Integer getTotalItemsCount(TaskCode searchEntity);
-    public void add(TaskCode entity);
+    public TaskCode add(TaskCode entity);
     public TaskCode getById(long id);
 
     Pagination<TaskCode> paginationEntity(TaskCode searchEntity, Pagination<TaskCode> pagination);

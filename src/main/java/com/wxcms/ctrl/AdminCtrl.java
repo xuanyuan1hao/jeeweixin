@@ -38,6 +38,10 @@ public class AdminCtrl {
     private VideoTaskService videoTaskService;
     @Autowired
     private WebConfigService webConfigService;
+    @Autowired
+    private ArticleService articleService;
+
+
     @RequestMapping(value = "/add_video_task")
     public ModelAndView addVideoTask() {
         ModelAndView mv = new ModelAndView("admin/add_video_task");
@@ -118,6 +122,35 @@ public class AdminCtrl {
         }
         mv.addObject("cur_nav", "list_video_task");
         return mv;
+    }
+    @RequestMapping(value = "/list_article_collect")
+    public ModelAndView listArticleCollect(Article article, Pagination<Article> pagination, String save) {
+        ModelAndView mv = new ModelAndView("admin/list_article_collect");
+        pagination = articleService.paginationEntity(article, pagination);
+        mv.addObject("pagination", pagination);
+        if (save != null) {
+            mv.addObject("successflag", true);
+        }
+        mv.addObject("cur_nav", "list_article_collect");
+        return mv;
+    }
+    @RequestMapping(value = "/delete_collected_article")
+    public ModelAndView deleteCollectedArticle(long id){
+        Article article=new Article();
+        article.setId(id);
+        articleService.delete(article);
+        return new ModelAndView("redirect:/admin/list_article_collect.html");
+    }
+    @RequestMapping(value = "/add_collected_article_to_task")
+    public ModelAndView addCollectedArticleToTask(long id){
+        Article article=  articleService.getById(String.format("%d", id));
+        VideoTask videoTask=new VideoTask();
+        videoTask.setCaptionStr(article.getArticleTitle());
+        videoTask.setContentStr(article.getArticleContent());
+        videoTask.setShareTimes(article.getReadTimes());
+        videoTask.setThumbnailUrl(article.getThumb());
+        videoTaskService.add(videoTask);
+        return new ModelAndView("redirect:/admin/list_article_collect.html?save=true");
     }
     @RequestMapping(value = "/list_webconfig")
     public ModelAndView listWebconfig(WebConfig webConfig, Pagination<WebConfig> pagination, String save) {

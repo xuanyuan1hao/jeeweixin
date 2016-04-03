@@ -1,5 +1,6 @@
 package com.wxcms.service.impl;
 
+import com.core.page.Pagination;
 import com.wxcms.domain.Flow;
 import com.wxcms.mapper.FlowDao;
 import com.wxcms.service.FlowService;
@@ -18,9 +19,17 @@ public class FlowServiceImpl implements FlowService {
     public Flow getById(String id) {
         return flowDao.getById(id);
     }
+    public List<Flow> listForPageTop100(Flow searchEntity) {
+        return flowDao.listForPageTop100(searchEntity);
+    }
 
-    public List<Flow> listForPage(Flow searchEntity) {
-        return flowDao.listForPage(searchEntity);
+    @Override
+    public Pagination<Flow> paginationEntity(Flow searchEntity, Pagination<Flow> pagination) {
+        Integer totalItemsCount = flowDao.getTotalItemsCount(searchEntity);
+        List<Flow> items = flowDao.listForPage(searchEntity, pagination);
+        pagination.setTotalItemsCount(totalItemsCount);
+        pagination.setItems(items);
+        return pagination;
     }
 
     public void add(Flow entity) {

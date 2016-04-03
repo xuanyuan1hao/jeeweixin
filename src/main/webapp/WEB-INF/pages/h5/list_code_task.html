@@ -70,7 +70,7 @@
                                 </div>
                                 <div style="text-align: center;">奖金<#if row.money??>${row.money*taskProfit}</#if>元【已执行${row.taskStatus!}次】</div>
                                 <div style="text-align: center;" >
-                                    长按二维码关注后回复福利口令：
+                                    长按二维码关注<#if row.wxAttentionUrl??><a style="color: red;" href="${row.wxAttentionUrl!}">(或点击这里关注)</a></#if>后回复福利口令：
                                     <label style="color: red;text-align: center;"> ${row.taskCodeNum!} </label>
                                     即可得到福利。转发给好友，好友关注回复福利口令一样获取福利。
                                 </div>

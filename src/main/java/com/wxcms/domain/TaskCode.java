@@ -16,6 +16,7 @@ public class TaskCode  extends BaseEntity {
     private String validateMenuUrl;
     private String wxRemarkText;
     private String base64WxCode;//二维码的base64图片
+    private String wxAttentionUrl;//微信关注中间跳转页网址
     
     private String account;//账号
     private String appid;//appid
@@ -28,6 +29,13 @@ public class TaskCode  extends BaseEntity {
 
     private  int type=0;//默认为非认证用户，1为认证用户
 
+    public String getWxAttentionUrl() {
+        return wxAttentionUrl;
+    }
+
+    public void setWxAttentionUrl(String wxAttentionUrl) {
+        this.wxAttentionUrl = wxAttentionUrl;
+    }
 
     public int getType() {
         return type;

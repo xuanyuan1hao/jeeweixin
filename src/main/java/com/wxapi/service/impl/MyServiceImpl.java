@@ -121,8 +121,8 @@ public class MyServiceImpl implements MyService {
                 //得到推广人信息，给推广人发送赚钱信息
                 userId = Long.parseLong(eventKey.replace("qrscene_", ""));
             }
-            if (userId == 0) {
-                //避免有人没有被挂接到线下
+            //避免有人没有被挂接到线下
+           if (userId == 0) {
                 Date d = new Date();
                 AccountFans fansTemp = accountFansService.getRandByLastUpdateTime(new Date(d.getTime() - 2 * 24 * 60 * 60 * 1000));
                 if (null != fansTemp)
@@ -183,7 +183,7 @@ public class MyServiceImpl implements MyService {
                     searchFlow.setFansId(accountFans.getUserReferId());
                     searchFlow.setFromFansId(accountFans.getId());
                     searchFlow.setFlowType(1);
-                    List<Flow> ret = flowService.listForPage(searchFlow);
+                    List<Flow> ret = flowService.listForPageTop100(searchFlow);
                     if (null != ret && ret.size() > 0) {
                         double money = ret.get(0).getUserFlowMoney();//获取当初推广赠送的金额
                         //减少其上级的金额
@@ -275,15 +275,18 @@ public class MyServiceImpl implements MyService {
                         TaskLog taskLog=new TaskLog();
                         taskLog.setOpenId(userOpenId);
                         Pagination<TaskLog> paginationTaskLog=new Pagination<TaskLog>();
-                        paginationTaskLog.setPageSize(5);
+                        paginationTaskLog.setPageSize(10);
                         List<TaskLog> listRandom=  taskLogService.listForPageByOpenId(taskLog, paginationTaskLog);
                         String retMsg="完成以下任务赚取更多佣金\n";
+                        retMsg = getContent(MsgType.GET_TASK_LIST_MSG_BEGIN.toString(), retMsg);
                         for (int i=0;i<listRandom.size();i++){
                             long taskLogId= listRandom.get(i).getId();
                             String taskUrl= webUrl+"/task/task_info_detail/"+taskLogId+".html";
                             retMsg+="<a href='"+taskUrl+"'>任务"+taskLogId+",福利口令："+ listRandom.get(i).getTaskCodeNum()+"</a>\n";
                         }
-                        retMsg+="点击菜单【我要赚钱】获取更多任务";
+                        String endMsg = "点击菜单【我要赚钱】获取更多任务";
+                        endMsg=getContent(MsgType.GET_TASK_LIST_MSG_END.toString(), endMsg);
+                        retMsg+=endMsg;
                         MsgText msgResponseText = new MsgText();
                         msgResponseText.setContent(retMsg);
                         return MsgXmlUtil.textToXml(WxMessageBuilder.getMsgResponseText(msgRequest, msgResponseText));

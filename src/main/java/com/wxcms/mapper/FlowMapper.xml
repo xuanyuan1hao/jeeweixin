@@ -3,7 +3,8 @@
 
 <mapper namespace="com.wxcms.mapper.FlowDao">
 
-    <select id="listForPage" parameterType="com.wxcms.domain.Flow" resultType="com.wxcms.domain.Flow">
+
+    <select id="listForPageTop100" parameterType="com.wxcms.domain.Flow" resultType="com.wxcms.domain.Flow">
         SELECT m.*
         from t_wxcms_flow m
         WHERE 1=1
@@ -16,9 +17,36 @@
         <if test="flowType!=0">
             and m.flowType = #{flowType}
         </if>
-        order by createtime desc
-        limit 100;
+        order by createtime desc limit 100;
     </select>
+
+    <select id="listForPage"  resultType="com.wxcms.domain.Flow">
+        SELECT m.*
+        from t_wxcms_flow m
+        WHERE 1=1
+        <if test="param1!=null and param1.fansId!=0">
+            and m.fansId = #{param1.fansId}
+        </if>
+        <if test="param1!=null and param1.fromFansId!=0">
+            and m.fromFansId = #{param1.fromFansId}
+        </if>
+        <if test="param1!=null and param1.flowType!=0">
+            and m.flowType = #{param1.flowType}
+        </if>
+            order by createtime desc
+        <if test="param2!=null">
+            LIMIT #{param2.start} , #{param2.pageSize}
+        </if>
+    </select>
+    <select id="getTotalItemsCount" parameterType="com.wxcms.domain.Flow" resultType="java.lang.Integer">
+        SELECT count(m.id) FROM t_wxcms_flow m
+        WHERE 1=1
+        <if test="fansId!=0">
+            and m.fansId = #{fansId}
+        </if>
+    </select>
+
+
     <select id="getById" parameterType="java.lang.String" resultType="com.wxcms.domain.Flow">
         SELECT * FROM t_wxcms_flow WHERE ID = #{id}
     </select>

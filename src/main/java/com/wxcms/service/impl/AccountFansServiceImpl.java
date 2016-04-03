@@ -15,6 +15,8 @@ import com.wxcms.service.CustomTextMessageService;
 import com.wxcms.service.FansTixianSrevice;
 import com.wxcms.service.FlowService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
@@ -37,11 +39,11 @@ public class AccountFansServiceImpl implements AccountFansService{
 	@Autowired
 	private CustomTextMessageService customTextMessageService;
 
-
+	@Cacheable(value="AccountFansCache",key="#id")
 	public AccountFans getById(String id){
 		return entityDao.getById(id);
 	}
-
+	@Cacheable(value="AccountFansCache",key="#openId")
 	public AccountFans getByOpenId(String openId){
 		return entityDao.getByOpenId(openId);
 	}
@@ -65,7 +67,8 @@ public class AccountFansServiceImpl implements AccountFansService{
 	public AccountFans getLastOpenId(){
 		return entityDao.getLastOpenId();
 	}
-	
+
+	@CacheEvict(value="AccountFansCache",key="#searchEntity.getId()")
 	public void sync(AccountFans searchEntity){
 		AccountFans lastFans = entityDao.getLastOpenId();
 		String lastOpenId = "";
@@ -75,45 +78,50 @@ public class AccountFansServiceImpl implements AccountFansService{
 		
 		
 	}
-
+	@CacheEvict(value="AccountFansCache",key="#entity.getId()")
 	public void add(AccountFans entity){
 		entityDao.add(entity);
 	}
-
+	@CacheEvict(value="AccountFansCache",key="#entity.getId()")
 	public void update(AccountFans entity){
 		entityDao.update(entity);
 	}
-
+	@CacheEvict(value="AccountFansCache",key="#entity.getId()")
 	public void delete(AccountFans entity){
 		entityDao.delete(entity);
 	}
-
+	@CacheEvict(value="AccountFansCache",key="#openId")
 	public void deleteByOpenId(String openId){
 		entityDao.deleteByOpenId(openId);
 	}
-
+	@CacheEvict(value="AccountFansCache",key="#userOpenId")
 	public void updateRecommendMediaId(String userOpenId, String mediaId) {
 		entityDao.updateRecommendMediaId(userOpenId, mediaId, new Date());
 	}
+	@CacheEvict(value="AccountFansCache",key="#userOpenId")
 	public void updateLastUpdateTime(String userOpenId,Date date){
 		entityDao.updateLastUpdateTime(userOpenId, date);
 	}
-
+	@CacheEvict(value="AccountFansCache",key="#userOpenId")
 	public void updateRecommendImgCreateTime(String userOpenId,Date date){
 		entityDao.updateRecommendImgCreateTime(userOpenId, date);
 	}
+	@CacheEvict(value="AccountFansCache",key="#userOpenId")
 	public void updateUserReferId(String userOpenId, long userReferId) {
 		entityDao.updateUserReferId(userOpenId, userReferId);
 	}
+	@CacheEvict(value="AccountFansCache",key="#accountFans.getId()")
 	public void updateUserMoneyPassword(AccountFans accountFans) {
 		entityDao.updateUserMoneyPassword(accountFans);
 	}
+	@CacheEvict(value="AccountFansCache",key="#openId")
 	public void updateUserMoney(double money, String openId,FansTixian fansTixian){
 		//用户金额减少，用户冻结金额增加
 		entityDao.updateUserMoney(money, openId);
 		//新增一条提现记录
 		fansTixianSrevice.add(fansTixian);
 	}
+
 	public AccountFans getRandByLastUpdateTime(Date lastUpdateTime){
 		return entityDao.getRandByLastUpdateTime(lastUpdateTime);
 	}
@@ -122,7 +130,7 @@ public class AccountFansServiceImpl implements AccountFansService{
 	public List<AccountFans> getAllByLastUpdateTimePage(Date lastUpdateTime, long id) {
 		return entityDao.getAllByLastUpdateTimePage(lastUpdateTime,id);
 	}
-
+	@CacheEvict(value="AccountFansCache",key="#fans.getId()")
 	public void updateUserAddMoney(AccountFans fans, double money, long referUserId,MpAccount mpAccount,int times){
 		if(times==0)
 			entityDao.updateAddUserMoney(money, fans.getOpenId());//当前关注的用户获取的金额
@@ -183,23 +191,29 @@ public class AccountFansServiceImpl implements AccountFansService{
 		}
 		return defalut;
 	}
+	@CacheEvict(value="AccountFansCache",key="#userId")
 	public void updateAddUserMoneyByUserId(double money, long userId){
 		entityDao.updateAddUserMoneyByUserId(money, userId);
 	}
+	@CacheEvict(value="AccountFansCache",key="#id")
 	public void updateUserLevel1( int userLevel1, long id){
 		entityDao.updateUserLevel1(userLevel1, id);
 	}
+	@CacheEvict(value="AccountFansCache",key="#id")
 	public void updateUserLevel2( int userLevel2,long id){entityDao.updateUserLevel2(userLevel2, id);}
+	@CacheEvict(value="AccountFansCache",key="#id")
 	public void updateUserLevel3(int userLevel3, long id){entityDao.updateUserLevel3(userLevel3, id);}
 
 	@Override
+	@CacheEvict(value="AccountFansCache",key="#id")
 	public void updateRemark(String remark, long id) {
 		entityDao.updateRemark(remark,id);
 	}
-
+	@CacheEvict(value="AccountFansCache",key="#id")
 	public void updateUserMoneyFreezed(double userMoneyFreezedAdd, long  id){
 		entityDao.updateUserMoneyFreezed(userMoneyFreezedAdd, id);
 	}
+	@CacheEvict(value="AccountFansCache",key="#accountFans.getId()")
 	public void updateSubRecommendLevelMoney( double money, AccountFans accountFans, MpAccount mpAccount,int times) {
 		AccountFans recommendAccountFans=this.getById(accountFans.getUserReferId() + "");
 		if(null!=recommendAccountFans&&times<3){
@@ -249,15 +263,17 @@ public class AccountFansServiceImpl implements AccountFansService{
 		long intervalMilli = oDate.getTime()-fDate.getTime();
 		return (int) (intervalMilli / (  60 * 60 * 1000));
 	}
+	@CacheEvict(value="AccountFansCache",key="#id")
 	public void updateUserMoneyCheck(long id){
 		entityDao.updateUserMoneyCheck(id);
 	}
-
+	@CacheEvict(value="AccountFansCache",key="#id")
 	public void updateHeadImgBlobToDb(String headImgSavePath,long id) {
 		//读取图片文件为byte
 		byte[] imageByte=ImageByteUtils.image2byte(headImgSavePath);
 		entityDao.updateHeadImgBlob(imageByte,id);
 	}
+	@CacheEvict(value="AccountFansCache",key="#id")
 	public void updateRecommendImgBlob(String recommendImgBlob,long id) {
 		//读取图片文件为byte
 		byte[] imageByte=ImageByteUtils.image2byte(recommendImgBlob);

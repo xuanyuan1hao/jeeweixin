@@ -41,6 +41,7 @@
                 <span>累计提现：${accountFans.userMoneyTixian!}元</span>
             </div>
                 </#if>
+            <form id="queryPageForm" action="">
             <div class="block-content-content">
                 <table class="fm-table">
                     <thead>
@@ -53,7 +54,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <#list pageList as row>
+                    <#list pagination.items as row>
                         <#if row_index %2 == 0>
                             <tr >
                                 <#else>
@@ -68,7 +69,9 @@
                     </#list>
                     </tbody>
                 </table>
+                <#include "../common/pagination.html">
             </div>
+            </form>
         </div>
         <div class="clearfloat"></div>
     </div>

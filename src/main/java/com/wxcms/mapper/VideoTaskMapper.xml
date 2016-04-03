@@ -27,6 +27,9 @@
     <insert id="add" parameterType="com.wxcms.domain.VideoTask" flushCache="true">
         INSERT INTO t_wxcms_video_task ( createtime,thumbnailUrl,caption,mp4Url,shareTimes,content)
         VALUES ( #{createtime},#{thumbnailUrl},#{caption},#{mp4Url},#{shareTimes},#{content} )
+        <selectKey resultType="long" keyProperty="id" >
+            SELECT LAST_INSERT_ID() ;
+        </selectKey>
     </insert>
 
     <update id="update" parameterType="com.wxcms.domain.VideoTask" flushCache="true">

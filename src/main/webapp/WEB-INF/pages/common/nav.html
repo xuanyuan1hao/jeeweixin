@@ -77,7 +77,12 @@
     <li
     <#if cur_nav?? && cur_nav == 'list_video_task' > class="cur-nav"</#if>
     ><a href="${s.base}/admin/list_video_task.html">
-    <span>文章管理</span>
+    <span>转发文章管理</span>
+</a></li>
+    <li
+    <#if cur_nav?? && cur_nav == 'list_article_collect' > class="cur-nav"</#if>
+    ><a href="${s.base}/admin/list_article_collect.html">
+    <span>文章库管理</span>
 </a></li>
     <li<#if cur_nav?? && cur_nav == 'list_webconfig' > class="cur-nav"</#if>>
     <a href="${s.base}/admin/list_webconfig.html">

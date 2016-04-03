@@ -5,6 +5,9 @@ import com.wxcms.domain.VideoTask;
 import com.wxcms.mapper.VideoTaskDao;
 import com.wxcms.service.VideoTaskService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,11 +20,15 @@ public class VideoTaskServiceImpl implements VideoTaskService {
     @Autowired
     private VideoTaskDao baseDao;
     @Override
-    public void add(VideoTask entity) {
+
+    @CachePut(value="VideoTaskItem",key="#entity.getId()")
+    public VideoTask add(VideoTask entity) {
         baseDao.add(entity);
+        return entity;
     }
 
     @Override
+    @Cacheable(value="VideoTaskItem", key="#id")
     public VideoTask getById(long id) {
         return baseDao.getById(id);
     }
@@ -46,16 +53,19 @@ public class VideoTaskServiceImpl implements VideoTaskService {
     }
 
     @Override
+    @CacheEvict(value="VideoTaskItem",key="#entity.getId()")
     public void update(VideoTask entity) {
         baseDao.update(entity);
     }
 
     @Override
+    @CacheEvict(value="VideoTaskItem",key="#entity.getId()")
     public void updateShareTimes(VideoTask entity) {
         baseDao.updateShareTimes(entity);
     }
 
     @Override
+    @CacheEvict(value="VideoTaskItem",key="#entity.getId()")
     public void delete(VideoTask entity) {
         baseDao.delete(entity);
     }

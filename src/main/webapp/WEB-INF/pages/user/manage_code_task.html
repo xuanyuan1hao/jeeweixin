@@ -45,7 +45,7 @@
                                 <td>${row.id!}</td>
                                 <td>${row.wxCodeImgHref!}</td>
                                 <td>${row.moneyPer!}</td>
-                                <td><#if row.base64WxCode??><img width="100px;" src="data:image/jpg;base64,${row.base64WxCode!}" /></#if></td>
+                                <td><#if row.wxCodeImgHref??><img width="100px;" src="http://open.weixin.qq.com/qr/code/?username=${row.wxCodeImgHref}" /></#if></td>
                                 <td>${row.wxRemarkText!}</td>
                                 <td>
                                     <a href="${s.base}/user/edit_code_task.html?id=${row.id}" >修改</a>

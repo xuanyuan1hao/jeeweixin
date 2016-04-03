@@ -14,6 +14,7 @@ import java.util.List;
 public interface UserAccountFansService {
 
     void updateLastUpdateTime(String openId, Date date);
+
     public UserAccountFans getById(String id);
 
     public UserAccountFans getByOpenId(String openId);
@@ -24,7 +25,7 @@ public interface UserAccountFansService {
 
     public UserAccountFans getLastOpenId();
 
-    public void add(UserAccountFans entity);
+    public UserAccountFans add(UserAccountFans entity);
 
     public List<UserAccountFans> getAllByLastUpdateTimePage(Date lastUpdateTime,long  id,String accountOld);
 

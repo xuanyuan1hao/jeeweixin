@@ -6,6 +6,9 @@ import com.wxcms.domain.TaskLog;
 import com.wxcms.mapper.TaskCodeDao;
 import com.wxcms.service.TaskCodeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,10 +29,13 @@ public class TaskCodeServiceImpl implements TaskCodeService{
         return baseDao.getTotalItemsCount(searchEntity);
     }
 
-    public void add(TaskCode entity) {
+    @CachePut(value="TaskCodeItem",key="#entity.getId()")
+    public TaskCode add(TaskCode entity) {
         baseDao.add(entity);
+        return entity;
     }
 
+    @Cacheable(value="TaskCodeItem", key="#id")
     public TaskCode getById(long id) {
         return baseDao.getById(id);
     }
@@ -41,7 +47,7 @@ public class TaskCodeServiceImpl implements TaskCodeService{
         pagination.setItems(items);
         return pagination;
     }
-
+    @CacheEvict(value="TaskCodeItem",key="#taskCode.getId()")// 清空accountCache 缓存
     public void update(TaskCode taskCode) {
         baseDao.update(taskCode);
     }
@@ -68,7 +74,7 @@ public class TaskCodeServiceImpl implements TaskCodeService{
         pagination.setItems(items);
         return pagination;
     }
-
+    @CacheEvict(value="TaskCodeItem", allEntries=true)
     public void delete(TaskCode taskCode) {
         baseDao.delete(taskCode);
     }

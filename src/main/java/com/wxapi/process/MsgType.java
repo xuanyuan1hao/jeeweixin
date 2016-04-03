@@ -23,7 +23,8 @@ public enum MsgType {
 	SUBSCRIBE_REWARD("subscribe_reward_log"),//关注成功奖励消息
 	UNSUBSCRIBE_REWARD("unsubscribe_reward_log"),//取消关注减钱消息
 	SUBSCRIBE_REWARD_LEVEL("subscribe_level_reward_log"),//关注成功上级奖励消息
-
+	GET_TASK_LIST_MSG_BEGIN("get_task_list_begin_log"),//关注成功上级奖励消息
+	GET_TASK_LIST_MSG_END("get_task_list_end_log"),//关注成功上级奖励消息
 	SUBSCRIBE_USER_ACCOUNT("subscribe_user_account"),//用户账号订阅消息
 	UNSUBSCRIBE_USER_ACCOUNT("unsubscribe_user_account"),//用户账号取消订阅
 	SUBSCRIBE_USER_ACCOUNT_ADD_MONEY("subscribe_user_account_add_money"),//用户关注订阅号成功送钱信息

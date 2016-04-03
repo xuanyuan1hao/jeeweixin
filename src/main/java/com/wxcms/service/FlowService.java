@@ -1,5 +1,6 @@
 package com.wxcms.service;
 
+import com.core.page.Pagination;
 import com.wxcms.domain.Flow;
 
 import java.util.List;
@@ -10,7 +11,9 @@ import java.util.List;
 public interface FlowService {
     public Flow getById(String id);
 
-    public List<Flow> listForPage(Flow searchEntity);
+    public List<Flow> listForPageTop100(Flow searchEntity);
+
+    Pagination<Flow> paginationEntity(Flow searchEntity, Pagination<Flow> pagination);
 
     public void add(Flow entity);
 }

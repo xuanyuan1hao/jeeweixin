@@ -47,7 +47,7 @@
                                 <td><#if row.moneyPer??>${row.moneyPer*taskProfit}</#if>元
                                     <input id="button_${row.id!}" type="button" value="任务认领" onclick="acceptTask(${row.id!});" />
                                 </td>
-                                <td><#if row.base64WxCode??><img width="100px;" src="data:image/jpg;base64,${row.base64WxCode!}" /></#if></td>
+                                <td><#if row.wxCodeImgHref??><img width="100px;" src="http://open.weixin.qq.com/qr/code/?username=${row.wxCodeImgHref}" /></#if></td>
                                 </tr>
                             </#list>
                             </tbody>
@@ -71,7 +71,7 @@
                             </#if>
                             <td><#if row.money??>${row.money*taskProfit}</#if>元
                             </td>
-                            <td><#if row.base64WxCode??><img width="100px;" src="data:image/jpg;base64,${row.base64WxCode!}" /></#if></td>
+                            <td><#if row.wxCodeImgHref??><img width="100px;" src="http://open.weixin.qq.com/qr/code/?username=${row.wxCodeImgHref}" /></#if></td>
                             <td style="color: red;"><div><label> ${row.taskCodeNum!} </label></div>
                             </td>
                             </tr>
@@ -95,7 +95,7 @@
                             </#if>
                             <td><#if row.money??>${row.money*taskProfit}</#if>元
                             </td>
-                            <td><#if row.base64WxCode??><img width="100px;" src="data:image/jpg;base64,${row.base64WxCode!}" /></#if></td>
+                            <td><#if row.wxCodeImgHref??><img width="100px;" src="http://open.weixin.qq.com/qr/code/?username=${row.wxCodeImgHref}" /></#if></td>
                             </td>
                             </tr>
                         </#list>
