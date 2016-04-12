@@ -35,6 +35,7 @@
                         <tr >
                             <td style="width: 150px;">编号</td>
                             <td>标题</td>
+                            <td>分类</td>
                             <td>创建时间</td>
                             <td>处理</td>
                         </tr>
@@ -48,6 +49,7 @@
                             </#if>
                             <td>${row.id!}</td>
                             <td>${row.articleTitle!}</td>
+                            <td>${row.classfyName!}</td>
                             <td>${row.createtime?string("yyyy-MM-dd HH:mm:ss")}</td>
                             <td>
                                 <a href="${s.base}/admin/add_collected_article_to_task.html?id=${row.id}" >添加到转发任务</a>

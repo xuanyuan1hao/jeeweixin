@@ -1,25 +1,15 @@
 package com.wxapi.process;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import net.sf.json.JSONException;
+import net.sf.json.JSONObject;
+
+import javax.net.ssl.*;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-
-import net.sf.json.JSONException;
-import net.sf.json.JSONObject;
 
 /**
  * 微信 API、微信基本接口
@@ -57,7 +47,9 @@ public class WxApi {
 	
 	//群发接口
 	private static final String MASS_SEND = "https://api.weixin.qq.com/cgi-bin/message/mass/send?access_token=%s";
-	
+	//群发接口
+	private static final String MASS_SEND_ALL = "https://api.weixin.qq.com/cgi-bin/message/mass/sendall?access_token=%s";
+
 	//网页授权OAuth2.0获取code
 	private static final String GET_OAUTH_CODE = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=%s&redirect_uri=%s&response_type=%s&scope=%s&state=%s#wechat_redirect";
 	
@@ -137,7 +129,10 @@ public class WxApi {
 	public static String getMassSendUrl(String token){
 		return String.format(MASS_SEND, token);
 	}
-	
+	//群发接口
+	public static String getMassSendAllUrl(String token){
+		return String.format(MASS_SEND_ALL, token);
+	}
 	//网页授权OAuth2.0获取code
 	public static String getOAuthCodeUrl(String appId ,String redirectUrl ,String scope ,String state){
 		return String.format(GET_OAUTH_CODE, appId, urlEnodeUTF8(redirectUrl), "code", scope, state);

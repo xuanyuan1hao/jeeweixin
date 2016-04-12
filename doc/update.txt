@@ -1,7 +1,11 @@
+20160409
+1.新增表t_wxcms_user_news_task，用于存储用户创建的文章发布任务
+2.新增表t_wxcms_user_news_task_article，用于存储任务下面的文章。
+
 20160403
 1.新增文章库表、新增文章类型表
 2.修改添加entity时cache报错的bug
-
+3.需要表t_wxcms_video_task的content字段为mediumtext类型。
 
 20160330
 1.新增字段用于存储中间跳转页

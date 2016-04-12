@@ -1,0 +1,89 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+    <title>商家会员中心</title>
+    <#include "head.html">
+</head>
+<body class=" theme-blue">
+
+<!-- Demo page code -->
+<#include "navigation.html">
+    <#include "sidebar-nav.html">
+        <div class="content">
+            <div class="header">
+                <h1 class="page-title">Dashboard</h1>
+                <ul class="breadcrumb">
+                    <li><a href="index.html">Home</a> </li>
+                    <li class="active">Dashboard</li>
+                </ul>
+
+            </div>
+            <div class="main-content">
+                <form id="queryPageForm" action="">
+                    <div class="btn-toolbar list-toolbar">
+                        <button class="btn btn-primary"><i class="fa fa-plus"></i><a href="/user/add_user_news_task.html">新增</a></button>
+                    </div>
+                    <table class="table">
+                        <thead>
+                        <tr >
+                            <td style="width: 150px;">编号</td>
+                            <td>微信号</td>
+                            <td>任务名称</td>
+                            <td>发布时间</td>
+                            <td>状态</td>
+                            <td>文章数量</td>
+                            <td>删除</td>
+                            <td>添加文章</td>
+                            <td>预览编辑</td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <#list pagination.items as row>
+                            <#if row_index %2 == 0>
+                                <tr style="height:40px;">
+                                    <#else>
+                                        <tr style="height:40px;background-color:#f9f9f9;">
+                            </#if>
+                            <td>${row.id!}</td>
+                            <td>${row.wxName!}</td>
+                            <td>${row.newsTaskName!}</td>
+                            <td>${row.taskRunTime?string("yyyy-MM-dd HH:mm:ss")}</td>
+                            <td>${row.taskRunStatusStr!}</td>
+                            <td>${row.articleCount!}</td>
+                            <td>
+                                <a href="javascript:add_my_news(${row.id});" >删除任务</a></td>
+                            <td>
+                                <a href="/user/manage_all_article.html?newsTaskId=${row.id}" >添加文章到任务</a>
+                            </td>
+                            <td>
+                                <a href="/user/edit_news_task_article.html?newsTaskId=${row.id}" >预览编辑</a>
+                            </td>
+                            </tr>
+                        </#list>
+                        </tbody>
+                    </table>
+                    <#include "../common/pagination.html">
+                </form>
+                <#include "footer.html">
+            </div>
+        </div>
+        <#include "js.html">
+</body>
+<script>
+    function add_my_news(articleId){
+        $.ajax({
+            type: "POST",
+            url:"/user/add_my_news_json.html",
+            data:"articleId="+articleId,// 要提交的表单
+            success: function(ret)
+            {
+                var returnJson=JSON.parse(ret);
+                alert(returnJson.msg);
+            },
+            error: function(error){alert(error);}
+        });
+    }
+</script>
+
+</html>

@@ -11,7 +11,8 @@ import java.util.List;
 public interface ArticleClassifyService {
     public ArticleClassify getById(String id);
 
-    public List<ArticleClassify> paginationEntity(ArticleClassify searchEntity, Pagination<ArticleClassify> pagination);
+    public List<ArticleClassify> listEntity(ArticleClassify searchEntity, Pagination<ArticleClassify> pagination);
+    public Pagination<ArticleClassify> paginationEntity(ArticleClassify searchEntity, Pagination<ArticleClassify> pagination);
 
     public Integer getTotalItemsCount(ArticleClassify searchEntity);
 

@@ -1,0 +1,112 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+    <title>商家会员中心</title>
+    <#include "head.html">
+        <style type="text/css">
+        .ui-timepicker-div .ui-widget-header { margin-bottom: 8px;}
+        .ui-timepicker-div dl { text-align: left; }
+        .ui-timepicker-div dl dt { height: 25px; margin-bottom: -25px; }
+        .ui-timepicker-div dl dd { margin: 0 10px 10px 65px; }
+        .ui-timepicker-div td { font-size: 90%; }
+        .ui-tpicker-grid-label { background: none; border: none; margin: 0; padding: 0; }
+        .ui_tpicker_hour_label,.ui_tpicker_minute_label,.ui_tpicker_second_label,.ui_tpicker_millisec_label,.ui_tpicker_time_label{padding-left:20px}
+        </style>
+        <link rel="stylesheet" type="text/css" href="/res/timepicker/css/jquery-ui.css" />
+        <script type="text/javascript" src="/res/timepicker/js/jquery-ui.js"></script>
+        <script type="text/javascript" src="/res/timepicker/js/jquery-ui-slide.min.js"></script>
+        <script type="text/javascript" src="/res/timepicker/js/jquery-ui-timepicker-addon.js"></script>
+</head>
+<body class=" theme-blue">
+
+<!-- Demo page code -->
+<#include "navigation.html">
+    <#include "sidebar-nav.html">
+        <div class="content">
+            <div class="header">
+                <h1 class="page-title">Dashboard</h1>
+                <ul class="breadcrumb">
+                    <li><a href="index.html">Home</a> </li>
+                    <li class="active">Dashboard</li>
+                </ul>
+
+            </div>
+            <div class="main-content">
+
+
+                <div class="row">
+                    <div class="col-md-8">
+                        <br>
+                        <div id="myTabContent" class="tab-content">
+                            <div class="tab-pane active in" id="home">
+                                <form id="add_form">
+                                    <input id="userId" value="${userInfo.id?c}" name="userId" type="hidden"/>
+                                    <div class="form-group">
+                                        <label>微信号</label>
+                                        <select id="wxId" name="wxId" class="form-control">
+                                            <#list myAllTaskCode as t>
+                                                <option value ="${t.id?c}">${t.wxCodeImgHref}</option>
+                                            </#list>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>任务执行时间</label>
+                                        <input type="text" name="taskRunTime" id="taskRunTime" />
+                                        <script type="text/javascript">
+                                        $(function(){
+                                            $('#taskRunTime').datetimepicker({
+                                                numberOfMonths: 2,
+                                                minDate: 0,
+                                                maxDate: 30
+                                            });
+                                        });
+                                        </script>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>任务名称</label>
+                                        <input id="newsTaskName"  name="newsTaskName" class="form-control" type="text"/>
+                                    </div>
+
+                                </form>
+                            </div>
+
+                            <div class="btn-toolbar list-toolbar">
+                                <button class="btn btn-primary" name="add_btn" id="add_btn"><i class="fa fa-save"></i> 新增</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <#include "footer.html">
+            </div>
+        </div>
+        <#include "js.html">
+
+            <script>
+                $("#add_btn").click(function(){
+                    var wxCodeImgHref=$("#wxCodeImgHref").val();
+                    if(wxCodeImgHref==""){
+                        alert("微信号不能为空");
+                        return;
+                    }
+                    $.ajax({
+                        type: "POST",
+                        url:"/user/add_user_news_task_json.html",
+                        data:$('#add_form').serialize(),// 要提交的表单
+                        success: function(ret)
+                        {
+                            var returnJson=JSON.parse(ret);
+                            alert(returnJson.msg);
+                            if(returnJson.result)
+                            {
+                                window.location.href="/user/manage_all_user_news_task.html";
+                            }
+                        },
+                        error: function(error){alert(error);}
+                    });
+                });
+            </script>
+</body>
+
+</html>

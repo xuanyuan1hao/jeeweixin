@@ -19,8 +19,17 @@ public class ArticleClassifyServiceImpl implements ArticleClassifyService {
     }
 
     @Override
-    public List<ArticleClassify> paginationEntity(ArticleClassify searchEntity, Pagination<ArticleClassify> pagination) {
+    public List<ArticleClassify> listEntity(ArticleClassify searchEntity, Pagination<ArticleClassify> pagination) {
         return baseDao.paginationEntity(searchEntity,pagination);
+    }
+
+    @Override
+    public  Pagination<ArticleClassify> paginationEntity(ArticleClassify searchEntity, Pagination<ArticleClassify> pagination) {
+        List<ArticleClassify> items= baseDao.paginationEntity(searchEntity,pagination);
+        Integer totalItemsCount= baseDao.getTotalItemsCount(searchEntity);
+        pagination.setTotalItemsCount(totalItemsCount);
+        pagination.setItems(items);
+        return pagination;
     }
 
     @Override

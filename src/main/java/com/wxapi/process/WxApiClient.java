@@ -332,7 +332,10 @@ public class WxApiClient {
 		}
 		return null;
 	}
-	
+	public static JSONObject massSendAllMsg(){
+		//getMassSendAllUrl
+		return  null;
+	}
 	/**
 	 * 根据openid群发文本消息
 	 * @param openids

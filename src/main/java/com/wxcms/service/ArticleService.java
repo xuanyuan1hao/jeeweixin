@@ -3,6 +3,8 @@ package com.wxcms.service;
 import com.core.page.Pagination;
 import com.wxcms.domain.Article;
 
+import java.util.List;
+
 /**
  * Created by Administrator on 2016-04-02.
  */
@@ -22,4 +24,5 @@ public interface ArticleService {
     public void update(Article entity);
 
     public void delete(Article entity);
+    public List<Article> getArticleNewsByIds(long[] array);
 }

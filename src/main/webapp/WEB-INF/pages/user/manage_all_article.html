@@ -1,0 +1,87 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+    <title>商家会员中心</title>
+    <#include "head.html">
+</head>
+<body class=" theme-blue">
+
+<!-- Demo page code -->
+<#include "navigation.html">
+    <#include "sidebar-nav.html">
+        <div class="content">
+            <div class="header">
+                <h1 class="page-title">Dashboard</h1>
+                <ul class="breadcrumb">
+                    <li><a href="index.html">Home</a> </li>
+                    <li class="active">Dashboard</li>
+                </ul>
+
+            </div>
+            <div class="main-content">
+                <form id="queryPageForm" action="">
+                    <input type="hidden" name="newsTaskId" id="newsTaskId" value="${newsTaskId!}">
+                <div class="btn-toolbar list-toolbar">
+                    <select name="classfyId" id="classfyId" onchange="_queryPage('1');">
+                        <option value="0">全部</option>
+                        <#list listArticleClassify as item>
+                            <option value="${item.id?c}">${item.classifyName!}</option>
+                        </#list>
+                    </select>
+                    <div>
+                        <#if userNewsTask??><span>任务：${userNewsTask.newsTaskName!}</span></#if>
+                    </div>
+                </div>
+                    <table class="table">
+                        <thead>
+                        <tr >
+                            <td style="width: 150px;">编号</td>
+                            <td>标题</td>
+                            <td>缩略图</td>
+                            <td>阅读量</td>
+                            <td>处理</td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <#list pagination.items as row>
+                            <#if row_index %2 == 0>
+                                <tr style="height:40px;">
+                                    <#else>
+                                        <tr style="height:40px;background-color:#f9f9f9;">
+                            </#if>
+                            <td>${row.id!}</td>
+                            <td>${row.articleTitle!}</td>
+                            <td><img src="${row.thumb!}" width="200px;" /></td>
+                            <td>${row.readTimes!}</td>
+                            <td>
+                                <#if (newsTaskId!=0)><a href="javascript:add_my_news(${row.id},${newsTaskId});" >加入到图文定时任务</a></#if>
+                            </td>
+                            </tr>
+                        </#list>
+                        </tbody>
+                    </table>
+                    <#include "../common/pagination.html">
+                </form>
+                <#include "footer.html">
+            </div>
+        </div>
+        <#include "js.html">
+</body>
+<script>
+    function add_my_news(articleId,newsTaskId){
+        $.ajax({
+            type: "POST",
+            url:"/user/add_my_news_json.html",
+            data:"articleId="+articleId+"&newsTaskId="+newsTaskId,// 要提交的表单
+            success: function(ret)
+            {
+                var returnJson=JSON.parse(ret);
+                alert(returnJson.msg);
+            },
+            error: function(error){alert(error);}
+        });
+    }
+</script>
+
+</html>

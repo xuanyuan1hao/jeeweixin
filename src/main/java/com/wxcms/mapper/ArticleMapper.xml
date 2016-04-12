@@ -4,20 +4,36 @@
 <mapper namespace="com.wxcms.mapper.ArticleDao">
 
     <select id="paginationEntity" resultType="com.wxcms.domain.Article">
-        SELECT m.*
-        from t_wxcms_article_collect m
+        SELECT m.* ,n.classifyName as classfyName
+        from t_wxcms_article_collect m,t_wxcms_article_classify n where m.classfyId=n.id
         <if test="param1.md5!=null and param1.md5!=''">
             and  m.md5 = #{param1.md5}
+        </if>
+        <if test="param1.classfyId!=null and param1.classfyId!=0 ">
+            and  m.classfyId = #{param1.classfyId}
         </if>
         order by m.id desc
         LIMIT #{param2.start} , #{param2.pageSize}
     </select>
     <select id="getTotalItemsCount" parameterType="com.wxcms.domain.Article" resultType="java.lang.Integer">
-        SELECT count(m.id) FROM t_wxcms_article_collect m
+        SELECT count(m.id) FROM t_wxcms_article_collect m where 1=1
+        <if test="classfyId!=null and classfyId!=0 ">
+            and  m.classfyId = #{classfyId}
+        </if>
     </select>
 
+    <select id="getArticleNewsByIds" resultType="com.wxcms.domain.Article" >
+        SELECT * FROM t_wxcms_article_collect WHERE ID IN
+        <foreach collection="array" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+
     <select id="getById" parameterType="java.lang.String" resultType="com.wxcms.domain.Article">
-        SELECT * FROM t_wxcms_article_collect WHERE ID = #{id}
+        SELECT *,n.classifyName as classfyName
+        FROM t_wxcms_article_collect m,t_wxcms_article_classify n
+        WHERE m.ID = #{id} and m.classfyId=n.id
     </select>
 
     <select id="getByMd5" parameterType="java.lang.String" resultType="java.lang.Integer">

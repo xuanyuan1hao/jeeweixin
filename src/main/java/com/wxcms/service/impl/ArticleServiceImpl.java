@@ -59,4 +59,9 @@ baseDao.update(entity);
     public void delete(Article entity) {
 baseDao.delete(entity);
     }
+
+    @Override
+    public List<Article> getArticleNewsByIds(long[] array) {
+      return   baseDao.getArticleNewsByIds(array);
+    }
 }

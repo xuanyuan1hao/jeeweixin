@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://10.20.91.130/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.wxcms.mapper.UserNewsTaskDao">
+    <resultMap id="UserNewsTaskMap" type="com.wxcms.domain.UserNewsTask">
+        <id property="id" column="id" />
+        <result property="wxId" column="wx_id"/>
+        <result property="taskRunTime" column="task_run_time"/>
+        <result property="createtime" column="createtime"/>
+        <result property="taskRunResult" column="task_run_result"/>
+        <result property="taskRunResultMsg" column="task_run_result_msg"/>
+        <result property="userId" column="user_id"/>
+        <result property="newsTaskName" column="news_task_name"/>
+        <result property="taskRunStatus" column="task_run_status"/>
+        <result property="taskRunTimes" column="task_run_times"/>
+        <result property="mediaId" column="media_id"/>
+        <result property="wxName" column="wxName"/>
+        <result property="articleCount" column="article_count"/>
+    </resultMap>
+    <select id="paginationEntity" resultMap="UserNewsTaskMap">
+        SELECT m.*,n.wxCodeImgHref as wxName
+        from t_wxcms_user_news_task m, t_wxcms_task_code n
+        where n.id=m.wx_id
+        order by m.id desc
+        LIMIT #{param2.start} , #{param2.pageSize}
+    </select>
+
+    <select id="getTotalItemsCount" parameterType="com.wxcms.domain.UserNewsTask" resultType="java.lang.Integer">
+        SELECT count(m.id)
+        FROM t_wxcms_user_news_task m, t_wxcms_task_code n
+        where n.id=m.wx_id
+    </select>
+
+
+    <select id="listForPage" parameterType="com.wxcms.domain.UserNewsTask" resultMap="UserNewsTaskMap">
+        SELECT * FROM t_wxcms_user_news_task t where 1=1
+            and t.task_run_status=#{taskRunStatus}
+        and task_run_time &lt; #{taskRunTime}
+        ORDER BY t.ID DESC limit 20
+    </select>
+
+    <select id="getById" resultMap="UserNewsTaskMap">
+        SELECT * FROM t_wxcms_user_news_task WHERE ID = #{id}
+    </select>
+
+
+    <insert id="add" parameterType="com.wxcms.domain.UserNewsTask" flushCache="true">
+        INSERT INTO t_wxcms_user_news_task ( createtime,wx_id,task_run_time,task_run_result,task_run_result_msg,user_id,
+        news_task_name,task_run_status,article_count,task_run_times,media_id)
+        VALUES ( #{createtime},#{wxId},#{taskRunTime},#{taskRunResult},#{taskRunResultMsg},#{userId} ,
+        #{newsTaskName},#{taskRunStatus},#{articleCount},#{taskRunTimes},#{mediaId})
+        <selectKey resultType="long" keyProperty="id" >
+            SELECT LAST_INSERT_ID() ;
+        </selectKey>
+    </insert>
+
+    <update id="update" parameterType="com.wxcms.domain.UserNewsTask" flushCache="true">
+        UPDATE t_wxcms_user_news_task SET task_run_result = #{taskRunResult},
+        task_run_result_msg=#{taskRunResultMsg} ,task_run_time=#{taskRunTime},
+        task_run_status=#{taskRunStatus},task_run_times=#{taskRunTimes},media_id=#{mediaId}
+        WHERE ID = #{id}
+    </update>
+
+    <update id="updateArticleCount" parameterType="com.wxcms.domain.UserNewsTask" flushCache="true">
+        UPDATE t_wxcms_user_news_task SET article_count = #{articleCount}
+        WHERE ID = #{id}
+    </update>
+
+    <delete id="delete" parameterType="com.wxcms.domain.UserNewsTask" >
+        DELETE FROM t_wxcms_user_news_task WHERE ID = #{id}
+    </delete>
+
+</mapper>

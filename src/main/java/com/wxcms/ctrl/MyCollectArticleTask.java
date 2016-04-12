@@ -1,5 +1,6 @@
 package com.wxcms.ctrl;
 
+import com.core.page.Pagination;
 import com.core.util.Str2MD5;
 import com.wxcms.domain.Article;
 import com.wxcms.domain.ArticleClassify;
@@ -13,6 +14,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -23,8 +25,8 @@ import java.util.regex.Pattern;
 
 @Component
 public class MyCollectArticleTask {
-    private static int page=39;
-    private static int maxPage=75;
+    private static int page=1;
+    private static int maxPage=230;
     @Autowired
    private ArticleService articleService;
     @Autowired
@@ -32,10 +34,41 @@ public class MyCollectArticleTask {
 
     @Scheduled(cron = "0/5 * * * * ? ") //间隔5秒执行
     public void collectTaskCycle() {
-       // String referer="http://fzn.cc/meiwen/";
         String targetUrl="http://fzn.cc/page/"+page+"/";
         if(page>maxPage)
             return;
+        //collectTask(targetUrl);
+        //relpaceArticleContent(page);
+        page++;
+    }
+
+    private void relpaceArticleContent(int page) {
+        Article article=new Article();
+        Pagination<Article> pagination=new Pagination<Article>();
+        pagination.setPageNum(page);
+        pagination= articleService.paginationEntity(article,pagination);
+        if (null!=pagination&&pagination.getItems().size()>0){
+            for (int i=0;i<pagination.getItems().size();i++){
+                Article temp=pagination.getItems().get(i);
+                temp.setArticleContent(clearArticleContent(temp.getArticleContent()));
+                articleService.update(temp);
+            }
+        }
+    }
+
+    private String clearArticleContent(String articleContent) {
+        String ret=articleContent;
+        Pattern pattern = Pattern.compile("<a.*?>");
+        Matcher mt = pattern.matcher(articleContent);
+        while(mt.find())
+        {
+            System.out.println(mt.group());
+            ret=ret.replace(mt.group(),"").replace("</a>","");
+        }
+        return  ret;
+    }
+
+    private void  collectTask(String targetUrl){
         String source=getHTMLSrc(targetUrl);
         List<Article> listContent=getListCoutent(source);
         for (int i=0;i<listContent.size();i++)
@@ -57,9 +90,7 @@ public class MyCollectArticleTask {
                 articleService.add(listContent.get(i));
             }
         }
-        page++;
     }
-
     private List<Article> getListCoutent(String source) {
         List<Article> ret=new ArrayList<Article>();
         Pattern pattern = Pattern.compile("<article class=\"excerpt\".*?</article>");
@@ -107,7 +138,7 @@ public class MyCollectArticleTask {
                 System.out.println("网址："+articleUrl);
                 article.setArticleUrl(articleUrl);
                 //获取文章内容
-                String content=getArticleContent(articleUrl);
+                String content=clearArticleContent(getArticleContent(articleUrl));
                 System.out.println("***************************");
                 System.out.println(content);
                 article.setArticleContent(content);
@@ -167,7 +198,9 @@ public class MyCollectArticleTask {
         try {
             String line = null;
             URL theUrl= new URL(url);
-            openStream = theUrl.openStream();
+            HttpURLConnection connection = (HttpURLConnection) theUrl.openConnection();
+            connection.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)");
+            openStream = connection.getInputStream();
             //<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
             //构建输入流的的字符集必须和HTML源码中的	charset一致
             buf = new BufferedReader(new InputStreamReader(openStream,"utf-8"));
