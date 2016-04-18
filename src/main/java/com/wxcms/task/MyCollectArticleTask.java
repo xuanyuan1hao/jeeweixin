@@ -1,4 +1,4 @@
-package com.wxcms.ctrl;
+package com.wxcms.task;
 
 import com.core.page.Pagination;
 import com.core.util.Str2MD5;
@@ -26,19 +26,21 @@ import java.util.regex.Pattern;
 @Component
 public class MyCollectArticleTask {
     private static int page=1;
-    private static int maxPage=230;
+    private static int maxPage=5;
     @Autowired
    private ArticleService articleService;
     @Autowired
     private ArticleClassifyService articleClassifyService;
 
-    @Scheduled(cron = "0/5 * * * * ? ") //间隔5秒执行
+    @Scheduled(cron = "0 0/30 * * * ?") //间隔30分钟执行
     public void collectTaskCycle() {
         String targetUrl="http://fzn.cc/page/"+page+"/";
         if(page>maxPage)
-            return;
-        //collectTask(targetUrl);
-        //relpaceArticleContent(page);
+        {
+            page=1;
+        }
+        collectTask(targetUrl);
+        relpaceArticleContent(page);
         page++;
     }
 

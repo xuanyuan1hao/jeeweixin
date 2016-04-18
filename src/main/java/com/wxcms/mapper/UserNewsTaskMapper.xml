@@ -70,4 +70,9 @@
         DELETE FROM t_wxcms_user_news_task WHERE ID = #{id}
     </delete>
 
+    <select id="hasExistTaskByTaskRunTime" resultType="boolean">
+        select count(*) from
+        t_wxcms_user_news_task where TO_DAYS(task_run_time)=TO_DAYS(#{taskRunTime})
+        and wx_id=#{wxId}
+    </select>
 </mapper>

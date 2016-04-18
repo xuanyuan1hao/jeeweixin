@@ -79,15 +79,14 @@ private ArticleService articleService;
                     if (rstObj.containsKey("media_id")) {
                         String mediaId= rstObj.getString("media_id");
                         tmp.setMediaId(mediaId);
-                        tmp.setTaskRunTimes(tmp.getTaskRunTimes()+1);
-                        userNewsTaskService.update(tmp);
                     } else {
-                        //这里同步发布素材就失败了。//失败
-                        tmp.setTaskRunStatus(-1);
+                        if(tmp.getTaskRunTimes()>=3)//上传3次失败就不再上传了。
+                            tmp.setTaskRunStatus(-1);
                         tmp.setTaskRunResult(rstObj.getInt("errcode"));
                         tmp.setTaskRunResultMsg(rstObj.getString("errmsg"));
-                        userNewsTaskService.update(tmp);
                     }
+                    tmp.setTaskRunTimes(tmp.getTaskRunTimes()+1);
+                    userNewsTaskService.update(tmp);
                 }
             }
         }

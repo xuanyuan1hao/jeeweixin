@@ -229,9 +229,14 @@ public class UserInfoCtrl {
             if (null != userInfo) {
                 userNewsTask.setUserId(userInfo.getId());
             }
-            userNewsTaskService.add(userNewsTask);
-            jsonObject.put("result", true);
-            jsonObject.put("msg", "添加成功");
+            //判断当天是否已经有任务要执行。
+           if(! userNewsTaskService.hasExistTaskByTaskRunTime(userNewsTask.getTaskRunTime(),userNewsTask.getWxId())){
+               userNewsTaskService.add(userNewsTask);
+               jsonObject.put("result", true);
+               jsonObject.put("msg", "添加成功");
+           }else{
+               jsonObject.put("msg", "选择的日期已经存在要发送的任务");
+           }
         } catch (Exception ex) {
 
         }

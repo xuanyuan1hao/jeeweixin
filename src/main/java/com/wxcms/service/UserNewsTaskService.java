@@ -3,6 +3,7 @@ package com.wxcms.service;
 import com.core.page.Pagination;
 import com.wxcms.domain.UserNewsTask;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -24,4 +25,6 @@ public interface UserNewsTaskService {
     public void updateArticleCount(UserNewsTask entity);
 
     public void delete(UserNewsTask entity);
+
+    boolean hasExistTaskByTaskRunTime(Date taskRunTime,long wxId);
 }

@@ -51,8 +51,12 @@ public class UserNewsTask extends BaseEntity{
     public String getTaskRunStatusStr() {
         if (taskRunStatus==0){
             taskRunStatusStr= "等待执行";
-        }else{
+        } else if(taskRunStatus==1){
             taskRunStatusStr= "执行完毕";
+        }else if(taskRunStatus==-1){
+            taskRunStatusStr= "执行失败";
+        }else{
+            taskRunStatusStr= "未知";
         }
         return taskRunStatusStr;
     }

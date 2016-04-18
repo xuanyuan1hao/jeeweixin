@@ -2,7 +2,9 @@ package com.wxcms.mapper;
 
 import com.core.page.Pagination;
 import com.wxcms.domain.UserNewsTask;
+import org.apache.ibatis.annotations.Param;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -24,4 +26,6 @@ public interface UserNewsTaskDao {
     public void updateArticleCount(UserNewsTask entity);
 
     public void delete(UserNewsTask entity);
+
+    boolean hasExistTaskByTaskRunTime(@Param("taskRunTime") Date taskRunTime,@Param("wxId") long wxId);
 }

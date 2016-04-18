@@ -7,6 +7,7 @@ import com.wxcms.service.UserNewsTaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -59,5 +60,10 @@ public class UserNewsTaskServiceImpl implements UserNewsTaskService {
     @Override
     public void delete(UserNewsTask entity) {
         baseDao.delete(entity);
+    }
+
+    @Override
+    public boolean hasExistTaskByTaskRunTime(Date taskRunTime,long wxId) {
+        return baseDao.hasExistTaskByTaskRunTime(taskRunTime,wxId);
     }
 }
