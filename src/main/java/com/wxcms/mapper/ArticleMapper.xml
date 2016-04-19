@@ -15,6 +15,9 @@
         order by m.id desc
         LIMIT #{param2.start} , #{param2.pageSize}
     </select>
+
+
+
     <select id="getTotalItemsCount" parameterType="com.wxcms.domain.Article" resultType="java.lang.Integer">
         SELECT count(m.id) FROM t_wxcms_article_collect m where 1=1
         <if test="classfyId!=null and classfyId!=0 ">
@@ -27,6 +30,16 @@
         <foreach collection="array" index="index" item="item" open="(" separator="," close=")">
             #{item}
         </foreach>
+    </select>
+
+    <select id="getArticleNewsByRandom" resultType="com.wxcms.domain.Article">
+        SELECT m.* ,n.classifyName as classfyName
+        from t_wxcms_article_collect m,t_wxcms_article_classify n where m.classfyId=n.id
+        <if test="classfyId!=null and classfyId!=0 ">
+            and  m.classfyId = #{classfyId}
+        </if>
+        order by rand()
+        LIMIT 8
     </select>
 
 

@@ -43,6 +43,8 @@ public class UserInfoCtrl {
     @Autowired
     private UserNewsTaskService userNewsTaskService;
     @Autowired
+    private UserAutoNewsTaskService userAutoNewsTaskService;
+    @Autowired
     private UserNewsTaskArticleService userNewsTaskArticleService;
 
     @RequestMapping(value = "/reg")
@@ -135,6 +137,25 @@ public class UserInfoCtrl {
         }
         return jsonObject.toString();
     }
+    @RequestMapping(value = "delete_user_auto_news_task_json")
+     public
+     @ResponseBody
+     String deleteUserAutoNews_taskJson(HttpServletRequest request,
+                               ModelMap map, long id, HttpSession httpSession) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("result", false);
+        jsonObject.put("msg", "系统错误，修改失败");
+        try {
+            UserAutoNewsTask userAutoNewsTask = new UserAutoNewsTask();
+            userAutoNewsTask.setId(id);
+            userAutoNewsTaskService.delete(userAutoNewsTask);
+            jsonObject.put("result", true);
+            jsonObject.put("msg", "删除成功");
+        } catch (Exception ex) {
+
+        }
+        return jsonObject.toString();
+    }
 
     @RequestMapping(value = "delete_code_task_json")
     public
@@ -189,7 +210,7 @@ public class UserInfoCtrl {
             UserNewsTask userNewsTask = userNewsTaskService.getById(newsTaskId);
             mv.addObject("userNewsTask", userNewsTask);
         }
-
+        mv.addObject("searchEntity",searchEntity);
 
         return mv;
     }
@@ -203,18 +224,84 @@ public class UserInfoCtrl {
         mv.addObject("pagination", pagination);
         return mv;
     }
+    @RequestMapping(value = "/manage_all_user_auto_news_task")
+    public ModelAndView manageUserAutoNewsTask(HttpServletRequest request, ModelMap map, UserAutoNewsTask searchEntity,
+                                               Pagination<UserAutoNewsTask> pagination, HttpSession httpSession) {
+        ModelAndView mv = new ModelAndView("user/manage_all_user_auto_news_task");
+        if (null == searchEntity)
+            searchEntity = new UserAutoNewsTask();
+        pagination = userAutoNewsTaskService.paginationEntity(searchEntity, pagination);
+        mv.addObject("pagination", pagination);
+        return mv;
+    }
+    @RequestMapping(value = "/add_user_auto_news_task")
+    public ModelAndView addUserAutoNewsTask(HttpSession httpSession) {
+        ModelAndView mv = new ModelAndView("user/add_user_auto_news_task");
+        //查找所有的公众号
+        TaskCode taskCode = new TaskCode();
+        UserInfo userInfo = (UserInfo) httpSession.getAttribute("userInfo");
+        if (null != userInfo) {
+            taskCode.setUserId(userInfo.getId());
+        }
+        Pagination<TaskCode> pagination = new Pagination<TaskCode>();
+        pagination.setPageSize(50);
+        List<TaskCode> myAllTaskCode = taskCodeService.listForPage(taskCode, pagination);
+        mv.addObject("myAllTaskCode", myAllTaskCode);
+
+        //获取文章分类
+        ArticleClassify searchEntityArticleClassify = new ArticleClassify();
+        Pagination<ArticleClassify> paginationArticleClassify = new Pagination<ArticleClassify>();
+        paginationArticleClassify.setPageSize(100);
+        List<ArticleClassify> listArticleClassify = articleClassifyService.listEntity(searchEntityArticleClassify, paginationArticleClassify);
+        mv.addObject("listArticleClassify", listArticleClassify);
+
+        return mv;
+    }
 
     @RequestMapping(value = "/add_user_news_task")
-    public ModelAndView addUserNewsTask() {
+    public ModelAndView addUserNewsTask(HttpSession httpSession) {
         ModelAndView mv = new ModelAndView("user/add_user_news_task");
         //查找所有的公众号
         TaskCode taskCode = new TaskCode();
+        UserInfo userInfo = (UserInfo) httpSession.getAttribute("userInfo");
+        if (null != userInfo) {
+            taskCode.setUserId(userInfo.getId());
+        }
         Pagination<TaskCode> pagination = new Pagination<TaskCode>();
         pagination.setPageSize(50);
         List<TaskCode> myAllTaskCode = taskCodeService.listForPage(taskCode, pagination);
         mv.addObject("myAllTaskCode", myAllTaskCode);
         return mv;
     }
+
+
+    @RequestMapping(value = "add_user_auto_news_task_json")
+    public
+    @ResponseBody
+    String addUserAutoNewsTaskJsonJson(HttpServletRequest request, ModelMap map,
+                                   @ModelAttribute("userNewsTask") UserAutoNewsTask userAutoNewsTask, HttpSession httpSession) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("result", false);
+        jsonObject.put("msg", "系统错误，新增失败");
+        try {
+            UserInfo userInfo = (UserInfo) httpSession.getAttribute("userInfo");
+            if (null != userInfo) {
+                userAutoNewsTask.setUserId(userInfo.getId());
+            }
+            //判断当天是否已经有任务要执行。
+            if(! userAutoNewsTaskService.hasExistTaskByWxId(userAutoNewsTask.getWxId())){
+                userAutoNewsTaskService.add(userAutoNewsTask);
+                jsonObject.put("result", true);
+                jsonObject.put("msg", "添加成功");
+            }else{
+                jsonObject.put("msg", "选择的公众号已经被托管了");
+            }
+        } catch (Exception ex) {
+
+        }
+        return jsonObject.toString();
+    }
+
 
     @RequestMapping(value = "add_user_news_task_json")
     public

@@ -1,17 +1,17 @@
 package com.wxcms.task;
 
+import com.core.page.Pagination;
 import com.wxapi.process.UserWxApiClient;
 import com.wxcms.domain.*;
-import com.wxcms.service.ArticleService;
-import com.wxcms.service.TaskCodeService;
-import com.wxcms.service.UserNewsTaskArticleService;
-import com.wxcms.service.UserNewsTaskService;
+import com.wxcms.service.*;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -21,10 +21,59 @@ public class MyPublicArticleTask {
     private UserNewsTaskService userNewsTaskService;
     @Autowired
     private UserNewsTaskArticleService userNewsTaskArticleService;
-@Autowired
-private ArticleService articleService;
+    @Autowired
+    private ArticleService articleService;
     @Autowired
     private TaskCodeService taskCodeService;
+    @Autowired
+    private UserAutoNewsTaskService userAutoNewsTaskService;
+
+
+    private int pageNum=1;
+    //@Scheduled(cron = "0 0/10 * * * ? ") //间隔10分钟执行
+    @Scheduled(cron = "0/30 * * * * ? ") //间隔10分钟执行
+    public void autoCreateArticleTask() {
+        //查找需要创建定时任务的所有微信号
+        UserAutoNewsTask userAutoNewsTask=new UserAutoNewsTask();
+        Pagination<UserAutoNewsTask> pagination=new Pagination<UserAutoNewsTask>();
+        pagination.setPageSize(10);
+        pagination.setPageNum(pageNum);
+        pagination=userAutoNewsTaskService.paginationEntity(userAutoNewsTask,pagination);
+        if (null==pagination||pagination.getItems().size()==0){
+            pageNum=1;
+        }else{
+            for (int i=0;i<pagination.getItems().size();i++){
+                UserAutoNewsTask userAutoNewsTaskTemp=  pagination.getItems().get(i);
+                if(!userNewsTaskService.hasExistTaskByTaskRunTime(new Date(),userAutoNewsTaskTemp.getWxId())){
+                    //创建任务
+                    UserNewsTask userNewsTask=new UserNewsTask();
+                    Calendar nowTime = Calendar.getInstance();
+                    nowTime.add(Calendar.MINUTE, 5);//5分钟后的发布
+                    userNewsTask.setTaskRunTime(nowTime.getTime());
+                    userNewsTask.setWxId(userAutoNewsTaskTemp.getWxId());
+                    userNewsTask.setArticleCount(userAutoNewsTaskTemp.getMaxArticleCount());
+                    userNewsTask.setUserId(userAutoNewsTaskTemp.getUserId());
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    userNewsTask.setNewsTaskName(sdf.format(nowTime.getTime()));
+                    userNewsTask=  userNewsTaskService.add(userNewsTask);
+                    //添加文章
+                    Article article=new Article();
+                    article.setClassfyId(userAutoNewsTaskTemp.getArticleClassifyId());
+                    List<Article> list=articleService.getArticleNewsByRandom(article);
+                    //添加文章到任务中
+                    for (int j=0;(j<list.size()&&j<userAutoNewsTaskTemp.getMaxArticleCount());j++)
+                    {
+                        UserNewsTaskArticle userNewsTaskArticle=new UserNewsTaskArticle();
+                        userNewsTaskArticle.setUserId(userAutoNewsTaskTemp.getUserId());
+                        userNewsTaskArticle.setArticleId(list.get(j).getId());
+                        userNewsTaskArticle.setNewsTaskId(userNewsTask.getId());
+                        userNewsTaskArticleService.add(userNewsTaskArticle);
+                    }
+                }
+            }
+            pageNum++;
+        }
+    }
 
     @Scheduled(cron = "0/60 * * * * ? ") //间隔50秒执行
     public void publishArticleTaskCycle() {

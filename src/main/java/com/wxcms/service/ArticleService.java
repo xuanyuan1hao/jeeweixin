@@ -25,4 +25,5 @@ public interface ArticleService {
 
     public void delete(Article entity);
     public List<Article> getArticleNewsByIds(long[] array);
+    public List<Article> getArticleNewsByRandom(Article searchEntity);
 }

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://10.20.91.130/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.wxcms.mapper.UserAutoNewsTaskDao">
+    <resultMap id="UserAutoNewsTaskMap" type="com.wxcms.domain.UserAutoNewsTask">
+        <id property="id" column="id" />
+        <result property="wxId" column="wx_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="maxArticleCount" column="max_article_count"/>
+        <result property="autoStatus" column="auto_status"/>
+        <result property="articleClassifyId" column="article_classify_id"/>
+        <result property="createtime" column="createtime"/>
+        <result property="wxName" column="wxName"/>
+    </resultMap>
+    <select id="paginationEntity" resultMap="UserAutoNewsTaskMap">
+        SELECT m.*,n.wxCodeImgHref as wxName,t.classifyName as articleClassifyName
+        from t_wxcms_user_auto_news_task m, t_wxcms_task_code n,t_wxcms_article_classify t
+        where n.id=m.wx_id and t.id=m.article_classify_id
+        order by m.id desc
+        LIMIT #{param2.start} , #{param2.pageSize}
+    </select>
+
+    <select id="getTotalItemsCount" parameterType="com.wxcms.domain.UserAutoNewsTask" resultType="java.lang.Integer">
+        SELECT count(m.id)
+        FROM t_wxcms_user_auto_news_task m, t_wxcms_task_code n,t_wxcms_article_classify t
+        where n.id=m.wx_id and t.id=m.article_classify_id
+    </select>
+
+
+    <select id="listForPage" parameterType="com.wxcms.domain.UserAutoNewsTask" resultMap="UserAutoNewsTaskMap">
+        SELECT * FROM t_wxcms_user_auto_news_task t where 1=1
+        and t.task_run_status=#{taskRunStatus}
+        and task_run_time &lt; #{taskRunTime}
+        ORDER BY t.ID DESC limit 20
+    </select>
+
+    <select id="getById" resultMap="UserAutoNewsTaskMap">
+        SELECT * FROM t_wxcms_user_auto_news_task WHERE ID = #{id}
+    </select>
+
+
+    <insert id="add" parameterType="com.wxcms.domain.UserAutoNewsTask" flushCache="true">
+        INSERT INTO t_wxcms_user_auto_news_task ( createtime,wx_id,user_id,
+        max_article_count,auto_status,article_classify_id)
+        VALUES ( #{createtime},#{wxId},#{userId} ,
+        #{maxArticleCount},#{autoStatus},#{articleClassifyId})
+        <selectKey resultType="long" keyProperty="id" >
+            SELECT LAST_INSERT_ID() ;
+        </selectKey>
+    </insert>
+
+    <update id="update" parameterType="com.wxcms.domain.UserAutoNewsTask" flushCache="true">
+        UPDATE t_wxcms_user_auto_news_task set article_classify_id=#{articleClassifyId},
+        max_article_count=#{maxArticleCount},auto_status=#{autoStatus}
+        WHERE ID = #{id}
+    </update>
+
+    <update id="updateAutoStatus" parameterType="com.wxcms.domain.UserAutoNewsTask" flushCache="true">
+        UPDATE t_wxcms_user_auto_news_task SET article_count = #{articleCount}
+        WHERE ID = #{id}
+    </update>
+
+    <delete id="delete" parameterType="com.wxcms.domain.UserAutoNewsTask" >
+        DELETE FROM t_wxcms_user_auto_news_task WHERE ID = #{id}
+    </delete>
+
+    <select id="hasExistTaskByWxId" resultType="boolean">
+        select count(*) from
+        t_wxcms_user_auto_news_task where 1=1
+        and wx_id=#{wxId}
+    </select>
+</mapper>

@@ -64,4 +64,9 @@ baseDao.delete(entity);
     public List<Article> getArticleNewsByIds(long[] array) {
       return   baseDao.getArticleNewsByIds(array);
     }
+
+    @Override
+    public List<Article> getArticleNewsByRandom(Article searchEntity) {
+        return baseDao.getArticleNewsByRandom(searchEntity);
+    }
 }
