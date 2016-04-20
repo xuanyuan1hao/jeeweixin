@@ -16,6 +16,10 @@
         SELECT m.*,n.wxCodeImgHref as wxName,t.classifyName as articleClassifyName
         from t_wxcms_user_auto_news_task m, t_wxcms_task_code n,t_wxcms_article_classify t
         where n.id=m.wx_id and t.id=m.article_classify_id
+        <if test="param1.autoStatus!=null and param1.autoStatus!=0 ">
+            and  m.auto_status = #{param1.autoStatus}
+        </if>
+
         order by m.id desc
         LIMIT #{param2.start} , #{param2.pageSize}
     </select>
@@ -24,6 +28,9 @@
         SELECT count(m.id)
         FROM t_wxcms_user_auto_news_task m, t_wxcms_task_code n,t_wxcms_article_classify t
         where n.id=m.wx_id and t.id=m.article_classify_id
+        <if test="autoStatus!=null and autoStatus!=0 ">
+            and  m.auto_status = #{autoStatus}
+        </if>
     </select>
 
 
@@ -35,7 +42,11 @@
     </select>
 
     <select id="getById" resultMap="UserAutoNewsTaskMap">
-        SELECT * FROM t_wxcms_user_auto_news_task WHERE ID = #{id}
+        SELECT m.*,n.wxCodeImgHref as wxName,t.classifyName as articleClassifyName
+        FROM t_wxcms_user_auto_news_task m, t_wxcms_task_code n,t_wxcms_article_classify t
+        where n.id=m.wx_id
+        and t.id=m.article_classify_id
+        and m.ID = #{id}
     </select>
 
 

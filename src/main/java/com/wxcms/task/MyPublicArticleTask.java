@@ -30,14 +30,15 @@ public class MyPublicArticleTask {
 
 
     private int pageNum=1;
-    //@Scheduled(cron = "0 0/10 * * * ? ") //间隔10分钟执行
-    @Scheduled(cron = "0/30 * * * * ? ") //间隔10分钟执行
+    @Scheduled(cron = "0 0/10 * * * ? ") //间隔10分钟执行
+   // @Scheduled(cron = "0/30 * * * * ? ") //间隔10分钟执行
     public void autoCreateArticleTask() {
         //查找需要创建定时任务的所有微信号
         UserAutoNewsTask userAutoNewsTask=new UserAutoNewsTask();
         Pagination<UserAutoNewsTask> pagination=new Pagination<UserAutoNewsTask>();
         pagination.setPageSize(10);
         pagination.setPageNum(pageNum);
+        userAutoNewsTask.setAutoStatus(1);//正在的才进行文章发布。
         pagination=userAutoNewsTaskService.paginationEntity(userAutoNewsTask,pagination);
         if (null==pagination||pagination.getItems().size()==0){
             pageNum=1;
