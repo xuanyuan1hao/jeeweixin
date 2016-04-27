@@ -19,10 +19,7 @@ public interface TaskCodeDao {
     //获取可以领取的任务
     public List<TaskCode> listForPageNotGet(TaskLog searchEntity,Pagination<TaskCode> page);
     public Integer getTotalItemsCountNotGet(TaskLog searchEntity);
-
-
     public void delete(TaskCode taskCode);
-
     TaskCode getByAccount(String account);
-
+    void updateFansNum(TaskCode taskCode);
 }

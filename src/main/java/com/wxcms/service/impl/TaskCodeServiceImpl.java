@@ -74,6 +74,12 @@ public class TaskCodeServiceImpl implements TaskCodeService{
         pagination.setItems(items);
         return pagination;
     }
+
+    @Override
+    public void updateFansNum(TaskCode taskCode) {
+        baseDao.updateFansNum(taskCode);
+    }
+
     @CacheEvict(value="TaskCodeItem", allEntries=true)
     public void delete(TaskCode taskCode) {
         baseDao.delete(taskCode);

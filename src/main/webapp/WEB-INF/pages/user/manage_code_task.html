@@ -21,7 +21,7 @@
             </div>
             <div class="main-content">
                 <div class="btn-toolbar list-toolbar">
-                    <button class="btn btn-primary"><i class="fa fa-plus"></i><a href="/user/add_user_news_task.html">新增</a></button>
+                    <button class="btn btn-primary"><i class="fa fa-plus"></i><a href="/user/add_code_task.html.html">新增</a></button>
                 </div>
                 <form id="queryPageForm" action="">
                         <table class="table">
@@ -29,6 +29,7 @@
                             <tr >
                                 <td style="width: 150px;">编号</td>
                                 <td>微信号</td>
+                                <td>粉丝数</td>
                                 <td>单价</td>
                                 <td>二维码</td>
                                 <td>备注</td>
@@ -44,6 +45,7 @@
                                 </#if>
                                 <td>${row.id!}</td>
                                 <td>${row.wxCodeImgHref!}</td>
+                                <td>${row.fansNum!}</td>
                                 <td>${row.moneyPer!}</td>
                                 <td><#if row.wxCodeImgHref??><img width="100px;" src="http://open.weixin.qq.com/qr/code/?username=${row.wxCodeImgHref}" /></#if></td>
                                 <td>${row.wxRemarkText!}</td>

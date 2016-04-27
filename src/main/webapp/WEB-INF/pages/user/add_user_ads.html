@@ -1,0 +1,96 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+    <title>商家会员中心</title>
+    <#include "head.html">
+        <script type="text/javascript">
+            CONETXT_PATH = '${s.base}';
+        </script>
+        <script type="text/javascript" src="${s.base}/res/jquery-1.9.1.min.js"></script>
+        <link 	type="text/css"	href="${s.base}/res/kindeditor/themes/default/default.css" rel="stylesheet">
+        <script type="text/javascript" src="${s.base}/res/kindeditor/kindeditor-min.js"></script>
+        <script type="text/javascript" src="${s.base}/res/kindeditor/zh_CN.js"></script>
+        <script type="text/javascript" src="${s.base}/res/common.js"></script>
+    <script type="text/javascript" >
+        var editor = simpleKindeditor("adsContent");
+    </script>
+</head>
+<body class=" theme-blue">
+
+<!-- Demo page code -->
+<#include "navigation.html">
+    <#include "sidebar-nav.html">
+        <div class="content">
+            <div class="header">
+                <h1 class="page-title">Dashboard</h1>
+                <ul class="breadcrumb">
+                    <li><a href="index.html">Home</a> </li>
+                    <li class="active">新增广告</li>
+                </ul>
+            </div>
+            <div class="main-content">
+                <div class="row">
+                    <div class="col-md-8">
+                        <br>
+                        <div id="myTabContent" class="tab-content">
+                            <div class="tab-pane active in" id="home">
+                                <form id="add_form">
+                                    <input id="userId" value="${userInfo.id?c}" name="userId" type="hidden"/>
+                                    <div class="form-group">
+                                        <label>广告名称:</label>
+                                        <input id="adsName" name="adsName" type="text" value=""/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>状态:</label>
+                                        <input type="radio" name="adsStatus" value="1" checked /> 正常
+                                        <input type="radio" name="adsStatus" value="0" /> 暂停
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>广告内容:</label>
+                                        <textarea name="adsContent" style="width:452px;height:300px;visibility:hidden;"></textarea>
+                                    </div>
+
+                                </form>
+                            </div>
+
+                            <div class="btn-toolbar list-toolbar">
+                                <button class="btn btn-primary" name="add_btn" id="add_btn"><i class="fa fa-save"></i> 新增</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <#include "footer.html">
+            </div>
+        </div>
+        <#include "js.html">
+
+            <script>
+                $("#add_btn").click(function(){
+                    var wxId=$("#wxId").val();
+                    if(wxId==""){
+                        alert("微信号不能为空");
+                        return;
+                    }
+                    $.ajax({
+                        type: "POST",
+                        url:"/user/add_user_ads_json.html",
+                        data:$('#add_form').serialize(),// 要提交的表单
+                        success: function(ret)
+                        {
+                            var returnJson=JSON.parse(ret);
+                            alert(returnJson.msg);
+                            if(returnJson.result)
+                            {
+                                window.location.href="/user/manage_all_ads.html";
+                            }
+                        },
+                        error: function(error){alert(error);}
+                    });
+                });
+            </script>
+</body>
+
+</html>

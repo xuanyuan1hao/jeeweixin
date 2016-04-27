@@ -47,14 +47,11 @@
                                         <input id="appsecret"  name="appsecret" class="form-control" type="text"/>
                                     </div>
                                     <div class="form-group">
-                                        <label>发布时间</label>
-                                        <select id="pubTime" name="pubTime" class="form-control">
-                                            <#list 0..23 as t>
-                                                <option value ="${t}">${t}点</option>
-                                            </#list>
-                                        </select>
+                                        <label>广告价格</label>
+                                        <input class="form-control" id="adsPrice" value="0.1"
+                                               name="moneyPer" type="text"/>元/天
                                     </div>
-                                    <div class="form-group"><label>关注单价:</label>
+                                    <div class="form-group"><label>吸粉付费单价:</label>
                                         <input class="form-control" id="moneyPer" value="0.1"
                                                name="moneyPer" type="text"/>
                                     </div>

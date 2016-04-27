@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://10.20.91.130/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.wxcms.mapper.UserAdsInfoDao">
+    <resultMap id="UserAdsInfoMap" type="com.wxcms.domain.UserAdsInfo">
+        <id property="id" column="id" />
+        <result property="userId" column="user_id"/>
+        <result property="adsContent" column="ads_content"/>
+        <result property="adsStatus" column="ads_status"/>
+        <result property="adsName" column="ads_name"/>
+        <result property="createtime" column="createtime"/>
+    </resultMap>
+    <select id="paginationEntity" resultMap="UserAdsInfoMap">
+        SELECT m.*
+        from t_wxcms_user_ads_info m
+        where 1=1
+        <if test="param1.adsStatus!=null and param1.adsStatus!=0 ">
+            and  m.ads_status = #{param1.adsStatus}
+        </if>
+        order by m.id desc
+        LIMIT #{param2.start} , #{param2.pageSize}
+    </select>
+
+    <select id="getTotalItemsCount" parameterType="com.wxcms.domain.UserAdsInfo" resultType="java.lang.Integer">
+        SELECT count(m.id)
+        FROM t_wxcms_user_ads_info m
+        where 1=1
+        <if test="adsStatus!=null and adsStatus!=0 ">
+            and  m.ads_status = #{adsStatus}
+        </if>
+    </select>
+
+
+    <select id="listForPage" parameterType="com.wxcms.domain.UserAdsInfo" resultMap="UserAdsInfoMap">
+        SELECT * FROM t_wxcms_user_ads_info t
+        where 1=1
+        ORDER BY t.ID DESC limit 20
+    </select>
+
+    <select id="getById" resultMap="UserAdsInfoMap">
+        SELECT m.*
+        FROM t_wxcms_user_ads_info m
+        where
+        m.ID = #{id}
+    </select>
+    <insert id="add" parameterType="com.wxcms.domain.UserAdsInfo" flushCache="true">
+        INSERT INTO t_wxcms_user_ads_info ( createtime,ads_name,user_id,
+        ads_content,ads_status)
+        VALUES ( #{createtime},#{adsName},#{userId} ,
+        #{adsContent},#{adsStatus})
+        <selectKey resultType="long" keyProperty="id" >
+            SELECT LAST_INSERT_ID() ;
+        </selectKey>
+    </insert>
+
+    <update id="update" parameterType="com.wxcms.domain.UserAdsInfo" flushCache="true">
+        UPDATE t_wxcms_user_ads_info set ads_name=#{adsName},
+        ads_content=#{adsContent},adsStatus=#{ads_status}
+        WHERE ID = #{id}
+    </update>
+
+    <delete id="delete" parameterType="com.wxcms.domain.UserAdsInfo" >
+        DELETE FROM t_wxcms_user_ads_info WHERE ID = #{id}
+    </delete>
+
+</mapper>

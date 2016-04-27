@@ -26,8 +26,16 @@ public class TaskCode  extends BaseEntity {
     private int fansNum;//粉丝数量
     private int pubTime;//几点发布任务
     private int pubLongTime=120;//发布持续时间长短（默认120分钟）
-
+    private double adsPrice;
     private  int type=0;//默认为非认证用户，1为认证用户
+
+    public double getAdsPrice() {
+        return adsPrice;
+    }
+
+    public void setAdsPrice(double adsPrice) {
+        this.adsPrice = adsPrice;
+    }
 
     public String getWxAttentionUrl() {
         return wxAttentionUrl;

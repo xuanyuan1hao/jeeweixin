@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://10.20.91.130/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.wxcms.mapper.MediaWxDao">
+
+    <select id="paginationEntity" resultType="com.wxcms.domain.MediaWx">
+        SELECT m.* ,n.classifyName as classfyName
+        from t_wxcms_media_wx m
+        <if test="param1.oldMediaMd5!=null and param1.oldMediaMd5!=''">
+            and  m.oldMediaMd5 = #{param1.oldMediaMd5}
+        </if>
+        order by m.id desc
+        LIMIT #{param2.start} , #{param2.pageSize}
+    </select>
+
+    <select id="getTotalItemsCount" parameterType="com.wxcms.domain.MediaWx" resultType="java.lang.Integer">
+        SELECT count(m.id) FROM t_wxcms_media_wx m where 1=1
+    </select>
+
+    <select id="getById" parameterType="java.lang.String" resultType="com.wxcms.domain.MediaWx">
+        SELECT *
+        FROM t_wxcms_media_wx m
+        WHERE m.ID = #{id}
+    </select>
+
+    <select id="isExistByMd5" parameterType="com.wxcms.domain.MediaWx" resultType="boolean">
+        SELECT count(*) FROM t_wxcms_media_wx WHERE oldMediaMd5 = #{oldMediaMd5}
+    </select>
+    <select id="getByMd5" parameterType="com.wxcms.domain.MediaWx" resultType="com.wxcms.domain.MediaWx">
+        SELECT * FROM t_wxcms_media_wx WHERE oldMediaMd5 = #{oldMediaMd5}
+    </select>
+
+    <insert id="add" parameterType="com.wxcms.domain.MediaWx" flushCache="true">
+        INSERT INTO t_wxcms_media_wx (oldMediaMd5 ,oldMedia,newUrl,media_id,createtime)
+        VALUES ( #{oldMediaMd5},#{oldMedia},#{newUrl},#{media_id},#{createtime})
+        <selectKey resultType="long" keyProperty="id" >
+            SELECT LAST_INSERT_ID() ;
+        </selectKey>
+    </insert>
+
+    <update id="update" parameterType="com.wxcms.domain.MediaWx" flushCache="true">
+        UPDATE t_wxcms_media_wx SET oldMediaMd5 = #{oldMediaMd5},oldMedia = #{oldMedia},newUrl = #{newUrl},
+        media_id = #{media_id}
+        WHERE ID = #{id}
+    </update>
+
+
+    <delete id="delete" parameterType="com.wxcms.domain.MediaWx" >
+        DELETE FROM t_wxcms_media_wx WHERE ID = #{id}
+    </delete>
+
+</mapper>

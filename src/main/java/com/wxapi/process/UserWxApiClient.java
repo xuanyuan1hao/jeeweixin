@@ -113,6 +113,7 @@ public class UserWxApiClient {
         }
     }
 
+
     public static JSONObject sendCustomTextMessage(String openid, String content, TaskCode taskCodeThread) {
         if (!StringUtils.isBlank(openid) && !StringUtils.isBlank(content)) {
             final String accessToken = getAccessToken(taskCodeThread);
@@ -187,6 +188,18 @@ public class UserWxApiClient {
         }
         return rstObj;
     }
+    //上传图片
+    public static JSONObject uploadImage(String imageUrl, TaskCode taskCode) {
+        JSONObject rstObj = new JSONObject();
+        String accessToken = getAccessToken(taskCode);
+        try {
+            rstObj= WxApi.uploadMediaImage(accessToken, imageUrl);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return rstObj;
+    }
+
 
     //群发信息
     public static JSONObject massSendall(String media_id, TaskCode taskCode) {
@@ -194,15 +207,26 @@ public class UserWxApiClient {
         String accessToken = getAccessToken(taskCode);
         try {
             JSONObject filterJson = new JSONObject();
-            filterJson.put("is_to_all",true);
-            filterJson.put("group_id",0);
+            filterJson.put("is_to_all", true);
+            filterJson.put("group_id", 0);
             JSONObject postObj = new JSONObject();
-            postObj.put("filter",filterJson);
+            postObj.put("filter", filterJson);
             JSONObject mpnewsJson = new JSONObject();
-            mpnewsJson.put("media_id",media_id);
-            postObj.put("mpnews",mpnewsJson);
-            postObj.put("msgtype","mpnews");
+            mpnewsJson.put("media_id", media_id);
+            postObj.put("mpnews", mpnewsJson);
+            postObj.put("msgtype", "mpnews");
             rstObj = WxApi.httpsRequest(WxApi.getMassSendAllUrl(accessToken), HttpMethod.POST, postObj.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return rstObj;
+    }
+
+    public static JSONObject syncFansGroups(TaskCode taskCode) {
+        JSONObject rstObj = new JSONObject();
+        String accessToken = getAccessToken(taskCode);
+        try {
+            rstObj = WxApi.httpsRequest(WxApi.getFansGroupsUrl(accessToken), HttpMethod.GET);
         } catch (Exception e) {
             e.printStackTrace();
         }

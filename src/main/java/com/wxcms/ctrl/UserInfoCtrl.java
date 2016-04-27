@@ -46,6 +46,8 @@ public class UserInfoCtrl {
     private UserAutoNewsTaskService userAutoNewsTaskService;
     @Autowired
     private UserNewsTaskArticleService userNewsTaskArticleService;
+    @Autowired
+    private UserAdsInfoService userAdsInfoService;
 
     @RequestMapping(value = "/reg")
     public ModelAndView reg() {
@@ -98,6 +100,12 @@ public class UserInfoCtrl {
         ModelAndView mv = new ModelAndView("user/add_code_task");
         return mv;
     }
+    @RequestMapping(value = "/add_user_ads")
+    public ModelAndView addUserAdsInfo() {
+        ModelAndView mv = new ModelAndView("user/add_user_ads");
+        return mv;
+    }
+
 
     @RequestMapping(value = "/edit_code_task")
     public ModelAndView editCodeTask(TaskCode searchEntity, ModelMap map, HttpSession httpSession) {
@@ -224,6 +232,20 @@ public class UserInfoCtrl {
         mv.addObject("pagination", pagination);
         return mv;
     }
+    //管理所有发布的广告位
+    @RequestMapping(value = "/manage_all_ads")
+    public ModelAndView manageAllAds(HttpServletRequest request, ModelMap map,
+                                     UserAdsInfo searchEntity, Pagination<UserAdsInfo> pagination, HttpSession httpSession) {
+        ModelAndView mv = new ModelAndView("user/manage_all_ads");
+        if (null == searchEntity)
+            searchEntity = new UserAdsInfo();
+        pagination = userAdsInfoService.paginationEntity(searchEntity, pagination);
+        mv.addObject("pagination", pagination);
+        return mv;
+    }
+
+
+
     @RequestMapping(value = "/manage_all_user_auto_news_task")
     public ModelAndView manageUserAutoNewsTask(HttpServletRequest request, ModelMap map, UserAutoNewsTask searchEntity,
                                                Pagination<UserAutoNewsTask> pagination, HttpSession httpSession) {
@@ -301,6 +323,69 @@ public class UserInfoCtrl {
         mv.addObject("myAllTaskCode", myAllTaskCode);
         return mv;
     }
+
+
+
+    @RequestMapping(value = "add_user_ads_json")
+    public
+    @ResponseBody
+    String addUserAdsJson(HttpServletRequest request, ModelMap map,
+                                        @ModelAttribute("userAdsInfo") UserAdsInfo userAdsInfo, HttpSession httpSession) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("result", false);
+        jsonObject.put("msg", "系统错误，新增失败");
+        try {
+            UserInfo userInfo = (UserInfo) httpSession.getAttribute("userInfo");
+            if (null != userInfo) {
+                userAdsInfo.setUserId(userInfo.getId());
+            }
+            userAdsInfoService.add(userAdsInfo);
+            jsonObject.put("result", true);
+            jsonObject.put("msg", "新增成功");
+        } catch (Exception ex) {
+
+        }
+        return jsonObject.toString();
+    }
+    @RequestMapping(value = "delete_user_ads_json")
+    public
+    @ResponseBody
+    String deleteUserAdsJson(HttpServletRequest request, ModelMap map,
+                          @ModelAttribute("id") long id, HttpSession httpSession) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("result", false);
+        jsonObject.put("msg", "系统错误，删除失败");
+        try {
+           UserAdsInfo userAdsInfo=userAdsInfoService.getById(id);
+            UserInfo userInfo = (UserInfo) httpSession.getAttribute("userInfo");
+            if(userAdsInfo.getUserId()!=userInfo.getId()){
+                return jsonObject.toString();
+            }
+            userAdsInfoService.delete(userAdsInfo);
+            jsonObject.put("result", true);
+            jsonObject.put("msg", "删除成功");
+        } catch (Exception ex) {
+
+        }
+        return jsonObject.toString();
+    }
+
+    @RequestMapping(value = "add_user_ads_to_article")
+    public ModelAndView addUserAdsToArticle(HttpSession httpSession) {
+        ModelAndView mv = new ModelAndView("user/add_user_ads_to_article");
+        //查找所有的公众号
+       /* TaskCode taskCode = new TaskCode();
+        UserInfo userInfo = (UserInfo) httpSession.getAttribute("userInfo");
+        if (null != userInfo) {
+            taskCode.setUserId(userInfo.getId());
+        }*/
+        /*Pagination<TaskCode> pagination = new Pagination<TaskCode>();
+        pagination.setPageSize(50);
+        List<TaskCode> myAllTaskCode = taskCodeService.listForPage(taskCode, pagination);
+        mv.addObject("myAllTaskCode", myAllTaskCode);*/
+        return mv;
+    }
+
 
     @RequestMapping(value = "edit_user_auto_news_task_json")
     public

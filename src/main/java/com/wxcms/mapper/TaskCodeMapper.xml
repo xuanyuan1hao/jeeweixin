@@ -61,16 +61,20 @@
 
     <insert id="add" parameterType="com.wxcms.domain.TaskCode" flushCache="true" useGeneratedKeys="true" keyProperty="id" >
         INSERT INTO t_wxcms_task_code ( userId,moneyPer,wxCodeImgHref,wxRemark,validateMenuUrl,createtime,
-        base64WxCode,account,appid,appsecret,url,token,type ,wxAttentionUrl)
+        base64WxCode,account,appid,appsecret,url,token,type ,wxAttentionUrl,adsPrice)
         VALUES ( #{userId},#{moneyPer},#{wxCodeImgHref},#{wxRemark},#{validateMenuUrl},#{createtime},
-        #{base64WxCode},#{account},#{appid},#{appsecret},#{url},#{token},#{type},#{wxAttentionUrl})
+        #{base64WxCode},#{account},#{appid},#{appsecret},#{url},#{token},#{type},#{wxAttentionUrl},#{adsPrice})
     </insert>
 
     <update id="update" parameterType="com.wxcms.domain.TaskCode" flushCache="true">
         UPDATE t_wxcms_task_code SET moneyPer = #{moneyPer},userId = #{userId},wxCodeImgHref = #{wxCodeImgHref},
         wxRemark = #{wxRemark},validateMenuUrl = #{validateMenuUrl},base64WxCode=#{base64WxCode},
         account=#{account},appid=#{appid},appsecret=#{appsecret},url=#{url},token=#{token} ,type=#{type},
-        wxAttentionUrl=#{wxAttentionUrl}
+        wxAttentionUrl=#{wxAttentionUrl},adsPrice=#{adsPrice}
+        WHERE ID = #{id}
+    </update>
+    <update id="updateFansNum" parameterType="com.wxcms.domain.TaskCode" flushCache="true">
+        UPDATE t_wxcms_task_code SET fansNum = #{fansNum}
         WHERE ID = #{id}
     </update>
 
